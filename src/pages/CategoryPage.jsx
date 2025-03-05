@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from 'react-router-dom'; // 이 부분은 그대로 두세요
 import axios from 'axios';
 import React, { useState, useEffect, useContext } from 'react'; // useContext는 React에서 import해야 함
@@ -9,7 +10,9 @@ import { CartContext } from '../context/CartContext'; // CartContext 사용
 function CategoryPage() {
   const { categoryId } = useParams(); // URL에서 categoryId 가져오기
   const [products, setProducts] = useState([]);
+
   const [categoryName, setCategoryName] = useState(''); // ✅ 카테고리 이름 저장
+
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
 
@@ -17,6 +20,7 @@ function CategoryPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
+
         const response = await fetch('http://localhost:5000/auth/user-info', {
           method: 'GET',
           credentials: 'include',
@@ -24,12 +28,15 @@ function CategoryPage() {
 
         if (!response.ok) {
           throw new Error('로그인 정보 조회 실패');
+
         }
 
         const data = await response.json();
         setUserId(data.userId);
       } catch (error) {
+
         console.error('사용자 정보 조회 오류:', error.message);
+
       }
     };
 
@@ -42,10 +49,12 @@ function CategoryPage() {
     const fetchCategoryName = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/category/${categoryId}`);
-        console.log('✅ Category Name Fetched:', response.data);
+
+        console.log("✅ Category Name Fetched:", response.data);
         setCategoryName(response.data.name); // ✅ 카테고리 이름 설정
       } catch (error) {
-        console.error('❌ 카테고리 정보를 불러오는 중 오류 발생:', error);
+        console.error("❌ 카테고리 정보를 불러오는 중 오류 발생:", error);
+
       }
     };
 
@@ -58,15 +67,18 @@ function CategoryPage() {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/products/category/${categoryId}`);
+
         console.log('✅ Category Products:', response.data);
         setProducts(response.data);
       } catch (error) {
         console.error('❌ 상품 목록을 불러오는 중 오류 발생:', error);
+
       }
     };
 
     fetchProducts();
   }, [categoryId]);
+
 
   const { cartItems, loadCart, removeItemFromCart, updateQuantity } = useContext(CartContext); // CartContext에서 가져오기
 
@@ -83,6 +95,7 @@ function CategoryPage() {
         },
         credentials: 'include', // ✅ JWT 쿠키 자동 전송
         body: JSON.stringify({ productId, quantity: 1 }), // ✅ userId 제거
+
       });
 
       if (!response.ok) {
@@ -95,10 +108,12 @@ function CategoryPage() {
       console.log('✅ 장바구니 추가 성공:', data);
     } catch (error) {
       console.error('❌ 장바구니 추가 오류:', error);
+
     }
   };
 
   return (
+
     <div className='product-container'>
       <h2>카테고리: {categoryName}</h2> {/* ✅ 제목을 카테고리 이름으로 변경 */}
       <ul className='product-list'>
@@ -110,13 +125,16 @@ function CategoryPage() {
               <p>설명: {product.description}</p>
 
               <button onClick={() => addToCart(product.productId)}>장바구니 추가2</button>
+
             </li>
           ))
         ) : (
           <p>해당 카테고리에 상품이 없습니다.</p>
         )}
       </ul>
+
       <button className='cart-btn' onClick={() => navigate('/cart')}>
+
         장바구니 보기
       </button>
     </div>
