@@ -31,6 +31,7 @@ export default [
       ...reactHooks.configs.recommended.rules,
       'react/jsx-no-target-blank': 'off',
       'no-unused-vars': 'off',
+      'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
       'no-undef': 'off', // no-undef 규칙 끄기
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],

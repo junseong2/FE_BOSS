@@ -1,0 +1,40 @@
+.sellerCardLayout {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 1rem;
+  width: 100%;
+
+  .sellerCard {
+    display: grid;
+    grid-template-columns: 1fr;
+    border: 1px solid gainsboro;
+    border-radius: 10px;
+    padding: 1.25rem;
+    width: 100%;
+    max-width: 400px;
+
+    strong {
+      padding: 5px 0;
+    }
+
+    span {
+      font-size: 0.85rem;
+      color: #777;
+    }
+  }
+}
+
+/* 768px 밑인 경우 적용 */
+@media screen and (max-width: 768px) {
+  .sellerCardLayout {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* 768px 밑인 경우 적용 */
+@media screen and (max-width: 368px) {
+  .sellerCardLayout {
+    grid-template-columns: 1fr;
+  }
+}

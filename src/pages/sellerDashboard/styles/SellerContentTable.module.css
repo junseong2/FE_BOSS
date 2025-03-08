@@ -1,0 +1,29 @@
+.sellerContentTableLayout {
+  margin-top: 1.25rem;
+  width: 100%;
+
+  .sellerContentTable {
+    width: 100%;
+    caption-side: bottom;
+  }
+  thead {
+    border-bottom: 1px solid #ececee;
+    color: gray;
+    th {
+      padding: 0.5rem 3px;
+    }
+  }
+
+  tbody {
+    td {
+      padding: 5px 3px;
+    }
+    tr {
+      transition: 0.2s background-color;
+    }
+
+    tr:hover {
+      background-color: rgba(0, 0, 0, 0.078);
+    }
+  }
+}
