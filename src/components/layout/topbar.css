@@ -1,18 +1,21 @@
 .top-bar {
   background-color: lightblue;
-  padding: 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start; /* 왼쪽으로 정렬 */
+
   align-items: center;
   font-family: 'Lora', serif;
   font-size: 36px;
   font-weight: bold;
-  position: fixed;
+  position: fixed; /* 부모 요소에 relative 추가 */
+  overflow: visible; /* 자식 요소가 밖으로 나가도 잘리게 하지 않도록 설정 */
   top: 0;
   left: 0;
   height: 100px;
   width: 100%;
   z-index: 1000;
+
+  padding: 0; /* 패딩을 제거하여 레이아웃 영향 줄이기 */
 }
 
 .top-bar > div {
@@ -21,8 +24,8 @@
 
 .cart-popup {
   position: absolute;
-  top: 100%;
-  left: 90%;
+  top: 100px; /* topbar의 높이만큼 띄워서 배치 */
+  left: -10%;
   transform: translateX(-50%);
   background-color: white;
   border: 1px solid #ddd;
@@ -30,6 +33,7 @@
   padding: 10px;
   z-index: 1000;
   font-size: 12px;
+  width: 10rem; /* 너비를 조정하여 박스 크기 증가 */
 }
 
 .user-info-container {
@@ -42,17 +46,16 @@
 .welcome-message {
   font-size: 12px;
 }
-
-/* 🔍 검색 바 스타일 */
 .search-form {
   display: flex;
   align-items: center;
+
   gap: 5px;
-  margin-left: 20px;
+  margin-left: 100px; /* 로고와 간격을 좁히기 위해 margin-left 조정 */
 }
 
 .search-input {
-  width: 200px;
+  width: 20rem;
   padding: 8px;
   border: 2px solid #ccc;
   border-radius: 5px;
@@ -62,19 +65,22 @@
 .search-input::placeholder {
   opacity: 0;
 }
-
 .search-button {
-  padding: 8px 10px;
-  background-color: lightblue;
+  padding: 10px 15px; /* 패딩 증가 */
+  background-color: transparent;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 3rem; /* 폰트 크기 조정 */
+  min-width: 100px; /* 최소 너비 추가 */
+  margin-top: -60px; /* 위로 올리기 위해 margin-top 조정 */
 }
 
 .search-button:hover {
-  background-color: #2980b9;
+  background-color: transparent;
 }
+
 button {
   display: inline-block;
   border: 2px solid black;
@@ -91,19 +97,20 @@ button {
 
 .button-container {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  flex-direction: row;
+  justify-content: flex-end;
   gap: 5px;
   margin: 0px;
-  flex-wrap: wrap;
+  position: absolute; /* 버튼들을 절대 위치로 배치 */
+  right: 0; /* 오른쪽 끝으로 고정 */
+  top: 50%; /* 탑바 높이의 중간에 배치 */
+  transform: translateY(-50%); /* 정확하게 중간에 위치하도록 */
 }
 
 button:active {
   transform: scale(0.98);
 }
 
-/* START 버튼 스타일 */
 .button-container .start-button {
   position: relative;
   overflow: hidden;
@@ -133,5 +140,52 @@ button:active {
   left: 0;
 }
 
-/* 얼굴 인식 TEST 버튼, Sign In 버튼, Mypage 버튼 스타일 */
-/* 여기에 `.face-test-button`, `.TopSigninBt`, `.MypageBt` 포함 */
+.logo {
+  width: 6rem;
+  height: 6rem;
+  margin-left: 3rem;
+  max-width: 100%;
+  max-height: 100%;
+  cursor: pointer;
+}
+.user-info-container {
+  width: 6rem;
+  height: 6rem;
+  text-overflow: ellipsis;
+  position: absolute;
+  right: 100px; /* 오른쪽 끝에서 10px 만큼 떨어지도록 설정 */
+  /* left: 10px; --> left 대신 right를 사용하여 오른쪽 끝에 가까운 위치로 이동 */
+}
+
+@media (max-width: 768px) {
+  .top-bar {
+    padding: 0; /* 패딩 제거 */
+    font-size: 3rem;
+  }
+
+  .logo {
+    width: 6rem;
+    height: 6rem;
+    margin-left: 0.1rem;
+  }
+
+  .search-form {
+    display: none;
+  }
+
+  .search-input {
+    width: 14rem;
+  }
+
+  .button-container {
+    gap: 3px;
+    margin-right: 0; /* 오른쪽 끝에 고정되도록 추가 */
+    top: 50%; /* 버튼들이 탑바의 중간에 위치하도록 */
+  }
+
+  button {
+    display: inline-block;
+    font-size: 0.3rem;
+    width: 70px;
+  }
+}

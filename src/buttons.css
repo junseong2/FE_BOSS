@@ -6,12 +6,14 @@ button {
   background-color: transparent;
   color: black;
   width: 80px;
-  font-size: 0.4rem;
+
   height: 25px;
   font-weight: bold;
   transition: all 0.3s ease;
 }
-
+.button-default {
+  font-size: 0.4rem;
+}
 .button-container {
   display: flex;
   flex-direction: column;

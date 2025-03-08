@@ -1,4 +1,5 @@
-button {
+/* 기본 버튼 스타일 (전역 적용 X, 특정 클래스를 가진 버튼만 적용) */
+.button-default {
   display: inline-block;
   border: 2px solid black;
   border-radius: 10px;
@@ -6,7 +7,7 @@ button {
   background-color: transparent;
   color: black;
   width: 80px;
-  font-size: 0.4rem;
+  font-size: 14px; /* 0.4rem → 14px로 수정 */
   height: 25px;
   font-weight: bold;
   transition: all 0.3s ease;
@@ -22,7 +23,8 @@ button {
   flex-wrap: wrap;
 }
 
-button:active {
+/* 버튼 클릭 시 효과 */
+.button-default:active {
   transform: scale(0.98);
 }
 
@@ -57,4 +59,27 @@ button:active {
 }
 
 /* 얼굴 인식 TEST 버튼, Sign In 버튼, Mypage 버튼 스타일 */
-/* 여기에 `.face-test-button`, `.TopSigninBt`, `.MypageBt` 포함 */
+.face-test-button,
+.TopSigninBt,
+.MypageBt {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.face-test-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.TopSigninBt {
+  background-color: #28a745;
+  color: white;
+}
+
+.MypageBt {
+  background-color: #6c757d;
+  color: white;
+}
