@@ -1,0 +1,17 @@
+.sellerToolBarLayout {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.searchInput {
+  border: 1px solid #9997;
+  border-radius: 5px;
+  padding: 4px;
+  max-width: 300px;
+  width: 100%;
+}
+
+.searchInput:focus {
+  outline-color: #374151;
+}

@@ -5,7 +5,9 @@ import axios from 'axios';
 function SearchPage() {
   const [searchResults, setSearchResults] = useState([]);
   const location = useLocation();
-  const query = new URLSearchParams(location.search).get('query');  // 쿼리 파라미터 가져오기
+
+  const query = new URLSearchParams(location.search).get('query'); // 쿼리 파라미터 가져오기
+
 
   useEffect(() => {
     const fetchSearchResults = async () => {
@@ -13,7 +15,9 @@ function SearchPage() {
         const response = await axios.get(`http://localhost:5000/products/search?query=${query}`);
         setSearchResults(response.data);
       } catch (error) {
-        console.error("검색 결과를 불러오는 데 실패했습니다.", error);
+
+        console.error('검색 결과를 불러오는 데 실패했습니다.', error);
+
       }
     };
 
