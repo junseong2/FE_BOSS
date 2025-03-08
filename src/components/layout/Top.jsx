@@ -85,7 +85,13 @@ function Top() {
 
   return (
     <div className='top-bar'>
-      &nbsp; &nbsp; Top bar&nbsp;
+      <img
+        src='src/assets/boss_logo.png' // 이미지 경로를 public 폴더 기준으로 설정
+        alt='Boss Logo'
+        className='logo'
+        onClick={() => navigate('/')} // 로고 클릭 시 홈으로 이동
+      />
+
       <form className='search-form' onSubmit={handleSearch}>
         <input
           type='text'

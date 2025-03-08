@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { CartProvider } from './context/CartContext'; // CartProvider import
@@ -16,6 +15,8 @@ import CameraCapturePage from './pages/CameraCapturePage';
 import ContactPage from './pages/ContactPage';
 import MyPage from './pages/MyPage';
 import EventPage from './pages/EventPage';
+import KakaoMapPage from './pages/KakaoMapPage'; // 경로를 맞게 수정
+
 import SignUp from './pages/SignUp';
 import CategoryPage from './pages/CategoryPage';
 import SearchPage from './pages/SearchPage';
@@ -64,6 +65,9 @@ function App() {
               <Route path='/about' element={<AboutPage />} />
               <Route path='/contact' element={<ContactPage />} />
               <Route path='/event' element={<EventPage />} />
+
+              <Route path='/kakaomap' element={<KakaoMapPage />} />
+
               <Route path='/camera' element={<CameraCapturePage onAdd={handleAdd} />} />
               <Route path='/signin' element={<SignIn />} />
               <Route path='/mypage' element={<MyPage />} />

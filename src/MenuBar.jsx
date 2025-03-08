@@ -7,6 +7,7 @@ import {
   IoHelpCircleOutline,
   IoGiftOutline,
   IoPersonOutline,
+  IoLocationOutline,
 } from 'react-icons/io5'; // 필요한 아이콘 추가
 import axios from 'axios';
 import styles from './styles/MenuBar.module.css'; // CSS 모듈 경로
@@ -84,7 +85,11 @@ function MenuBar() {
             <IoGiftOutline /> 이벤트상품
           </Link>
         </div>
-
+        <div className={styles.menuItem}>
+          <Link to='/kakaomap' className={styles.menuLink}>
+            <IoLocationOutline /> 카카오맵
+          </Link>
+        </div>
         {categories.map((category) => (
           <div
             key={category.id}
