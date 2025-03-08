@@ -7,8 +7,7 @@ function SearchPage() {
   const [sortOrder, setSortOrder] = useState('asc');
   const [userId, setUserId] = useState(null); // ✅ userId 상태 추가
   const location = useLocation();
-  const navigate = useNavigate();
-  const query = new URLSearchParams(location.search).get('query');
+  const query = new URLSearchParams(location.search).get('query'); // 쿼리 파라미터 가져오기
 
   useEffect(() => {
     const fetchSearchResults = async () => {

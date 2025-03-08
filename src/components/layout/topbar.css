@@ -49,6 +49,7 @@
 .search-form {
   display: flex;
   align-items: center;
+  
   gap: 5px;
   margin-left: 100px; /* 로고와 간격을 좁히기 위해 margin-left 조정 */
 }
@@ -64,19 +65,22 @@
 .search-input::placeholder {
   opacity: 0;
 }
-
 .search-button {
-  padding: 8px 10px;
+  padding: 10px 15px; /* 패딩 증가 */
   background-color: transparent;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 3rem; /* 폰트 크기 조정 */
+  min-width: 100px; /* 최소 너비 추가 */
+  margin-top: -60px; /* 위로 올리기 위해 margin-top 조정 */
 }
 
 .search-button:hover {
   background-color: transparent;
 }
+
 button {
   display: inline-block;
   border: 2px solid black;

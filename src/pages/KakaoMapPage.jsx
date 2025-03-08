@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import bossLogo from '../assets/boss_logo.png';
 
 function KakaoMapPage() {
   const [location, setLocation] = useState(null);
   const [stores, setStores] = useState([]);
-  let marker = null; // 마커를 전역 변수로 선언
+  let marker = null; // 🔥 마커를 전역 변수로 유지
+  let map = null; // 🔥 지도 객체를 전역 변수로 유지
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -14,86 +16,126 @@ function KakaoMapPage() {
     document.head.appendChild(script);
 
     script.onload = () => {
+
+    
       if (window.kakao && window.kakao.maps) {
         window.kakao.maps.load(() => {
           const container = document.getElementById('map');
           const options = {
-            center: new window.kakao.maps.LatLng(35.1595, 129.0605), // 서면위치
+            center: new window.kakao.maps.LatLng(35.1014, 128.9770), // 기본 위치(사하구중심)
             level: 3,
           };
-          const map = new window.kakao.maps.Map(container, options);
+          map = new window.kakao.maps.Map(container, options);
 
+          // ✅ 사용자가 지도 클릭 시 마커 추가
           window.kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
             const lat = mouseEvent.latLng.getLat();
             const lng = mouseEvent.latLng.getLng();
-
-            // LatLng 객체 생성
-            const latLng = new window.kakao.maps.LatLng(lat, lng);
             setLocation({ lat, lng });
 
-            // 이전에 찍은 마커가 있다면 삭제
+            // ✅ 기존 마커 삭제 후 새 마커 추가
             if (marker) {
               marker.setMap(null);
             }
 
-            // 새 마커 아이콘 설정
-            const markerImage = new window.kakao.maps.MarkerImage(
-              'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', // 아이콘 이미지 URL
-              new window.kakao.maps.Size(24, 35), // 아이콘 크기 설정
-            );
-
-            // 새 마커 생성
-            marker = new window.kakao.maps.Marker({
-              position: latLng,
-              image: markerImage, // 아이콘 설정
+            const newMarker = new window.kakao.maps.Marker({
+              position: new window.kakao.maps.LatLng(lat, lng),
             });
-            marker.setMap(map);
+            newMarker.setMap(map);
+            marker = newMarker; // 🔥 전역 변수에 저장
 
-            // 클릭한 위치로 지도의 중심 이동
-            map.setCenter(latLng);
+            // 지도 중심 이동
+            map.setCenter(new window.kakao.maps.LatLng(lat, lng));
 
-            // 서버에서 편의점 데이터 가져오기
+            // ✅ 서버에서 편의점 데이터 가져오기
             fetch(`http://localhost:5000/api/stores?lat=${lat}&lng=${lng}`)
-              .then((response) => response.json()) // JSON으로 응답 처리
+              .then((response) => response.json())
               .then((data) => {
-                console.log('Fetched stores data:', data); // 응답 데이터 출력
-                setStores(data); // 받아온 데이터로 상태 업데이트
+                console.log('📌 Fetched stores data:', data);
+                setStores(data);
+
+                // ✅ 각 매장에 대한 마커 추가
+                data.forEach((store) => {
+                  const storeLatLng = new window.kakao.maps.LatLng(store.latitude, store.longitude);
+                  const storeMarkerImage = new window.kakao.maps.MarkerImage(
+                    bossLogo,
+                    new window.kakao.maps.Size(50, 50)
+                  );
+
+                  const storeMarker = new window.kakao.maps.Marker({
+                    position: storeLatLng,
+                    image: storeMarkerImage,
+                  });
+                  storeMarker.setMap(map);
+
+                  // ✅ 매장 클릭 이벤트 추가
+                  window.kakao.maps.event.addListener(storeMarker, 'click', function () {
+                    const message = `${store.store_name} - ${store.address}\n주문하시겠습니까?`;
+                    if (window.confirm(message)) {
+                      alert('주문이 접수되었습니다.');
+                    }
+                  });
+                });
               })
-              .catch((error) => console.error('Error fetching stores:', error));
+              .catch((error) => console.error('❌ Error fetching stores:', error));
           });
+
+          // ✅ 새로고침 후 `location`을 가져오면 지도 중심 업데이트
+          if (location) {
+            const userLatLng = new window.kakao.maps.LatLng(location.lat, location.lng);
+            map.setCenter(userLatLng); // 지도 중심을 사용자 위치로 이동
+
+            if (!userMarker) {
+              userMarker = new window.kakao.maps.Marker({
+                position: userLatLng,
+              });
+              userMarker.setMap(map); // 사용자 위치 마커를 지도에 표시
+            }
+          }
         });
       }
     };
 
     script.onerror = () => {
-      console.error('카카오 맵 API 로드 실패');
+      console.error('❌ 카카오 맵 API 로드 실패');
     };
-  }, []); // 한 번만 실행되도록 `[]`로 설정
+  }, []);
 
-  // 각도를 라디안으로 변환하는 함수
-  const toRadians = (degrees) => {
-    return degrees * (Math.PI / 180);
-  };
+  // ✅ **사용자 위치 가져오기 (초기 실행)**
+  useEffect(() => {
+    fetch('http://localhost:5000/auth/user/location', {
+      credentials: 'include',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.latitude && data.longitude) {
+          setLocation({ lat: data.latitude, lng: data.longitude });
 
-  //클라이언트측에서 거리계산시킴
-  // 두 지점 간의 거리를 계산하는 함수 (단위: km)
-  const calculateDistance = (lat1, lng1, lat2, lng2) => {
-    const latDistance = toRadians(lat2 - lat1);
-    const lonDistance = toRadians(lng2 - lng1);
-    const a =
-      Math.sin(latDistance / 2) * Math.sin(latDistance / 2) +
-      Math.cos(toRadians(lat1)) *
-        Math.cos(toRadians(lat2)) *
-        Math.sin(lonDistance / 2) *
-        Math.sin(lonDistance / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return 6371 * c; // 거리 계산
-  };
+          // ✅ API에서 받은 좌표로 지도 중심 이동
+          if (map) {
+            map.setCenter(new window.kakao.maps.LatLng(data.latitude, data.longitude));
+
+            if (!userMarker) {
+              userMarker = new window.kakao.maps.Marker({
+                position: userLatLng,
+                //  if (data.latitude && data.longitude) {setLocation({ lat: data.latitude, lng: data.longitude });에서 가져온 좌표
+              });
+              userMarker.setMap(map); // 사용자 위치 마커를 지도에 표시
+            }
+       
+            
+          }
+        } else {
+          console.error('❌ 사용자 위치를 가져오지 못했습니다.');
+        }
+      })
+      .catch((error) => console.error('❌ 위치 데이터 가져오기 실패:', error));
+  }, []);
 
   return (
     <div>
       <h1>카카오 지도 - 이마트24 편의점 추천</h1>
-      <div id='map' style={{ width: '400px', height: '400px' }}></div>
+      <div id="map" style={{ width: '400px', height: '400px' }}></div>
       {location && (
         <div>
           <h2>
@@ -103,20 +145,11 @@ function KakaoMapPage() {
             <div>
               <h3>주변 이마트24 편의점:</h3>
               <ul>
-                {stores.map((store, index) => {
-                  // 거리 계산
-                  const distance = calculateDistance(
-                    location.lat,
-                    location.lng,
-                    store.latitude,
-                    store.longitude,
-                  );
-                  return (
-                    <li key={index}>
-                      {store.store_name} - {store.address} - {distance.toFixed(2)} km
-                    </li>
-                  );
-                })}
+                {stores.map((store, index) => (
+                  <li key={index}>
+                    {store.store_name} - {store.address}
+                  </li>
+                ))}
               </ul>
             </div>
           )}

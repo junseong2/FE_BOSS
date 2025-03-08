@@ -1,11 +1,10 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // 이 부분은 그대로 두세요
 import axios from 'axios';
 import React, { useState, useEffect, useContext } from 'react';
 
 function CategoryPage() {
   const { categoryId } = useParams(); // URL에서 categoryId 가져오기
   const [products, setProducts] = useState([]);
-  const [sortOrder, setSortOrder] = useState('asc'); // ✅ 가격 정렬 상태 추가
   const [categoryName, setCategoryName] = useState(''); // ✅ 카테고리 이름 저장
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
@@ -40,8 +39,9 @@ function CategoryPage() {
       try {
         const response = await axios.get(`http://localhost:5000/category/${categoryId}`);
         console.log('✅ Category Name Fetched:', response.data);
-        setCategoryName(response.data.name);
+        setCategoryName(response.data.name); // ✅ 카테고리 이름 설정
       } catch (error) {
+        console.error('❌ 카테고리 정보를 불러오는 중 오류 발생:', error);
         console.error('❌ 카테고리 정보를 불러오는 중 오류 발생:', error);
       }
     };
@@ -65,14 +65,9 @@ function CategoryPage() {
     fetchProducts();
   }, [categoryId]);
 
-  // ✅ 가격 정렬 함수
-  const sortProducts = (order) => {
-    const sorted = [...products].sort((a, b) => {
-      return order === 'asc' ? a.price - b.price : b.price - a.price;
-    });
-    setProducts(sorted);
-    setSortOrder(order);
-  };
+  const { cartItems, loadCart, removeItemFromCart, updateQuantity } = useContext(CartContext); // CartContext에서 가져오기
+
+  //const { cartItems, loadCart, removeItemFromCart, updateQuantity } = useCart();
 
   const addToCart = async (event, productId) => {
     event.stopPropagation(); // ✅ 상세 페이지 이동 방지
@@ -129,15 +124,17 @@ function CategoryPage() {
               <p>상품명: {product.name}</p>
               <p>가격: {product.price.toLocaleString()}원</p>
               <p>설명: {product.description}</p>
-              <button onClick={(event) => addToCart(event, product.productId)}>
-                장바구니 추가
-              </button>
+
+              <button onClick={() => addToCart(product.productId)}>장바구니 추가2</button>
             </li>
           ))
         ) : (
           <p>해당 카테고리에 상품이 없습니다.</p>
         )}
       </ul>
+      <button className='cart-btn' onClick={() => navigate('/cart')}>
+        장바구니 보기
+      </button>
     </div>
   );
 }

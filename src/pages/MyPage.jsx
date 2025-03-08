@@ -28,25 +28,47 @@ function MyPage() {
         method: 'GET',
         credentials: 'include',
       });
-
+  
+      if (response.status === 403) {
+        console.warn("❌ 로그인 정보 없음. 로그인 페이지로 이동.");
+        navigate("/signin"); // 로그인 페이지로 이동
+        return;
+      }
+  
       if (!response.ok) {
         throw new Error('로그인 정보 조회 실패');
       }
-
+  
       const data = await response.json();
-      console.log('응답 상태:', response.status);
-      console.log('사용자 정보:', data);
-
+      console.log('📌 사용자 정보 응답:', data);
+  
       setUserId(data.userId);
       setUserName(data.userName);
+      setEmails(data.emails.length > 0 ? data.emails : ['']);
+      setPhones(data.phones.length > 0 ? data.phones : ['']);
+      setAddresses(data.addresses.length > 0 ? data.addresses : [
+        { address1: '', address2: '', post: '', isDefault: false },
+      ]);
     } catch (error) {
-      console.error('사용자 정보 조회 오류:', error.message);
+      console.error('❌ 사용자 정보 조회 오류:', error.message);
     }
   };
+  
+  // ✅ 페이지 처음 로딩 시 실행
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
+  
+  
 
   useEffect(() => {
     console.log('📌 최신 userId 상태 변경 감지:', userId);
   }, [userId]);
+
+
+
+
+
 
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -98,6 +120,27 @@ function MyPage() {
     }
   };
 
+
+
+
+  const handleAddressSearch = (index) => {
+    new window.daum.Postcode({
+      oncomplete: function (data) {
+        console.log('선택된 주소:', data);
+
+        const newAddresses = [...addresses];
+        newAddresses[index].address1 = data.roadAddress; // 도로명 주소 입력
+        newAddresses[index].post = data.zonecode; // 우편번호 입력
+        setAddresses(newAddresses);
+      },
+    }).open();
+  };
+
+
+
+
+
+
   return (
     <div className='mypage-container'>
       <h2>마이페이지</h2>
@@ -144,6 +187,13 @@ function MyPage() {
           전화번호 추가
         </button>
 
+
+
+
+
+
+
+
         <label>주소:</label>
         {addresses.map((address, index) => (
           <div key={index}>
@@ -151,15 +201,13 @@ function MyPage() {
               type='text'
               placeholder='주소1'
               value={address.address1}
-              onChange={(e) => {
-                const newAddresses = [...addresses];
-                newAddresses[index].address1 = e.target.value;
-                setAddresses(newAddresses);
-              }}
+              readOnly
             />
+            <button type='button' onClick={() => handleAddressSearch(index)}>주소 검색</button>
+
             <input
               type='text'
-              placeholder='주소2'
+              placeholder='주소2 (상세주소)'
               value={address.address2}
               onChange={(e) => {
                 const newAddresses = [...addresses];
@@ -171,11 +219,7 @@ function MyPage() {
               type='text'
               placeholder='우편번호'
               value={address.post}
-              onChange={(e) => {
-                const newAddresses = [...addresses];
-                newAddresses[index].post = e.target.value;
-                setAddresses(newAddresses);
-              }}
+              readOnly
             />
             <label>
               <input
@@ -188,6 +232,14 @@ function MyPage() {
                 }}
               />
               기본 주소
+
+
+
+
+
+
+
+
             </label>
           </div>
         ))}

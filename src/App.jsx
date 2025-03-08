@@ -1,12 +1,15 @@
-import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { CartProvider } from './context/CartContext'; // CartProvider import
+import { CartProvider } from './context/CartContext';
+import { useState, useEffect } from 'react';
 
 import './App.css';
 import './layout.css';
 
 import Top from './components/layout/Top';
 import MenuBar from './MenuBar';
+import BottomNavigation from './components/layout/BottomNavigation.jsx'; // 추가
+import useIsMobile from './hooks/useIsMobile'; // 새로 만든 훅 추가
+
 import SignIn from './pages/SignIn.jsx';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
@@ -15,7 +18,7 @@ import CameraCapturePage from './pages/CameraCapturePage';
 import ContactPage from './pages/ContactPage';
 import MyPage from './pages/MyPage';
 import EventPage from './pages/EventPage';
-import KakaoMapPage from './pages/KakaoMapPage'; // 경로를 맞게 수정
+import KakaoMapPage from './pages/KakaoMapPage';
 
 import SignUp from './pages/SignUp';
 import CategoryPage from './pages/CategoryPage';
@@ -35,6 +38,8 @@ function App() {
     return JSON.parse(localStorage.getItem('memberData')) || [];
   });
 
+  const isMobile = useIsMobile(); // 새로운 훅 사용
+
   useEffect(() => {
     if (memberData.length > 0) {
       localStorage.setItem('memberData', JSON.stringify(memberData));
@@ -48,20 +53,17 @@ function App() {
   // 현재 경로 가져오기
   const location = useLocation();
   const isAdminPage =
-    location.pathname.startsWith('/seller') || location.pathname.startsWith('/admin'); // `/admin`으로 시작하면 true
+    location.pathname.startsWith('/seller') || location.pathname.startsWith('/admin'); // `/admin`이면 true
 
   return (
     <CartProvider>
-      {' '}
-      {/* CartContext로 감싸기 */}
       <div className='flex'>
-        {/* 관리자 페이지가 아닐 때만 MenuBar와 Top을 렌더링 */}
-        {!isAdminPage && <MenuBar />}
-        <div className={`flex-1 ${!isAdminPage ? 'ml-60' : ''}`}>
+        {/* 관리자 페이지가 아닐 때만 MenuBar 또는 BottomNavigation을 렌더링 */}
+        {!isAdminPage && !isMobile && <MenuBar />}
+        <div className={`flex-1 ${!isAdminPage && !isMobile ? 'ml-60' : ''}`}>
           {!isAdminPage && <Top />}
           <main className='main page'>
             <Routes>
-              {/* 일반 페이지 */}
               <Route path='/' element={<HomePage memberData={memberData} onAdd={handleAdd} />} />
               <Route path='/about' element={<AboutPage />} />
               <Route path='/contact' element={<ContactPage />} />
@@ -91,6 +93,9 @@ function App() {
           </main>
         </div>
       </div>
+      
+      {/* 모바일 환경에서는 BottomNavigation 표시 */}
+      {!isAdminPage && isMobile && <BottomNavigation />}
     </CartProvider>
   );
 }
