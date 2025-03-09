@@ -2,6 +2,10 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom'; // ✅ 여기만 사용!
 import './index.css';
+import './menubar.css';
+import './animations.css';
+
+import './responsive.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App.jsx';
 

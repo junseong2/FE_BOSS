@@ -22,7 +22,6 @@ function MyPage() {
       navigate('/signin');
     }
   }, [userName, navigate]);
-
   const fetchUserInfo = async () => {
     try {
       const response = await fetch('http://localhost:5000/auth/user-info', {
@@ -35,17 +34,13 @@ function MyPage() {
       }
 
       const data = await response.json();
-      console.log('📢 서버에서 받은 데이터:', data);
+      console.log('응답 상태:', response.status);
+      console.log('사용자 정보:', data);
 
       setUserId(data.userId);
       setUserName(data.userName);
-      setEmails(data.emails || ['']);
-      setPhones(data.phones || ['']);
-      setAddresses(data.addresses || [{ address1: '', address2: '', post: '', isDefault: false }]); // 객체 배열로 초기화
-
-      console.log('🔄 상태 업데이트 후 userId:', data.userId);
     } catch (error) {
-      console.error('회원 정보 로드 오류:', error);
+      console.error('사용자 정보 조회 오류:', error.message);
     }
   };
 
@@ -81,8 +76,10 @@ function MyPage() {
     try {
       const response = await fetch('http://localhost:5000/auth/update-userinfo', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // 쿠키 포함
         body: JSON.stringify(requestData),
       });
 
@@ -92,6 +89,9 @@ function MyPage() {
       }
 
       alert('회원 정보가 수정되었습니다!');
+
+      // 수정 후 /home 페이지로 리다이렉트
+      navigate('/home'); // navigate를 사용하여 홈으로 리다이렉트
     } catch (error) {
       console.error('❌ 회원 정보 수정 오류:', error);
       alert(`오류 발생: ${error.message}`);

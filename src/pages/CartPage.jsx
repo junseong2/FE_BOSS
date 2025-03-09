@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../App.css'; // 스타일 적용
-import './CartPage.css'; // 추가 스타일
+import '../App.css';
+import './styles/CartPage.css';
 
 function CartPage() {
   const [userId, setUserId] = useState(null);
@@ -11,6 +11,7 @@ function CartPage() {
 
   useEffect(() => {
     fetchUserInfo();
+    loadCart();
   }, []);
 
   const fetchUserInfo = async () => {
@@ -27,47 +28,49 @@ function CartPage() {
       const data = await response.json();
       setUserId(data.userId);
       setUserName(data.userName);
-      loadCart(data.userId); // 사용자 ID를 전달하여 장바구니 로드
+      loadCart(); // 사용자 ID를 전달하여 장바구니 로드
     } catch (error) {
       console.error('사용자 정보 조회 오류:', error.message);
     }
   };
+  const handleQuantityChange = (e, productId) => {
+    const updatedCart = cartItems.map((item) =>
+      item.productId === productId ? { ...item, quantity: Number(e.target.value) } : item,
+    );
+    setCartItems(updatedCart);
+  };
 
-  const loadCart = async (userId) => {
-    if (userId) {
-      try {
-        const response = await fetch(`http://localhost:5000/cart?userId=${userId}`, {
-          method: 'GET',
-          credentials: 'include',
-        });
+  const loadCart = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/cart', {
+        // 쿼리 없이 요청
+        method: 'GET',
+        credentials: 'include', // 쿠키에서 JWT 자동 전송
+      });
 
-        if (!response.ok) {
-          throw new Error('장바구니 조회 실패');
-        }
-
-        const data = await response.json();
-        setCartItems(data.cartItems || []); // 응답에서 cartItems를 설정합니다.
-      } catch (error) {
-        console.error('장바구니 조회 오류:', error.message);
+      if (!response.ok) {
+        throw new Error('장바구니 조회 실패');
       }
-    } else {
-      console.log('사용자 ID가 없습니다. 장바구니를 조회할 수 없습니다.');
+
+      const data = await response.json();
+      setCartItems(data.cartItems || []); // 장바구니 데이터를 설정
+    } catch (error) {
+      console.error('장바구니 조회 오류:', error.message);
     }
   };
 
   const clearCart = async () => {
     try {
-      // 서버에 장바구니 비우기 요청 추가 (필요 시)
-      const response = await fetch(`http://localhost:5000/cart/clear?userId=${userId}`, {
+      const response = await fetch('http://localhost:5000/cart/clear', {
+        // userId 제거
         method: 'POST',
-        credentials: 'include',
+        credentials: 'include', // 쿠키에서 JWT 전송
       });
 
       if (!response.ok) {
         throw new Error('장바구니 비우기 실패');
       }
 
-      // 상태 업데이트
       setCartItems([]);
     } catch (error) {
       console.error('장바구니 비우기 오류:', error.message);
@@ -75,25 +78,56 @@ function CartPage() {
   };
 
   const removeItemFromCart = async (productId) => {
+    console.log(`🗑️ 삭제 요청 시작: productId=${productId}`); // 함수 호출 확인
+
     try {
-      // 서버에서 아이템 삭제 요청 (필요 시)
-      const response = await fetch(
-        `http://localhost:5000/cart/remove?productId=${productId}&userId=${userId}`,
-        {
-          method: 'DELETE',
-          credentials: 'include',
-        },
-      );
+      const response = await fetch(`http://localhost:5000/cart/remove?productId=${productId}`, {
+        method: 'DELETE',
+        credentials: 'include', // JWT 자동 전송
+      });
 
       if (!response.ok) {
-        throw new Error('장바구니에서 아이템 삭제 실패');
+        const errorText = await response.text();
+        throw new Error(`장바구니에서 아이템 삭제 실패: ${errorText}`);
       }
 
-      // 상태 업데이트
-      const updatedCart = cartItems.filter((item) => item.productId !== productId);
-      setCartItems(updatedCart);
+      setCartItems(cartItems.filter((item) => item.productId !== productId));
+      console.log('✅ 장바구니에서 삭제 성공');
     } catch (error) {
-      console.error('아이템 삭제 오류:', error.message);
+      console.error('❌ 장바구니에서 삭제 오류:', error);
+    }
+  };
+
+  const updateQuantity = async (productId, newQuantity) => {
+    if (newQuantity <= 0) {
+      alert('수량은 1개 이상이어야 합니다.');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/cart/updatequantity', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // 쿠키에서 JWT 자동 전송
+        body: JSON.stringify({
+          productId: productId,
+          quantity: newQuantity,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('수량 업데이트 실패');
+      }
+
+      const data = await response.json();
+      console.log('수량 업데이트 성공:', data);
+
+      // 장바구니 상태 갱신 후 UI 업데이트
+      loadCart(); // 갱신된 장바구니 정보를 다시 로드합니다
+    } catch (error) {
+      console.error('수량 업데이트 오류:', error.message);
     }
   };
 
@@ -117,6 +151,7 @@ function CartPage() {
             <th>총가격</th>
             <th>삭제</th>
             <th>장바구니 ID</th>
+            <th>상품 ID(여긴 이후삭제예정)</th>
           </tr>
         </thead>
 
@@ -124,10 +159,30 @@ function CartPage() {
           {cartItems.length > 0 ? (
             cartItems.map((item) => (
               <tr key={item.cartId} className='cart-deal-item'>
-                <td className='product-box'>{item.name}</td>
-                <td className='option-price-part'>{item.price}원</td>
-                <td>{item.quantity}</td>
-                <td>{item.price * item.quantity}원</td>
+                <td className='product-box'>{item.productName}</td>
+                <td className='option-price-part'>{item.productPrice}원</td>
+                <td>
+                  <td>
+                    {/* 수량 입력 필드 */}
+                    <input
+                      type='number'
+                      value={item.quantity}
+                      onChange={(e) => handleQuantityChange(e, item.productId)}
+                      min='1'
+                      className='quantity-input'
+                    />
+
+                    {/* 수량 변경 버튼 */}
+                    <button
+                      onClick={() => updateQuantity(item.productId, item.quantity)} // 입력된 값으로 수량 업데이트
+                      className='update-quantity-btn'
+                    >
+                      변경
+                    </button>
+                  </td>
+                </td>
+
+                <td>{item.productPrice * item.quantity}원</td>
                 <td>
                   <button
                     className='remove-item-btn'
@@ -137,6 +192,7 @@ function CartPage() {
                   </button>
                 </td>
                 <td>{item.cartId}</td>
+                <td>아이디: {item.productId}</td>
               </tr>
             ))
           ) : (
