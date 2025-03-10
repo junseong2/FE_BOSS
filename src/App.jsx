@@ -28,6 +28,7 @@ import SellerOrderPage from './pages/sellerDashboard/SellerOrderPage.jsx';
 import SellerInventoryPage from './pages/sellerDashboard/SellerInventoryPage.jsx';
 import SellerSalesPage from './pages/sellerDashboard/SellerSalesPage.jsx';
 import SellerPaymentPage from './pages/sellerDashboard/SellerPaymentPage.jsx';
+import ProductDetailPage from './pages/ProductDetailPage';
 
 function App() {
   const [memberData, setMemberData] = useState(() => {
@@ -76,6 +77,7 @@ function App() {
               <Route path='/category/:categoryId' element={<CategoryPage />} />
               <Route path='/search' element={<SearchPage />} />
               <Route path='/productlist' element={<ProductListPage />} />
+              <Route path='/product/:productId' element={<ProductDetailPage />} />
 
               <Route path='/seller' element={<SellerPage />}>
                 <Route index path='dashboard' element={<SellerDashboardPage />} />
