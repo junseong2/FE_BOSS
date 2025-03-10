@@ -1,6 +1,6 @@
 import SellerContentHeader from './components/SellerContentHeader';
 import SellerTitle from './components/SellerTitle';
-import SellerToolBar from './components/SellerToolBar';
+import SellerToolBar from './components/layout/SellerToolBar';
 import SellerActionButton from './components/SellerActionButton';
 import SellerSearch from './components/SellerSearch';
 import useToggle from '../../hooks/useToggle';

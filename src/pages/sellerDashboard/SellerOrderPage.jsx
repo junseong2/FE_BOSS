@@ -3,7 +3,7 @@ import SellerActionButton from './components/SellerActionButton';
 import SellerContentHeader from './components/SellerContentHeader';
 import SellerSearch from './components/SellerSearch';
 import SellerTitle from './components/SellerTitle';
-import SellerToolBar from './components/SellerToolBar';
+import SellerToolBar from './components/layout/SellerToolBar';
 import useToggle from '../../hooks/useToggle';
 
 const headers = ['주문 번호', '고객명', '주문 일시', '총액', '상태', '작업'];

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styles from '../styles/SellerProductRegisterForm.module.css';
+import styles from '../../../styles/SellerProductRegisterForm.module.css';
 import { IoCloseCircle } from 'react-icons/io5';
 
 const mockData = [
@@ -73,15 +73,27 @@ function SellerProductRegisterForm({ onSubmit, onToggle }) {
           </select>
         </div>
 
-        <div className={styles.formBottom}>
+        <div className={styles.formBottomLayout}>
           <div className={styles.inputGroup}>
             <label htmlFor='name'>상품명</label>
-            <input type='text' value={selectedProduct.productName} readOnly />
+            <input type='text' value={selectedProduct.productName} readOnly name='name' />
+          </div>
+
+          <div className={styles.flexLayout}>
+            <div className={styles.inputGroup}>
+              <label htmlFor='price'>가격</label>
+              <input type='number' value={selectedProduct.price} readOnly name='price' />
+            </div>
+
+            <div className={styles.inputGroup}>
+              <label htmlFor='stock'>재고</label>
+              <input type='number' value={selectedProduct.stock} readOnly name='stock' />
+            </div>
           </div>
 
           <div className={styles.inputGroup}>
             <label htmlFor='category'>카테고리</label>
-            <select value={selectedProduct.category} readOnly>
+            <select value={selectedProduct.category} readOnly name='category'>
               {categories.map((category) => (
                 <option key={category} value={category}>
                   {category}
@@ -89,17 +101,14 @@ function SellerProductRegisterForm({ onSubmit, onToggle }) {
               ))}
             </select>
           </div>
-
           <div className={styles.inputGroup}>
-            <label htmlFor='price'>가격</label>
-            <input type='number' value={selectedProduct.price} readOnly />
-          </div>
-
-          <div className={styles.inputGroup}>
-            <label htmlFor='stock'>재고</label>
-            <input type='number' value={selectedProduct.stock} readOnly />
+            <label htmlFor='description'>상품설명</label>
+            <textarea name='description' readOnly value={selectedProduct.description}></textarea>
           </div>
         </div>
+        <button className={styles.submitButton} type='submit'>
+          등록
+        </button>
       </form>
     </div>
   );

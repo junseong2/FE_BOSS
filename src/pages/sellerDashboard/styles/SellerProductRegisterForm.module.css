@@ -1,7 +1,7 @@
 .sellerProductRegisterFormLayout {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -25,22 +25,35 @@
   background-color: #1f2937;
   border-radius: 12px;
   color: #f3f4f6;
-  font-family: 'Inter', 'Arial', sans-serif;
   max-width: 600px;
   width: 100%;
-  padding: 28px;
+  padding: 40px;
   box-sizing: border-box;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   transform: translateY(0);
   animation: slideUp 0.4s ease;
 
   .inputGroup {
+    width: 100%;
     margin-top: 1rem;
+
+    textarea {
+      width: 100%;
+      height: 150px;
+    }
   }
 
-  .formBottom {
+  /* 폼 하단 레이아웃 */
+  .formBottomLayout {
     margin-top: 2rem;
     border-top: 2px solid #e5e7eb;
+  }
+
+  /* Flex 례이아웃 */
+  .flexLayout {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
   }
 
   /* 닫기 버튼 */
@@ -48,9 +61,21 @@
     position: absolute;
     width: 50px;
     height: 50px;
-    font-size: 16px;
-    top: 0;
-    right: 0;
+    font-size: 20px;
+    top: 20px;
+    right: 24px;
+  }
+
+  /* 전송 버튼 */
+  .submitButton {
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    width: 100px;
+    color: black;
+    background: white;
   }
 }
 
@@ -67,7 +92,6 @@
 }
 
 .sellerProductRegisterForm h2 {
-  text-align: center;
   font-size: 26px;
   font-weight: 700;
   margin-bottom: 24px;
@@ -87,13 +111,14 @@
   margin-bottom: 3px;
 }
 
+.sellerProductRegisterForm textarea,
 .sellerProductRegisterForm select,
 .sellerProductRegisterForm input {
   outline: none;
   background-color: #ffff;
   border: 1px solid #4b5563;
   color: #374151;
-  padding: 12px 14px;
+  padding: 8px 14px;
   border-radius: 6px;
   font-size: 15px;
   width: 100%;

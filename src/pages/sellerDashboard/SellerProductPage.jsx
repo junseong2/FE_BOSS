@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react';
 import useToggle from '../../hooks/useToggle';
 import SellerActionButton from './components/SellerActionButton';
 import SellerContentHeader from './components/SellerContentHeader';
-import SellerProductContentTable from './components/SellerProductContentTable';
+import SellerProductContentTable from './components/pages/product/SellerProductContentTable';
 import SellerSearch from './components/SellerSearch';
 import SellerTitle from './components/SellerTitle';
-import SellerToolBar from './components/SellerToolBar';
-import SellerProductRegisterForm from './components/SellerProductRegisterForm';
+import SellerToolBar from './components/layout/SellerToolBar';
+import SellerProductRegisterForm from './components/pages/product/SellerProductRegisterForm';
 
 import { IoAddCircleOutline, IoRemoveCircleOutline } from 'react-icons/io5';
 import {
@@ -20,16 +20,17 @@ import {
 } from '../../services/seller/product.service';
 
 const headers = ['선택', '상품ID', '상품명', '카테고리', '설명', '가격', '재고', '작업'];
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 15;
 function SellerProductPage() {
   const { onToggle, isOpen, toggleId } = useToggle();
   const { onToggle: onToggleNewProductForm, isOpen: isOpenNewProductForm } = useToggle();
   const [productIds, setProductIds] = useState([]);
   const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(false);
+
   const [products, setProducts] = useState([
     { productId: 1, name: '삼각김밥', price: 1200, categoryName: '도시락/즉석식', stock: 60 },
   ]);
-  const [loading, setLoading] = useState(false);
 
   // 상품 선택
   async function onCheck(e) {
@@ -81,9 +82,11 @@ function SellerProductPage() {
 
   // 상품 추가
   async function onCreateProductSubmit(e) {
-    const { productId, product } = mappingSubmitData(e);
+    const { product } = await mappingSubmitData(e);
 
-    const data = await createSellerProduct(products);
+    const data = await createSellerProduct([product]);
+
+    console.log('상품추가:', data);
   }
 
   // 상품 수정
@@ -109,13 +112,14 @@ function SellerProductPage() {
     const name = formData.get('name')?.toString().trim() || '';
     const price = Number(formData.get('price')) || 0;
     const category = formData.get('category')?.toString().trim() || '';
+    const description = formData.get('description')?.toString().trim() || '';
     const stock = Number(formData.get('stock')) || 0;
 
     const errors = [];
 
-    if (!productId) errors.push('유효한 상품ID가 아닙니다.');
     if (!name) errors.push('상품명을 입력하세요.');
     if (!category) errors.push('카테고리를 선택하세요.');
+    if (!description) errors.push('상품 설명을 입력하세요.');
     if (isNaN(price) || price <= 0) errors.push('가격은 0보다 커야 합니다.');
     if (isNaN(stock) || stock < 0) errors.push('재고는 0 이상이어야 합니다.');
 
@@ -126,7 +130,8 @@ function SellerProductPage() {
     const product = {
       name,
       price,
-      category,
+      categoryName: category,
+      description,
       stock,
     };
 
@@ -174,7 +179,10 @@ function SellerProductPage() {
         />
       </section>
       {isOpenNewProductForm ? (
-        <SellerProductRegisterForm onToggle={onToggleNewProductForm} />
+        <SellerProductRegisterForm
+          onToggle={onToggleNewProductForm}
+          onSubmit={onCreateProductSubmit}
+        />
       ) : null}
     </>
   );

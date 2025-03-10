@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import styles from '../styles/SellerContentTable.module.css';
-import common from '../styles/common.module.css';
-import TableHeader from '../../table/TableHeader.jsx';
+import styles from '../../../styles/SellerContentTable.module.css';
+import common from '../../../styles/common.module.css';
+import TableHeader from '../../TableHeader.jsx';
 
 function SellerProductContentTable({
   headers,
