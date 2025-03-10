@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from '../styles/SellerProductRegisterForm.module.css';
-import { IoCloseCircle, IoCloseOutline } from 'react-icons/io5';
+import { IoCloseCircle } from 'react-icons/io5';
 
 const mockData = [
   {

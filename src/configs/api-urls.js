@@ -15,6 +15,8 @@ export const apiRoutes = {
     // 재고 관리
     inventories: {
       getAll: (page, size) => BASE_URL + `/seller/inventories?page=${page}&size=${size}`,
+      search: (page, size, search) =>
+        BASE_URL + `/seller/inventories/search?search=${search}&page=${page}&size=${size}`,
       update: () => BASE_URL + `/seller/inventories`,
     },
   },
