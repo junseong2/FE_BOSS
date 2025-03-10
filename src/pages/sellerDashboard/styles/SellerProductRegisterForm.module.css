@@ -1,0 +1,166 @@
+.sellerProductRegisterFormLayout {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.sellerProductRegisterForm {
+  background-color: #1f2937;
+  border-radius: 12px;
+  color: #f3f4f6;
+  font-family: 'Inter', 'Arial', sans-serif;
+  max-width: 600px;
+  width: 100%;
+  padding: 28px;
+  box-sizing: border-box;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transform: translateY(0);
+  animation: slideUp 0.4s ease;
+
+  .inputGroup {
+    margin-top: 1rem;
+  }
+
+  .formBottom {
+    margin-top: 2rem;
+    border-top: 2px solid #e5e7eb;
+  }
+
+  /* 닫기 버튼 */
+  .closeButton {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    font-size: 16px;
+    top: 0;
+    right: 0;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sellerProductRegisterForm h2 {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #f9fafb;
+  letter-spacing: -0.015em;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.sellerProductRegisterForm label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #e5e7eb;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.sellerProductRegisterForm select,
+.sellerProductRegisterForm input {
+  outline: none;
+  background-color: #ffff;
+  border: 1px solid #4b5563;
+  color: #374151;
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-size: 15px;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.sellerProductRegisterForm input:focus {
+  outline: none;
+  border-color: #f3f4f6;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+.sellerProductRegisterForm option {
+  padding: 8px;
+}
+
+.sellerProductRegisterForm button {
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  margin-top: 10px;
+  letter-spacing: 0.01em;
+  position: relative;
+  overflow: hidden;
+}
+
+.sellerProductRegisterForm button:hover {
+  transform: translateY(-1px);
+}
+
+.sellerProductRegisterForm button:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.sellerProductRegisterForm button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%);
+  transform-origin: 50% 50%;
+}
+
+.sellerProductRegisterForm button:focus:not(:active)::after {
+  animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(40, 40);
+    opacity: 0;
+  }
+}
