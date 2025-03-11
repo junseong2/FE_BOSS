@@ -34,4 +34,6 @@ export const deleteSellerProduct = async (productIds) => {
 /** 판매자 상품 검색 */
 export const getSearchSellerProducts = async (page, size, search) => {
   const url = apiRoutes.seller.products.search(page, size, search);
+  const response = await instance.get(url);
+  return response.data;
 };

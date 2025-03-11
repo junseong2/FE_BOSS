@@ -74,9 +74,12 @@ function SellerProductPage() {
 
   // 상품 검색
   async function onSearch(e) {
-    const search = e.currentTarget.value;
-    console.log('검색어:', search);
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    const search = formData.get('search');
     const data = await getSearchSellerProducts(page, PAGE_SIZE, search);
+    console.log(data);
     setProducts(data);
   }
 
@@ -152,8 +155,8 @@ function SellerProductPage() {
           <SellerTitle type={'main'}>상품관리</SellerTitle>
           <p>상품 목록 및 관리</p>
           <SellerToolBar>
-            <SellerSearch placeholder={'상품명을 입력하세요.'} />
-            <div className={styles.buttonLayout}>
+            <SellerSearch placeholder={'상품명을 입력하세요.'} onSearch={onSearch} />
+            <div className={styles.actionButtonLayout}>
               <SellerActionButton onClick={onDeleteProduct}>
                 <IoRemoveCircleOutline />
                 선택 삭제

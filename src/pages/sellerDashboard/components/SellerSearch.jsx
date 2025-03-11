@@ -2,12 +2,12 @@ import styles from '../styles/SellerToolBar.module.css';
 
 function SellerSearch({ onSearch, placeholder }) {
   return (
-    <input
-      type='search'
-      placeholder={placeholder}
-      className={styles.searchInput}
-      onKeyDown={onSearch}
-    />
+    <form onSubmit={onSearch} className={styles.searchFormLayout}>
+      <input type='search' name='search' placeholder={placeholder} className={styles.searchInput} />
+      <button className={styles.submitButton} type='submit'>
+        검색
+      </button>
+    </form>
   );
 }
 
