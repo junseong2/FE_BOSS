@@ -1,49 +1,28 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import "../../App.css"; // 경로 확인 필수!
+import { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import '../../App.css';
+import './topbar.css';
+import '../../buttons.css';
+import { useCart } from '../../context/CartContext'; // CartContext에서 useCart 훅 import
+import fetchUserInfo from '../../utils/api.js'; // API 함수 import
 
 function Top() {
   const [userId, setUserId] = useState(null);
   const [userName, setUserName] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [showCartPopup, setShowCartPopup] = useState(false); // 팝업 상태
-  const [cartItems, setCartItems] = useState([]); // 장바구니 아이템 상태
+  const { cartItems, loadCart } = useCart(); // useCart 훅을 통해 cartItems 상태 가져오기
+  const [loadingCart, setLoadingCart] = useState(false); // 장바구니 로딩 상태 추가
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    fetchUserInfo();
-    loadCart(); // 장바구니 불러오기
-  }, []);
+    const getUserInfo = async () => {
+      await fetchUserInfo(setUserId, setUserName); // 사용자 정보 불러오기
+    };
 
-  const fetchUserInfo = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/auth/user-info", {
-        method: "GET",
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("로그인 정보 조회 실패");
-      }
-
-      const data = await response.json();
-      console.log("응답 상태:", response.status);
-      console.log("사용자 정보:", data);
-
-      setUserId(data.userId);
-      setUserName(data.userName);
-    } catch (error) {
-      console.error("사용자 정보 조회 오류:", error.message);
-    }
-  };
-
-  const loadCart = () => {
-    const storedCart = localStorage.getItem("cart");
-    if (storedCart) {
-      setCartItems(JSON.parse(storedCart));
-    }
-  };
+    getUserInfo(); // 사용자 정보 불러오기
+  }, []); // 빈 배열로 수정하여 처음 렌더링될 때만 호출
 
   const handleSignInClick = async () => {
     const currentUrl = location.pathname + location.search;
@@ -60,10 +39,11 @@ function Top() {
   };
 
   const handleLogoutClick = async () => {
-    await fetch('http://localhost:5000/logout', {
-      method: 'POST',
+    await fetch('http://localhost:5000/auth/logout', {
+      method: 'GET',
       credentials: 'include',
     });
+
     setUserId(null);
     setUserName(null);
     navigate('/');
@@ -76,13 +56,15 @@ function Top() {
     }
   };
 
-  // 장바구니 마우스 오버 핸들러
-  const handleMouseEnter = () => {
-    setShowCartPopup(true); // 팝업을 보여줌
+  const handleMouseEnter = async () => {
+    setLoadingCart(true); // 장바구니 로딩 시작
+    await loadCart(); // 장바구니 데이터를 불러옵니다.
+    setLoadingCart(false); // 로딩 완료
+    setShowCartPopup(true); // 팝업 표시
   };
 
   const handleMouseLeave = () => {
-    setShowCartPopup(false); // 팝업을 숨김
+    setShowCartPopup(false); // 팝업 숨김
   };
 
   const getCartItemList = () => {
@@ -94,7 +76,7 @@ function Top() {
       <ul>
         {cartItems.map((item, index) => (
           <li key={index}>
-            {item.name} - {item.price}원 (수량: {item.quantity})
+            {item.productName} - {item.productPrice}원 (수량: {item.quantity})
           </li>
         ))}
       </ul>
@@ -103,8 +85,13 @@ function Top() {
 
   return (
     <div className='top-bar'>
-      {/* 검색창 */}
-      &nbsp; &nbsp; Top bar&nbsp;
+      <img
+        src='src/assets/boss_logo.png' // 이미지 경로를 public 폴더 기준으로 설정
+        alt='Boss Logo'
+        className='logo'
+        onClick={() => navigate('/')} // 로고 클릭 시 홈으로 이동
+      />
+
       <form className='search-form' onSubmit={handleSearch}>
         <input
           type='text'
@@ -113,18 +100,18 @@ function Top() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <button type='submit' className='search-button'>🔍</button>
+        <button type='submit' className='search-button'>
+          🔍
+        </button>
       </form>
-
-      {/* 유저 정보 및 버튼 그룹 */}
-      <div className="user-info-container">
+      <div className='user-info-container'>
         {userId && userName && (
-          <p className="welcome-message">
-            {userName}님,  <span>유저 ID: {userId}</span>
+          <p className='welcome-message'>
+            {userName}님, <span>유저 ID: {userId}</span>
           </p>
         )}
       </div>
-      <div className="button-container">
+      <div className='button-container'>
         {userId ? (
           <>
             <button className='TopSigninBt' onClick={handleLogoutClick}>
@@ -141,10 +128,9 @@ function Top() {
             >
               장바구니
             </button>
-            {/* 장바구니 팝업 */}
             {showCartPopup && (
-              <div className="cart-popup">
-                {getCartItemList()}
+              <div className='cart-popup'>
+                {loadingCart ? <p>장바구니 로딩 중...</p> : getCartItemList()}
               </div>
             )}
           </>

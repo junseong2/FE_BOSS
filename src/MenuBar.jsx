@@ -1,31 +1,37 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { FaBars, FaTimes } from 'react-icons/fa';
-import axios from 'axios'; // Spring Boot API 요청을 위한 axios 추가
-import './App.css';
+import {
+  IoHomeOutline,
+  IoInformationOutline,
+  IoHelpCircleOutline,
+  IoGiftOutline,
+  IoPersonOutline,
+  IoLocationOutline,
+} from 'react-icons/io5'; // 필요한 아이콘 추가
+import axios from 'axios';
+import styles from './styles/MenuBar.module.css'; // CSS 모듈 경로
 
 function MenuBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isIconClicked, setIsIconClicked] = useState(false);
-  const [categories, setCategories] = useState([]); // API에서 가져온 카테고리 데이터 저장
+  const [categories, setCategories] = useState([]);
   const [openSubMenu, setOpenSubMenu] = useState(null);
   const location = useLocation();
 
   useEffect(() => {
-    // Spring Boot에서 카테고리 데이터 가져오기
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/category/root'); // 루트 카테고리 가져오기
-        console.log("Fetched Categories:", response.data); // 👉 데이터 확인 로그 추가
+        const response = await axios.get('http://localhost:5000/category/root');
+        console.log('Fetched Categories:', response.data);
         setCategories(response.data);
       } catch (error) {
         console.error('카테고리 데이터를 불러오는 중 오류 발생:', error);
       }
     };
-  
+
     fetchCategories();
   }, []);
-  
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
@@ -34,7 +40,9 @@ function MenuBar() {
 
   const handleMouseEnter = async (categoryId) => {
     try {
-      const response = await axios.get(`http://localhost:5000/category/${categoryId}/subcategories`);
+      const response = await axios.get(
+        `http://localhost:5000/category/${categoryId}/subcategories`,
+      );
       setOpenSubMenu({ id: categoryId, subcategories: response.data });
     } catch (error) {
       console.error('서브카테고리를 불러오는 중 오류 발생:', error);
@@ -42,35 +50,59 @@ function MenuBar() {
   };
 
   useEffect(() => {
-    setIsMenuOpen(false); // 라우트 변경 시 메뉴 닫기
+    setIsMenuOpen(false);
     setIsIconClicked(false);
   }, [location.pathname]);
 
   return (
     <>
-      <div className="menu-icon" onClick={toggleMenu}>
-        {isIconClicked ? <FaTimes className="icon-change" /> : <FaBars className="icon-change" />}
+      <div className={styles.menuIcon} onClick={toggleMenu}>
+        {isIconClicked ? (
+          <FaTimes className={styles.iconChange} />
+        ) : (
+          <FaBars className={styles.iconChange} />
+        )}
       </div>
 
-      <div className={`menu-bar ${isMenuOpen ? 'open' : 'closed'}`}>
-        <Link to="/" className="menu-link">홈</Link>
-        <Link to="/about" className="menu-link">소개</Link>
-        <Link to="/contact" className="menu-link">FAQ</Link>
-        <Link to="/event" className="menu-link">이벤트상품</Link>
-
+      <div className={`${styles.menuBar} ${isMenuOpen ? styles.open : styles.closed}`}>
+        <div className={styles.menuItem}>
+          <Link to='/' className={styles.menuLink}>
+            <IoHomeOutline /> 홈
+          </Link>
+        </div>
+        <div className={styles.menuItem}>
+          <Link to='/about' className={styles.menuLink}>
+            <IoInformationOutline /> 소개
+          </Link>
+        </div>
+        <div className={styles.menuItem}>
+          <Link to='/contact' className={styles.menuLink}>
+            <IoHelpCircleOutline /> FAQ
+          </Link>
+        </div>
+        <div className={styles.menuItem}>
+          <Link to='/event' className={styles.menuLink}>
+            <IoGiftOutline /> 이벤트상품
+          </Link>
+        </div>
+        <div className={styles.menuItem}>
+          <Link to='/kakaomap' className={styles.menuLink}>
+            <IoLocationOutline /> 카카오맵
+          </Link>
+        </div>
         {categories.map((category) => (
           <div
             key={category.id}
-            className="menu-item"
+            className={styles.menuItem}
             onMouseEnter={() => handleMouseEnter(category.id)}
           >
-            <Link to={`/category/${category.id}`} className="menu-link">
+            <Link to={`/category/${category.id}`} className={styles.menuLink}>
               {category.name}
             </Link>
             {openSubMenu?.id === category.id && (
-              <div className="submenu">
+              <div className={styles.submenu}>
                 {openSubMenu.subcategories.map((sub) => (
-                  <Link key={sub.id} to={`/category/${sub.id}`} className="submenu-link">
+                  <Link key={sub.id} to={`/category/${sub.id}`} className={styles.submenuLink}>
                     {sub.name}
                   </Link>
                 ))}
@@ -79,7 +111,11 @@ function MenuBar() {
           </div>
         ))}
 
-        <Link to="/FaceSetDetail" className="menu-link">등록된 얼굴 목록</Link>
+        <div className={styles.menuItem}>
+          <Link to='/FaceSetDetail' className={styles.menuLink}>
+            <IoPersonOutline /> 등록된 얼굴 목록
+          </Link>
+        </div>
       </div>
     </>
   );
