@@ -126,6 +126,21 @@ function CategoryPage() {
               onClick={() => navigate(`/product/${product.productId}`)}
               style={{ cursor: 'pointer' }}
             >
+              <img
+                src={
+                  Array.isArray(product.gimage)
+                    ? product.gimage[0] || "/default-product.jpg"
+                    : product.gimage || "/default-product.jpg"
+                }
+                alt={product.name}
+                style={{
+                  width: "400px",
+                  height: "auto",
+                  maxHeight: "300px",
+                  objectFit: "cover",
+                  borderRadius: "10px",
+                }}
+              />
               <p>상품명: {product.name}</p>
               <p>가격: {product.price.toLocaleString()}원</p>
               <p>설명: {product.description}</p>
