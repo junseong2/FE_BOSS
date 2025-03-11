@@ -1,10 +1,9 @@
 import { IoFilterOutline } from 'react-icons/io5';
 import SellerActionButton from './components/SellerActionButton';
 import SellerContentHeader from './components/SellerContentHeader';
-import SellerContentTable from './components/SellerContentTable';
 import SellerSearch from './components/SellerSearch';
 import SellerTitle from './components/SellerTitle';
-import SellerToolBar from './components/SellerToolBar';
+import SellerToolBar from './components/layout/SellerToolBar';
 import useToggle from '../../hooks/useToggle';
 
 const headers = ['주문 번호', '고객명', '주문 일시', '총액', '상태', '작업'];
@@ -34,14 +33,6 @@ function SellerOrderPage() {
           </SellerActionButton>
         </SellerToolBar>
       </SellerContentHeader>
-
-      {/* 테이블 */}
-      <SellerContentTable
-        headers={headers}
-        data={data}
-        actionButtonName={'상세보기'}
-        onToggle={onToggle}
-      />
     </section>
   );
 }

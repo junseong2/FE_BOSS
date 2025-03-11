@@ -10,7 +10,7 @@ import {
   IoCardOutline,
   IoGridOutline,
 } from 'react-icons/io5';
-import styles from '../styles/SellerSideBar.module.css';
+import styles from '../../styles/SellerSideBar.module.css';
 
 function SellerSideBar() {
   return (

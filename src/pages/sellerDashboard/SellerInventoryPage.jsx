@@ -1,9 +1,8 @@
 import SellerContentHeader from './components/SellerContentHeader';
 import SellerTitle from './components/SellerTitle';
-import SellerToolBar from './components/SellerToolBar';
+import SellerToolBar from './components/layout/SellerToolBar';
 import SellerActionButton from './components/SellerActionButton';
 import SellerSearch from './components/SellerSearch';
-import SellerContentTable from './components/SellerContentTable';
 import useToggle from '../../hooks/useToggle';
 
 import { IoCar } from 'react-icons/io5';
@@ -29,19 +28,10 @@ function SellerInventoryPage() {
         <SellerToolBar>
           <SellerSearch placeholder={'상품명을 입력하세요.'} />
           <SellerActionButton>
-            <IoCar />
-            재고 발주
+            <IoCar /> 재고 발주
           </SellerActionButton>
         </SellerToolBar>
       </SellerContentHeader>
-
-      {/* 테이블 */}
-      <SellerContentTable
-        headers={headers}
-        data={data}
-        actionButtonName={'재고 조정'}
-        onToggle={onToggle}
-      />
     </section>
   );
 }
