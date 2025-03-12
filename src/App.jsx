@@ -16,6 +16,7 @@ import ContactPage from './pages/ContactPage';
 import MyPage from './pages/MyPage';
 import EventPage from './pages/EventPage';
 import KakaoMapPage from './pages/KakaoMapPage'; // 경로를 맞게 수정
+import ChatBot from "./components/layout/ChatBot"; 
 
 import SignUp from './pages/SignUp';
 import CategoryPage from './pages/CategoryPage';
@@ -59,6 +60,7 @@ function App() {
         {!isAdminPage && <MenuBar />}
         <div className={`flex-1 ${!isAdminPage ? 'ml-60' : ''}`}>
           {!isAdminPage && <Top />}
+          <ChatBot />
           <main className='main page'>
             <Routes>
               {/* 일반 페이지 */}
@@ -78,6 +80,7 @@ function App() {
               <Route path='/search' element={<SearchPage />} />
               <Route path='/productlist' element={<ProductListPage />} />
               <Route path='/product/:productId' element={<ProductDetailPage />} />
+              {/* <Route path='/product/recommend-text' element={<ChatBot />} /> */}
 
               <Route path='/seller' element={<SellerPage />}>
                 <Route index path='dashboard' element={<SellerDashboardPage />} />
