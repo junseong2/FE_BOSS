@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "prettier --write --cache .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "server": "node server.js"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
@@ -21,18 +22,26 @@
     ]
   },
   "dependencies": {
+    "axios": "^1.8.1",
     "bootstrap": "^5.3.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
-    "react-router": "^7.2.0"
+    "react-router": "^7.2.0",
+    "react-router-dom": "^7.2.0",
+    "react-swipeable": "^7.0.2",
+    "react-webcam": "^7.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
     "eslint": "^9.19.0",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.0.0",
@@ -40,7 +49,9 @@
     "globals": "^15.14.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.4.3",
+    "postcss": "^8.5.3",
     "prettier": "^3.5.2",
+    "tailwindcss": "^4.0.9",
     "vite": "^6.1.0"
   }
 }

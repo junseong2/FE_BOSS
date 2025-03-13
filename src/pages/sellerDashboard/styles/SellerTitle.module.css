@@ -1,0 +1,18 @@
+.sellerTitle-main {
+  font-size: 1.5rem;
+  /* 24px */
+  font-weight: bold;
+}
+
+.sellerTitle-sub {
+  font-size: 1.25rem;
+  /* 20px */
+  font-weight: bold;
+  margin: 0;
+}
+
+.sellerTitle-normal {
+  font-size: 1rem;
+  /* 20px */
+  margin: 0;
+}

@@ -1,0 +1,23 @@
+.App {
+  text-align: center;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-top: 100px;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+  text-align: center;
+}
+
+.main {
+  margin-top: 80px;
+  padding: 20px;
+}

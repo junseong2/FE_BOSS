@@ -1,7 +1,55 @@
-import Form from 'react-bootstrap/Form';
-import { CiHeart } from 'react-icons/ci';
+import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { CartProvider } from './context/CartContext'; // CartProvider import
+
+import './App.css';
+import './layout.css';
+
+import Top from './components/layout/Top';
+import MenuBar from './MenuBar';
+import SignIn from './pages/SignIn.jsx';
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
+import CartPage from './pages/CartPage';
+import CameraCapturePage from './pages/CameraCapturePage';
+import ContactPage from './pages/ContactPage';
+import MyPage from './pages/MyPage';
+import EventPage from './pages/EventPage';
+import KakaoMapPage from './pages/KakaoMapPage'; // 경로를 맞게 수정
+
+import SignUp from './pages/SignUp';
+import CategoryPage from './pages/CategoryPage';
+import SearchPage from './pages/SearchPage';
+import ProductListPage from './pages/ProductListPage.jsx';
+import SellerPage from './pages/sellerDashboard/SellerPage.jsx';
+import SellerDashboardPage from './pages/sellerDashboard/SellerDashboardPage.jsx';
+import SellerProductPage from './pages/sellerDashboard/SellerProductPage.jsx';
+import SellerOrderPage from './pages/sellerDashboard/SellerOrderPage.jsx';
+import SellerInventoryPage from './pages/sellerDashboard/SellerInventoryPage.jsx';
+import SellerSalesPage from './pages/sellerDashboard/SellerSalesPage.jsx';
+import SellerPaymentPage from './pages/sellerDashboard/SellerPaymentPage.jsx';
+import ProductDetailPage from './pages/ProductDetailPage';
 
 function App() {
+  const [memberData, setMemberData] = useState(() => {
+    return JSON.parse(localStorage.getItem('memberData')) || [];
+  });
+
+  useEffect(() => {
+    if (memberData.length > 0) {
+      localStorage.setItem('memberData', JSON.stringify(memberData));
+    }
+  }, [memberData]);
+
+  function handleAdd(newMember) {
+    setMemberData((prev) => [...prev, newMember]);
+  }
+
+  // 현재 경로 가져오기
+  const location = useLocation();
+  const isAdminPage =
+    location.pathname.startsWith('/seller') || location.pathname.startsWith('/admin'); // `/admin`으로 시작하면 true
+
   return (
     <CartProvider>
       {' '}
@@ -16,7 +64,9 @@ function App() {
               {/* 일반 페이지 */}
               <Route path='/' element={<HomePage memberData={memberData} onAdd={handleAdd} />} />
               <Route path='/about' element={<AboutPage />} />
+
               <Route path='/contact/*' element={<ContactPage />} />
+
               <Route path='/event' element={<EventPage />} />
 
               <Route path='/kakaomap' element={<KakaoMapPage />} />

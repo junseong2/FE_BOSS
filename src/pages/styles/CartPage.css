@@ -1,0 +1,100 @@
+.cart-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.cart-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.user-info,
+.login-prompt {
+  text-align: center;
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.cartTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.cartTable th,
+.cartTable td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.cartTable th {
+  background-color: #f2f2f2;
+}
+
+.cart-deal-item {
+  background-color: #fff;
+}
+
+.clear-cart-btn,
+.back-btn,
+.remove-item-btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.clear-cart-btn {
+  background-color: #ff6666;
+  color: white;
+  margin-right: 10px;
+}
+
+.back-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.remove-item-btn {
+  background-color: #e7e7e7;
+}
+
+.cart-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+.remove-item-btn {
+  background-color: white;
+  border: 3px solid black;
+}
+/* 수량 버튼 컨테이너 스타일 */
+.quantity-btn-container {
+  display: flex; /* 버튼들을 가로로 나열 */
+  justify-content: center; /* 버튼 간 간격을 중앙 정렬 */
+  align-items: center; /* 버튼 높이를 맞춤 */
+}
+
+.quantity-btn {
+  width: 30px; /* 버튼의 너비를 고정 */
+  height: 30px; /* 버튼의 높이를 고정 */
+  font-size: 16px; /* 텍스트 크기 조정 */
+  margin: 0 5px; /* 버튼 간 간격 설정 */
+  border: 1px solid #ccc; /* 테두리 추가 */
+  background-color: #f0f0f0; /* 배경색 */
+  cursor: pointer; /* 마우스 포인터를 손 모양으로 */
+  border-radius: 4px; /* 둥근 모서리 */
+  display: flex; /* 가운데 텍스트 정렬 */
+  justify-content: center;
+  align-items: center;
+}
+
+.quantity-btn:hover {
+  background-color: #e0e0e0; /* 버튼에 마우스를 올리면 색 변경 */
+}
