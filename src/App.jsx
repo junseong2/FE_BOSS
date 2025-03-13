@@ -64,7 +64,9 @@ function App() {
               {/* 일반 페이지 */}
               <Route path='/' element={<HomePage memberData={memberData} onAdd={handleAdd} />} />
               <Route path='/about' element={<AboutPage />} />
-              <Route path='/contact' element={<ContactPage />} />
+
+              <Route path='/contact/*' element={<ContactPage />} />
+
               <Route path='/event' element={<EventPage />} />
 
               <Route path='/kakaomap' element={<KakaoMapPage />} />
