@@ -2,13 +2,24 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../../App.css';
 import './topbar.css';
-import '../../buttons.css';
+
 import { useCart } from '../../context/CartContext'; // CartContext에서 useCart 훅 import
 import fetchUserInfo from '../../utils/api.js'; // API 함수 import
+import { IoSearch, IoGiftOutline } from 'react-icons/io5'; // IoSearch 아이콘 import
 
 function Top() {
   const [userId, setUserId] = useState(null);
   const [userName, setUserName] = useState(null);
+  const [emails, setEmails] = useState(['']); // 추가된 상태
+  const [phones, setPhones] = useState(['']); // 추가된 상태
+  const [addresses, setAddresses] = useState([
+    {
+      address1: '',
+      address2: '',
+      post: '',
+      isDefault: false,
+    },
+  ]); // 추가된 상태
   const [searchQuery, setSearchQuery] = useState('');
   const [showCartPopup, setShowCartPopup] = useState(false); // 팝업 상태
   const { cartItems, loadCart } = useCart(); // useCart 훅을 통해 cartItems 상태 가져오기
@@ -18,7 +29,7 @@ function Top() {
 
   useEffect(() => {
     const getUserInfo = async () => {
-      await fetchUserInfo(setUserId, setUserName); // 사용자 정보 불러오기
+      await fetchUserInfo(setUserId, setUserName, setEmails, setPhones, setAddresses); // 사용자 정보 불러오기
     };
 
     getUserInfo(); // 사용자 정보 불러오기
@@ -101,7 +112,7 @@ function Top() {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <button type='submit' className='search-button'>
-          🔍
+          <IoSearch /> {/* 돋보기 아이콘으로 변경 */}
         </button>
       </form>
       <div className='user-info-container'>
@@ -111,10 +122,10 @@ function Top() {
           </p>
         )}
       </div>
-      <div className='button-container'>
+      <div className='Mypagebutton-container'>
         {userId ? (
           <>
-            <button className='TopSigninBt' onClick={handleLogoutClick}>
+            <button className='MypageBt' onClick={handleLogoutClick}>
               로그아웃
             </button>
             <button className='MypageBt' onClick={() => navigate('/mypage')}>
@@ -135,7 +146,7 @@ function Top() {
             )}
           </>
         ) : (
-          <button className='TopSigninBt' onClick={handleSignInClick}>
+          <button className='MypageBt' onClick={handleSignInClick}>
             로그인
           </button>
         )}
