@@ -1,8 +1,8 @@
 import styles from './styles/SellerPage.module.css';
-import SellerSideBar from './components/SellerSideBar';
+import SellerSideBar from './components/layout/SellerSideBar';
 import SellerTitle from './components/SellerTitle';
 import SellerContent from './components/SellerContent';
-import SellerHeader from './components/SellerHeader';
+import SellerHeader from './components/layout/SellerHeader';
 import { IoBusiness } from 'react-icons/io5';
 
 function SellerPage() {

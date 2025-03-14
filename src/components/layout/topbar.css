@@ -3,6 +3,8 @@
   display: flex;
   justify-content: flex-start; /* 왼쪽으로 정렬 */
 
+  justify-content: flex-start; /* 왼쪽으로 정렬 */
+
   align-items: center;
   font-family: 'Lora', serif;
   position: fixed; /* ✅ 웹과 모바일에서 고정 */
@@ -10,11 +12,15 @@
   font-weight: bold;
   position: fixed; /* 부모 요소에 relative 추가 */
   overflow: visible; /* 자식 요소가 밖으로 나가도 잘리게 하지 않도록 설정 */
+  position: fixed; /* 부모 요소에 relative 추가 */
+  overflow: visible; /* 자식 요소가 밖으로 나가도 잘리게 하지 않도록 설정 */
   top: 0;
   left: 0;
   height: 100px;
   width: 100%;
   z-index: 1000;
+
+  padding: 0; /* 패딩을 제거하여 레이아웃 영향 줄이기 */
 
   padding: 0; /* 패딩을 제거하여 레이아웃 영향 줄이기 */
 }
@@ -27,6 +33,8 @@
   position: absolute;
   top: 100px; /* topbar의 높이만큼 띄워서 배치 */
   left: -10%;
+  top: 100px; /* topbar의 높이만큼 띄워서 배치 */
+  left: -10%;
   transform: translateX(-50%);
   background-color: white;
   border: 1px solid #ddd;
@@ -34,6 +42,7 @@
   padding: 10px;
   z-index: 1000;
   font-size: 12px;
+  width: 10rem; /* 너비를 조정하여 박스 크기 증가 */
   width: 10rem; /* 너비를 조정하여 박스 크기 증가 */
 }
 
@@ -53,9 +62,11 @@
 
   gap: 5px;
   margin-left: 100px; /* 로고와 간격을 좁히기 위해 margin-left 조정 */
+  margin-left: 100px; /* 로고와 간격을 좁히기 위해 margin-left 조정 */
 }
 
 .search-input {
+  width: 20rem;
   width: 20rem;
   padding: 8px;
   border: 2px solid #ccc;
@@ -104,6 +115,7 @@
 
 .search-button:hover {
   background-color: transparent;
+  background-color: transparent;
 }
 
 button {
@@ -124,8 +136,14 @@ button {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  flex-direction: row;
+  justify-content: flex-end;
   gap: 5px;
   margin: 0px;
+  position: absolute; /* 버튼들을 절대 위치로 배치 */
+  right: 0; /* 오른쪽 끝으로 고정 */
+  top: 50%; /* 탑바 높이의 중간에 배치 */
+  transform: translateY(-50%); /* 정확하게 중간에 위치하도록 */
   position: absolute; /* 버튼들을 절대 위치로 배치 */
   right: 0; /* 오른쪽 끝으로 고정 */
   top: 50%; /* 탑바 높이의 중간에 배치 */

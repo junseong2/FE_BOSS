@@ -97,12 +97,10 @@ function Top() {
   return (
     <div className='top-bar'>
       <img
-        src='http://localhost:5173/src/assets/boss_logo.png' // 이미지 경로를 public 폴더 기준으로 설정
+        src='src/assets/boss_logo.png' // 이미지 경로를 public 폴더 기준으로 설정
         alt='Boss Logo'
-        className='bosslogo'
+        className='logo'
         onClick={() => navigate('/')} // 로고 클릭 시 홈으로 이동
-        width={150} // 가로 크기
-        height={150}
       />
 
       <form className='search-form' onSubmit={handleSearch}>

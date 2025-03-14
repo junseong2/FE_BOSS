@@ -117,31 +117,40 @@ function CategoryPage() {
         </button>
       </div>
 
-      <ul className='product-grid'>
+      <ul className='product-list'>
         {products.length > 0 ? (
           products.map((product) => (
             <li
               key={product.productId}
-              onClick={() => navigate(`/product/${product.productId}`)}
               className='product-item'
+              onClick={() => navigate(`/product/${product.productId}`)}
+              style={{ cursor: 'pointer' }}
             >
               <img
-                src={getFirstImageUrl(product.gimage)}
+                src={
+                  Array.isArray(product.gimage)
+                    ? product.gimage[0] || '/default-product.jpg'
+                    : product.gimage || '/default-product.jpg'
+                }
                 alt={product.name}
-                className='product-image'
-                onError={(e) => (e.target.src = '/default-product.jpg')}
+                style={{
+                  width: '400px',
+                  height: 'auto',
+                  maxHeight: '300px',
+                  objectFit: 'cover',
+                  borderRadius: '10px',
+                }}
               />
-              <h3>{product.name}</h3>
-              <p>{product.description}</p>
+              <p>상품명: {product.name}</p>
               <p>가격: {product.price.toLocaleString()}원</p>
-              <p>유통기한: {product.expiry_date}</p>
-              <button onClick={(event) => addToCart(event, product.product_id)}>
+              <p>설명: {product.description}</p>
+              <button onClick={(event) => addToCart(event, product.productId)}>
                 장바구니 추가
               </button>
             </li>
           ))
         ) : (
-          <p>상품이 없습니다.</p>
+          <p>해당 카테고리에 상품이 없습니다.</p>
         )}
       </ul>
     </div>

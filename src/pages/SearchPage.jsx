@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useContext } from 'react';
+
 import axios from 'axios';
 
 function SearchPage() {
@@ -7,6 +8,7 @@ function SearchPage() {
   const [sortOrder, setSortOrder] = useState('asc');
   const [userId, setUserId] = useState(null); // ✅ userId 상태 추가
   const location = useLocation();
+  const navigate = useNavigate();
   const query = new URLSearchParams(location.search).get('query'); // 쿼리 파라미터 가져오기
 
   useEffect(() => {
@@ -23,6 +25,29 @@ function SearchPage() {
       fetchSearchResults();
     }
   }, [query]);
+
+  // ✅ 사용자 정보 요청 (로그인 상태 확인)
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/auth/user-info', {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          throw new Error('로그인 정보 조회 실패');
+        }
+
+        const data = await response.json();
+        setUserId(data.userId);
+      } catch (error) {
+        console.error('사용자 정보 조회 오류:', error.message);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
 
   // ✅ 사용자 정보 요청 (로그인 상태 확인)
   useEffect(() => {
