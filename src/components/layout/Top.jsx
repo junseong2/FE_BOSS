@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../../App.css';
 import './topbar.css';
-import '../../buttons.css';
+
 import { useCart } from '../../context/CartContext'; // CartContext에서 useCart 훅 import
 import fetchUserInfo from '../../utils/api.js'; // API 함수 import
 import { IoSearch, IoGiftOutline } from 'react-icons/io5'; // IoSearch 아이콘 import
@@ -97,10 +97,12 @@ function Top() {
   return (
     <div className='top-bar'>
       <img
-        src='src/assets/boss_logo.png' // 이미지 경로를 public 폴더 기준으로 설정
+        src='http://localhost:5173/src/assets/boss_logo.png' // 이미지 경로를 public 폴더 기준으로 설정
         alt='Boss Logo'
-        className='logo'
+        className='bosslogo'
         onClick={() => navigate('/')} // 로고 클릭 시 홈으로 이동
+        width={150} // 가로 크기
+        height={150}
       />
 
       <form className='search-form' onSubmit={handleSearch}>
@@ -122,10 +124,10 @@ function Top() {
           </p>
         )}
       </div>
-      <div className='button-container'>
+      <div className='Mypagebutton-container'>
         {userId ? (
           <>
-            <button className='TopSigninBt' onClick={handleLogoutClick}>
+            <button className='MypageBt' onClick={handleLogoutClick}>
               로그아웃
             </button>
             <button className='MypageBt' onClick={() => navigate('/mypage')}>
@@ -146,7 +148,7 @@ function Top() {
             )}
           </>
         ) : (
-          <button className='TopSigninBt' onClick={handleSignInClick}>
+          <button className='MypageBt' onClick={handleSignInClick}>
             로그인
           </button>
         )}

@@ -1,0 +1,20 @@
+html {
+  scroll-behavior: smooth;
+}
+
+.scroll-triggers {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: -1;
+}
+
+.section {
+  height: 110vh; /* 한 화면 크기보다 조금 더 크게 설정 */
+  margin-bottom: 5vh; /* 섹션 간 간격 추가 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0; /* 사용자가 직접 보지 않도록 숨김 */
+  pointer-events: none;
+}

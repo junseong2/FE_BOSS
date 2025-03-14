@@ -1,0 +1,8 @@
+@media (max-width: 768px) {
+  .top-title {
+    font-size: 18px;
+  }
+  .search-form {
+    width: 100%;
+  }
+}

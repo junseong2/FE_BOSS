@@ -1,8 +1,0 @@
-@media (max-width: 768px) {
-  .top-title {
-    font-size: 18px;
-  }
-  .top-bar {
-    flex-direction: column;
-  }
-}

@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { CartProvider } from './context/CartContext'; // CartProvider import
+import { CartProvider } from './context/CartContext';
+import AppLayout from './AppLayout'; // ✅ AppLayout import 추가
+import ShopPage from './pages/ShopPage';
 
+import './App.css';
+import './layout.css';
 import Top from './components/layout/Top';
 import MenuBar from './MenuBar';
+import BottomNavigation from './components/layout/BottomNavigation';
+
 import SignIn from './pages/SignIn.jsx';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
@@ -12,12 +18,11 @@ import CameraCapturePage from './pages/CameraCapturePage';
 import ContactPage from './pages/ContactPage';
 import MyPage from './pages/MyPage';
 import EventPage from './pages/EventPage';
-import KakaoMapPage from './pages/KakaoMapPage'; // 경로를 맞게 수정
-
+import KakaoMapPage from './pages/KakaoMapPage';
 import SignUp from './pages/SignUp';
 import CategoryPage from './pages/CategoryPage';
 import SearchPage from './pages/SearchPage';
-import ProductListPage from './pages/ProductListPage.jsx';
+
 import SellerPage from './pages/sellerDashboard/SellerPage.jsx';
 import SellerDashboardPage from './pages/sellerDashboard/SellerDashboardPage.jsx';
 import SellerProductPage from './pages/sellerDashboard/SellerProductPage.jsx';
@@ -27,55 +32,126 @@ import SellerSalesPage from './pages/sellerDashboard/SellerSalesPage.jsx';
 import SellerPaymentPage from './pages/sellerDashboard/SellerPaymentPage.jsx';
 import ProductDetailPage from './pages/ProductDetailPage';
 
+import Footer from './components/layout/Footer'; // ✅ Footer import 추가
+
 function App() {
-  const [memberData, setMemberData] = useState(() => {
-    return JSON.parse(localStorage.getItem('memberData')) || [];
-  });
+  const [storename, setStorename] = useState(null);
+  const [headerId, setHeaderId] = useState(null);
+  const [sellerId, setSellerId] = useState(null);
+  const [menuBarId, setMenuBarId] = useState(null);
+  const [navigationId, setNavigationId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (memberData.length > 0) {
-      localStorage.setItem('memberData', JSON.stringify(memberData));
-    }
-  }, [memberData]);
-
-  function handleAdd(newMember) {
-    setMemberData((prev) => [...prev, newMember]);
-  }
-
-  // 현재 경로 가져오기
   const location = useLocation();
   const isAdminPage =
-    location.pathname.startsWith('/seller') || location.pathname.startsWith('/admin'); // `/admin`으로 시작하면 true
+    location.pathname.toLowerCase().startsWith('/seller') ||
+    location.pathname.toLowerCase().startsWith('/admin');
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // ✅ 모바일 여부 체크
 
+  useEffect(() => {
+    if (!storename) {
+      setLoading(false);
+      return;
+    }
+
+    const fetchSellerInfo = async () => {
+      try {
+        const sellerResponse = await fetch(`http://localhost:5000/seller/info/${storename}`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (!sellerResponse.ok) {
+          throw new Error(`API 오류 상태: ${sellerResponse.status}`);
+        }
+
+        const sellerData = await sellerResponse.json();
+
+        console.log('📌 [fetchSellerInfo] 응답 데이터:', sellerData); // ✅ API 응답 확인
+
+        setSellerId(sellerData.sellerData ?? null);
+        setHeaderId(sellerData.headerId ?? null);
+        setMenuBarId(sellerData.menuBarId ?? null);
+        setSellerId(sellerData.sellerId ?? null);
+        setNavigationId(sellerData.navigationId ?? null);
+
+        console.log('seller:' + sellerData);
+      } catch (error) {
+        console.error('API 호출 실패:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSellerInfo();
+  }, [storename]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
   return (
     <CartProvider>
-      {' '}
-      {/* CartContext로 감싸기 */}
-      <div className='flex'>
-        {/* 관리자 페이지가 아닐 때만 MenuBar와 Top을 렌더링 */}
+      <div className='app-container'>
+        {/* ✅ 관리자 페이지가 아닐 때만 `Top`과 `MenuBar` 렌더링 */}
+        {!isAdminPage && <Top />}
         {!isAdminPage && <MenuBar />}
-        <div className={`flex-1 ${!isAdminPage ? 'ml-60' : ''}`}>
-          {!isAdminPage && <Top />}
-          <main className='main page'>
+
+        <div className='main-content'>
+          {loading ? (
+            <div className='loading-screen'>
+              <h2>🔄 데이터 불러오는 중...</h2>
+            </div>
+          ) : (
             <Routes>
-              {/* 일반 페이지 */}
-              <Route path='/' element={<HomePage memberData={memberData} onAdd={handleAdd} />} />
+              <Route
+                path='/:storename/*'
+                element={
+                  <AppLayout
+                    sellerId={sellerId}
+                    headerId={headerId}
+                    menuBarId={menuBarId}
+                    navigationId={navigationId}
+                    setStorename={setStorename}
+                  />
+                }
+              >
+                <Route
+                  path='shop'
+                  element={
+                    <ShopPage
+                      sellerId={sellerId}
+                      headerId={headerId}
+                      menuBarId={menuBarId}
+                      navigationId={navigationId}
+                    />
+                  }
+                />
+              </Route>
+
+              {/* ✅ 일반적인 페이지 경로 유지 */}
+              <Route path='/' element={<HomePage />} />
               <Route path='/about' element={<AboutPage />} />
               <Route path='/contact' element={<ContactPage />} />
               <Route path='/event' element={<EventPage />} />
-
               <Route path='/kakaomap' element={<KakaoMapPage />} />
-
-              <Route path='/camera' element={<CameraCapturePage onAdd={handleAdd} />} />
+              <Route path='/camera' element={<CameraCapturePage />} />
               <Route path='/signin' element={<SignIn />} />
               <Route path='/mypage' element={<MyPage />} />
               <Route path='/signup' element={<SignUp />} />
               <Route path='/cart' element={<CartPage />} />
               <Route path='/category/:categoryId' element={<CategoryPage />} />
               <Route path='/search' element={<SearchPage />} />
-              <Route path='/productlist' element={<ProductListPage />} />
               <Route path='/product/:productId' element={<ProductDetailPage />} />
 
+              {/* ✅ 판매자 대시보드 경로 유지 */}
               <Route path='/seller' element={<SellerPage />}>
                 <Route index path='dashboard' element={<SellerDashboardPage />} />
                 <Route path='product' element={<SellerProductPage />} />
@@ -85,9 +161,12 @@ function App() {
                 <Route path='payment' element={<SellerPaymentPage />} />
               </Route>
             </Routes>
-          </main>
+          )}
         </div>
+        <Footer />
       </div>
+
+      {!isAdminPage && isMobile && <BottomNavigation />}
     </CartProvider>
   );
 }
