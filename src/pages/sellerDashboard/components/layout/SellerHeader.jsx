@@ -1,4 +1,4 @@
-import styles from '../../styles/sellerHeader.module.css';
+import styles from '../../styles/SellerHeader.module.css';
 function SellerHeader({ children }) {
   return <header className={styles.sellerHeader}>{children}</header>;
 }
