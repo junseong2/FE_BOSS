@@ -18,7 +18,6 @@ import CameraCapturePage from './pages/CameraCapturePage';
 import ContactPage from './pages/ContactPage';
 import MyPage from './pages/MyPage';
 import EventPage from './pages/EventPage';
-import KakaoMapPage from './pages/KakaoMapPage'; // 경로를 맞게 수정
 import ChatBot from './components/layout/ChatBot';
 
 import SignUp from './pages/SignUp';
@@ -141,7 +140,6 @@ function App() {
               <Route path='/about' element={<AboutPage />} />
               <Route path='/contact/*' element={<ContactPage />} />
               <Route path='/event' element={<EventPage />} />
-              <Route path='/kakaomap' element={<KakaoMapPage />} />
               <Route path='/camera' element={<CameraCapturePage />} />
               <Route path='/signin' element={<SignIn />} />
               <Route path='/mypage' element={<MyPage />} />
