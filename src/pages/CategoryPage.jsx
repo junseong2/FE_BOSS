@@ -129,16 +129,16 @@ function CategoryPage() {
               <img
                 src={
                   Array.isArray(product.gimage)
-                    ? product.gimage[0] || "/default-product.jpg"
-                    : product.gimage || "/default-product.jpg"
+                    ? product.gimage[0] || '/default-product.jpg'
+                    : product.gimage || '/default-product.jpg'
                 }
                 alt={product.name}
                 style={{
-                  width: "400px",
-                  height: "auto",
-                  maxHeight: "300px",
-                  objectFit: "cover",
-                  borderRadius: "10px",
+                  width: '400px',
+                  height: 'auto',
+                  maxHeight: '300px',
+                  objectFit: 'cover',
+                  borderRadius: '10px',
                 }}
               />
               <p>상품명: {product.name}</p>

@@ -98,36 +98,29 @@ function ProductDetailPage() {
     }
   };
 
-
-
   if (!product) {
-    console.log("🚀 상품 정보가 없음! 데이터를 불러오는 중...");
-  };
+    console.log('🚀 상품 정보가 없음! 데이터를 불러오는 중...');
+  }
 
-
-  const imageList = product?.gimage && product.gimage.length > 0 ? product.gimage : ["/default-product.jpg"];
-
+  const imageList =
+    product?.gimage && product.gimage.length > 0 ? product.gimage : ['/default-product.jpg'];
 
   // ✅ 스와이프 기능 추가
   const handlers = useSwipeable({
     onSwipedLeft: () => {
       if (!imageList || imageList.length === 0) return;
-      setCurrentImageIndex((prevIndex) =>
-        prevIndex === imageList.length - 1 ? 0 : prevIndex + 1
-      );
+      setCurrentImageIndex((prevIndex) => (prevIndex === imageList.length - 1 ? 0 : prevIndex + 1));
     },
     onSwipedRight: () => {
       if (!imageList || imageList.length === 0) return;
-      setCurrentImageIndex((prevIndex) =>
-        prevIndex === 0 ? imageList.length - 1 : prevIndex - 1
-      );
+      setCurrentImageIndex((prevIndex) => (prevIndex === 0 ? imageList.length - 1 : prevIndex - 1));
     },
     preventDefaultTouchmoveEvent: true,
     trackMouse: true,
   });
 
   useEffect(() => {
-    console.log("📸 현재 이미지 인덱스:", currentImageIndex);
+    console.log('📸 현재 이미지 인덱스:', currentImageIndex);
   }, [currentImageIndex]);
 
   if (!product) {
@@ -136,18 +129,18 @@ function ProductDetailPage() {
 
   return (
     <div className='product-detail-container'>
-      <div className="image-carousel" {...handlers}>
+      <div className='image-carousel' {...handlers}>
         <img
           src={encodeURI(imageList[currentImageIndex])}
-          alt={product?.name || "상품 이미지"}
-          className="product-image"
-          onError={(e) => (e.target.src = "/default-product.jpg")}
+          alt={product?.name || '상품 이미지'}
+          className='product-image'
+          onError={(e) => (e.target.src = '/default-product.jpg')}
           style={{
-            width: "400px",
-            height: "auto",
-            maxHeight: "300px",
-            objectFit: "cover",
-            borderRadius: "10px",
+            width: '400px',
+            height: 'auto',
+            maxHeight: '300px',
+            objectFit: 'cover',
+            borderRadius: '10px',
           }}
         />
       </div>
@@ -164,10 +157,10 @@ function ProductDetailPage() {
           <button onClick={increaseQuantity}>➕</button>
         </div>
 
-        <button onClick={(event) => addToCart(event, product.productId)}>
-          장바구니 추가
+        <button onClick={(event) => addToCart(event, product.productId)}>장바구니 추가</button>
+        <button className='back-btn' onClick={() => navigate(-1)}>
+          뒤로 가기
         </button>
-        <button className='back-btn' onClick={() => navigate(-1)}>뒤로 가기</button>
       </div>
     </div>
   );
