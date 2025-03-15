@@ -210,7 +210,9 @@ function CartPage() {
         <button className='back-btn' onClick={() => navigate('/')}>
           홈으로 돌아가기
         </button>
-        <button>결제</button>
+        <button className='payment-btn' onClick={() => navigate('/payment')}>
+          결제
+        </button>{' '}
       </div>
     </div>
   );

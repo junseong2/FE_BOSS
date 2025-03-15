@@ -1,0 +1,66 @@
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(100px, 1fr)); /* 한 줄에 4개씩 */
+  gap: 10px; /* 간격 줄이기 */
+  list-style: none;
+  padding: 0;
+}
+
+/* 개별 상품 스타일 */
+.product-item {
+  border: 1px solid #ddd;
+
+  text-align: center;
+  border-radius: 10px;
+  transition: transform 0.2s ease-in-out;
+
+  padding: 10px; /* 내부 여백 줄이기 */
+  border: 1px solid #ddd; /* 테두리 추가 */
+  border-radius: 8px; /* 모서리 둥글게 */
+  text-align: center; /* 내용 중앙 정렬 */
+  padding: 50px;
+
+  border-radius: 5px;
+  font-size: 12px;
+  width: 300px;
+  height: 540px;
+}
+
+.product-item:hover {
+  transform: scale(1.05);
+}
+
+/* 이미지 스타일 */
+.product-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+@media (max-width: 768px) {
+  /* 모바일 */
+  .product-grid {
+    font-size: 1rem;
+    grid-template-columns: repeat(1, minmax(9rem, 1fr)); /* ✅ 한 줄에 2개씩 */
+    width: 100%; /* ✅ 전체 너비를 100%로 설정 */
+    margin: 0 auto; /* ✅ 자동 중앙 정렬 */
+    padding: 0 5px; /* ✅ 좌우 여백 추가 */
+    overflow-x: hidden; /* ✅ 가로 스크롤 방지 */
+  }
+
+  .product-item {
+    font-size: 0.8rem; /* ✅ 폰트 크기 조정 */
+    width: auto; /* ✅ 가변 크기로 조정 */
+    height: auto; /* ✅ 가변 크기로 조정 */
+    padding: 15px; /* ✅ 패딩 조정 */
+    max-width: 95%; /* ✅ 너무 커지는 것 방지 */
+    margin: 0 auto; /* ✅ 아이템이 가운데 정렬되도록 */
+  }
+
+  .product-image {
+    width: 100%;
+    height: 8rem; /* ✅ 이미지 크기 줄이기 */
+    object-fit: cover;
+    border-radius: 8px;
+  }
+}

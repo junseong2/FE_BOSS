@@ -1,0 +1,71 @@
+/* 모달 배경 (어두운 투명 레이어) */
+.signin-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* 배경 투명도 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* 모달 컨테이너 */
+.signin-modal-content {
+  background: white;
+  width: 400px; /* 원하는 크기로 조정 가능 */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  position: relative; /* 닫기 버튼을 위한 포지션 */
+}
+
+/* 닫기 버튼 (더 세련된 디자인) */
+.signin-modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  color: #333;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+
+/* 닫기 버튼 호버 효과 */
+.signin-modal-close-btn:hover {
+  color: #007bff;
+  transform: rotate(90deg); /* 호버 시 부드러운 회전 효과 */
+}
+/* 로그인 입력창 */
+.signin-modal-content input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+/* 로그인 버튼 */
+.signin-modal-login-btn {
+  width: 100%;
+  padding: 10px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.signin-modal-login-btn:hover {
+  background: #0056b3;
+}
