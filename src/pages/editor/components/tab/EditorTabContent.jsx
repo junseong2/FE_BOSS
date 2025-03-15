@@ -1,11 +1,14 @@
 import { IoGridOutline, IoImageOutline, IoBagHandleOutline } from 'react-icons/io5';
+import { MultipleImageUploader } from '../../../../components/ImageUploader';
 
 export default function EditorTabContent({ targetTabName, onSelectElement, elements }) {
   return (
     <div className='w-full px-2'>
-      {targetTabName === '요소' ? (
+      {targetTabName === '설정' ? (
         <EditorElementGrid onSelectElement={onSelectElement} elements={elements} />
-      ) : null}
+      ) : (
+        <MultipleImageUploader />
+      )}
     </div>
   );
 }

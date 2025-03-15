@@ -88,7 +88,7 @@ function DraggableElement({ element, index, isSelected, onClick, onUpdate, onRem
       className='relative p-2 border border-none cursor-pointer hover:shadow-[0_0_1px_black]'
       onClick={onClick}
     >
-      {/* 렌더링되는 요소 */}
+      {/* 프리뷰(미리보기) 요소 */}
       <EditorPreview element={element} />
 
       {/* 요소 삭제 버튼 */}

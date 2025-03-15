@@ -8,7 +8,7 @@ export function TemplateHeader({ properties }) {
   return (
     <div className='relative w-full flex justify-between items-center gap-2 border-b border-[#E4E4E7]  p-2 cursor-move'>
       {/* 팔로우 버튼 */}
-      <div className='bg-[#4294f2] flex items-center justify-center max-h-[35px] w-[100px] text-[0.9rem] text-white text-center rounded-sm p-2'>
+      <div className='bg-[#2477d5] flex items-center justify-center max-h-[35px] w-[100px] text-[0.9rem] text-white text-center rounded-sm p-2'>
         <button>팔로우</button>
       </div>
 
