@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { CartProvider } from './context/CartContext'; // CartProvider import
 
-import './App.css';
-import './layout.css';
+// import './App.css';
+// import './layout.css';
 
 import Top from './components/layout/Top';
 import MenuBar from './MenuBar';
@@ -21,14 +21,15 @@ import SignUp from './pages/SignUp';
 import CategoryPage from './pages/CategoryPage';
 import SearchPage from './pages/SearchPage';
 import ProductListPage from './pages/ProductListPage.jsx';
-import SellerPage from './pages/sellerDashboard/SellerPage.jsx';
-import SellerDashboardPage from './pages/sellerDashboard/SellerDashboardPage.jsx';
-import SellerProductPage from './pages/sellerDashboard/SellerProductPage.jsx';
-import SellerOrderPage from './pages/sellerDashboard/SellerOrderPage.jsx';
-import SellerInventoryPage from './pages/sellerDashboard/SellerInventoryPage.jsx';
-import SellerSalesPage from './pages/sellerDashboard/SellerSalesPage.jsx';
-import SellerPaymentPage from './pages/sellerDashboard/SellerPaymentPage.jsx';
+import SellerPage from './pages/seller/SellerPage.jsx';
+import SellerDashboardPage from './pages/seller/SellerDashboardPage.jsx';
+import SellerProductPage from './pages/seller/SellerProductPage.jsx';
+import SellerOrderPage from './pages/seller/SellerOrderPage.jsx';
+import SellerInventoryPage from './pages/seller/SellerInventoryPage.jsx';
+import SellerSalesPage from './pages/seller/SellerSalesPage.jsx';
+import SellerPaymentPage from './pages/seller/SellerPaymentPage.jsx';
 import ProductDetailPage from './pages/ProductDetailPage';
+import ShopEditorPage from './pages/editor/ShopEditorPage.jsx';
 
 function App() {
   const [memberData, setMemberData] = useState(() => {
@@ -48,7 +49,9 @@ function App() {
   // 현재 경로 가져오기
   const location = useLocation();
   const isAdminPage =
-    location.pathname.startsWith('/seller') || location.pathname.startsWith('/admin'); // `/admin`으로 시작하면 true
+    location.pathname.startsWith('/seller') ||
+    location.pathname.startsWith('/admin') ||
+    location.pathname.startsWith('/editor'); // `/admin`으로 시작하면 true
 
   return (
     <CartProvider>
@@ -87,6 +90,8 @@ function App() {
                 <Route path='sales' element={<SellerSalesPage />} />
                 <Route path='payment' element={<SellerPaymentPage />} />
               </Route>
+
+              <Route path='/editor' element={<ShopEditorPage />}></Route>
             </Routes>
           </main>
         </div>

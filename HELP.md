@@ -21,6 +21,36 @@
 └── .gitignore                      # Git에서 무시할 파일들
 ```
 
+## 🗺 미디어 쿼리 가이드
+
+### 모바일 기준 미디어쿼리
+
+```
+/* 태블릿 (768px 이상) */
+@media (min-width: 768px) {
+  .container {
+    max-width: 720px;
+    padding: 24px;
+  }
+}
+
+/* 데스크탑 (1024px 이상) */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 960px;
+    padding: 32px;
+  }
+}
+
+/* 대형 화면 (1280px 이상) */
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1200px;
+    padding: 40px;
+  }
+}
+```
+
 ## ⚙ VITE 환경에서 환경변수를 사용하는 방법
 
 ### .env.local

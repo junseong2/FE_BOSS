@@ -1,0 +1,22 @@
+.editorTab {
+  margin: 5px 8px;
+  width: 100%;
+  max-width: 230px;
+  height: 35px;
+  background-color: white;
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+
+  .tabButton {
+    border-radius: 3px;
+    font-size: 0.8rem;
+    width: 100%;
+    transition: 0.5s;
+  }
+
+  .tabButton.active {
+    background-color: #4294f2;
+    color: white;
+  }
+}

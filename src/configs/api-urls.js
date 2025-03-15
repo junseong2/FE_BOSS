@@ -1,6 +1,11 @@
 const BASE_URL = 'http://localhost:5000';
 
 export const apiRoutes = {
+  products: {
+    getAll: (page, size) => BASE_URL + `/products?page=${page}&size=${size}`,
+    getById: (productId) => BASE_URL + `/products/${productId}`,
+  },
+
   // 판매자
   seller: {
     // 상품 관리
