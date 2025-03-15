@@ -1,5 +1,4 @@
 import SortList from '../../../components/SortList';
-import styles from '../styles/EditorTemplates.module.css';
 
 /**
  * 커스텀 헤더
@@ -7,27 +6,25 @@ import styles from '../styles/EditorTemplates.module.css';
  */
 export function TemplateHeader({ properties }) {
   return (
-    <div className={styles.header}>
+    <div className='relative w-full flex justify-between items-center gap-2 border-b border-[#E4E4E7]  p-2 cursor-move'>
       {/* 팔로우 버튼 */}
-      <div className={styles.followButton}>
+      <div className='bg-[#4294f2] flex items-center justify-center max-h-[35px] w-[100px] text-[0.9rem] text-white text-center rounded-sm p-2'>
         <button>팔로우</button>
       </div>
 
       {/* 로고 */}
-      <div className={styles.logo}>
+      <div className='w-[200px] text-center'>
         <img src={properties.logoUrl} alt='로고 이미지' />
       </div>
 
       {/* 네비게이션 */}
-      <nav className={styles.navigation}>
-        {
-          <ul className={styles.ul}>
-            {properties?.menuItems.map((menu) => {
-              return <li key={menu}> {menu}</li>;
-            })}
-          </ul>
-        }
-      </nav>
+      <div className='flex items-center max-w-[300px] w-full h-[50px]'>
+        <ul className='flex gap-[15px] m-0'>
+          {properties?.menuItems.map((menu) => (
+            <li key={menu}>{menu}</li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
@@ -38,14 +35,23 @@ export function TemplateHeader({ properties }) {
  */
 export function TemplateBanner({ properties }) {
   return (
-    <div className={styles.banner} style={{ backgroundColor: properties.backgroundColor }}>
-      <img
-        className={styles.logoImage}
-        src={properties.imageUrl}
-        alt=''
-        width={1024}
-        height={300}
-      />
+    <div
+      className='relative max-h-[450px] h-full w-full p-4 flex items-center justify-center cursor-move'
+      style={{ backgroundColor: properties.backgroundColor }}
+    >
+      <figure>
+        <div className='absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]  w-full flex items-center flex-col'>
+          <h2 className='text-3xl'>{properties.title}</h2>
+          <h3 className='text-xl mt-3'>{properties.subtitle}</h3>
+        </div>
+        <img
+          className='w-full h-full'
+          src={properties.imageUrl}
+          alt='배너 이미지'
+          width={1024}
+          height={300}
+        />
+      </figure>
     </div>
   );
 }
@@ -56,12 +62,12 @@ export function TemplateBanner({ properties }) {
  */
 export function TemplateProductGrid({ properties }) {
   return (
-    <div className={styles.productGrid}>
-      <h2 className={styles.title}>{properties.title}</h2>
+    <div className='relative cursor-move py-[50px]'>
+      <h2 className='text-[1.8rem] text-center'>{properties.title}</h2>
 
       {/* 정렬 리스트 */}
       <SortList sortList={properties.sortList} />
-      <ul className={styles.productList}></ul>
+      <ul className='list-none'></ul>
     </div>
   );
 }

@@ -1,10 +1,8 @@
 import { useRef } from 'react';
-import styles from '../styles/EditorCanvas.module.css';
 import { useDrag, useDrop } from 'react-dnd';
 import { IoTrashOutline } from 'react-icons/io5';
 import EditorPreview from './EditorPreview';
 
-// const tabList = ['에디터', '미리보기'];
 export default function EditorCanvas({
   editorTab,
   elements,
@@ -15,15 +13,13 @@ export default function EditorCanvas({
   onElementMove,
 }) {
   return (
-    <div className={styles.editorCanvas}>
-      <div className={styles.canvasTab}>{editorTab}</div>
-      <div className={styles.editorCanvasDisplay}>
+    <div className='w-full '>
+      <div className='m-1 border border-gray-200 rounded max-w-[240px] '>{editorTab}</div>
+      <div className='border border-gray-200 overflow-y- overflow-x-hidden auto max-h-[690px] h-full m-2 rounded-md'>
         {/* 편집기 와이어프레임 뷰 */}
-        <div className={`${styles.wireframeView}`}>
+        <div className='p-2'>
           {elements.length === 0 ? (
-            <p style={{ textAlign: 'center', marginTop: '2rem' }}>
-              요소를 선택하여 쇼핑몰을 구성해보세요!
-            </p>
+            <p className='text-center mt-8'>요소를 선택하여 쇼핑몰을 구성해보세요!</p>
           ) : (
             elements?.map((element, index) => {
               if (!element.id) return null;
@@ -87,14 +83,19 @@ function DraggableElement({ element, index, isSelected, onClick, onUpdate, onRem
   drag(drop(divRef));
 
   return (
-    <div ref={divRef} className={styles.draggableElement} onClick={onClick}>
+    <div
+      ref={divRef}
+      className='relative p-2 border border-none cursor-pointer hover:shadow-[0_0_1px_black]'
+      onClick={onClick}
+    >
       {/* 렌더링되는 요소 */}
       <EditorPreview element={element} />
 
       {/* 요소 삭제 버튼 */}
       <div
-        className={styles.elementDeleteButton}
-        style={isSelected ? { opacity: 1 } : { opacity: 0.2 }}
+        className={`absolute top-0 right-0 cursor-pointer p-1 rounded ${
+          isSelected ? 'opacity-100 border border-black' : 'opacity-20'
+        }`}
       >
         <button
           onClick={(e) => {

@@ -165,7 +165,7 @@ function App() {
             </Routes>
           </div>
 
-          <Footer />
+          {/* <Footer /> */}
         </div>
 
         {!isAdminPage && isMobile && <BottomNavigation />}
