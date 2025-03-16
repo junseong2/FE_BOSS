@@ -1,5 +1,3 @@
-// interface PropsType { }
-
 export default function SellerTableHeader({ headers }) {
   return (
     <thead>

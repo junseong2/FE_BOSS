@@ -13,6 +13,7 @@ export const apiRoutes = {
       getAll: (page, size) => BASE_URL + `/seller/products?page=${page}&size=${size}`,
       search: (page, size, search) =>
         BASE_URL + `/seller/products/search?search=${search}&page=${page}&size=${size}`,
+      insertMany: () => BASE_URL + `/seller/products/multiple`,
       insert: () => BASE_URL + `/seller/products`,
       delete: () => BASE_URL + `/seller/products`,
       update: (productId) => BASE_URL + `/seller/products/${productId}`,

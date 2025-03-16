@@ -1,6 +1,5 @@
-import styles from '../../styles/SellerToolBar.module.css';
 function SellerToolBar({ children }) {
-  return <div className={styles.sellerToolBarLayout}>{children}</div>;
+  return <div className='flex w-full flex-col items-center justify-between'>{children}</div>;
 }
 
 export default SellerToolBar;

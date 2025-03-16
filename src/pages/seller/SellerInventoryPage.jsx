@@ -1,7 +1,6 @@
 import useToggle from '../../hooks/useToggle';
 
 import { useEffect, useState } from 'react';
-import SellerInventoryContentTable from './components/pages/inventory/SellerInventoryContentTable';
 import {
   getAllSellerInventories,
   getSearchSellerInventories,
@@ -11,6 +10,7 @@ import SellerTitle from './components/common/SellerTitle';
 import SellerToolBar from './components/layout/SellerToolBar';
 import SellerContentHeader from './components/common/SellerContentHeader';
 import SellerSearch from './components/common/SellerSearch';
+import { SellerInventoryTable } from './components/pages/SellerInventoryTable';
 
 const headers = [
   '카테고리ID',
@@ -48,7 +48,7 @@ function SellerInventoryPage() {
   // 재고 조회
   async function getInventoriesFetch() {
     const data = await getAllSellerInventories(page, PAGE_SIZE);
-    console.log(data);
+
     setInventories(data);
   }
 
@@ -59,7 +59,7 @@ function SellerInventoryPage() {
     const formData = new FormData(e.currentTarget);
     const search = formData.get('search');
     const data = await getSearchSellerInventories(page, PAGE_SIZE, search);
-    console.log('재고 목록:', data);
+
     setInventories(data);
   }
 
@@ -104,7 +104,7 @@ function SellerInventoryPage() {
           <SellerSearch placeholder={'상품명을 입력하세요.'} onSearch={onSearch} />
         </SellerToolBar>
       </SellerContentHeader>
-      <SellerInventoryContentTable
+      <SellerInventoryTable
         headers={headers}
         inventories={inventories}
         actionButtonName={'수정'}

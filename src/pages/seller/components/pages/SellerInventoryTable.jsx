@@ -1,10 +1,8 @@
 import { useState } from 'react';
-import styles from '../../../styles/SellerContentTable.module.css';
-import common from '../../../styles/common.module.css';
-import { formatDate } from '../../../../../utils/formatter.js';
-import TableHeader from '../../common/SellerTableHeader.jsx';
+import { formatDate } from '../../../../utils/formatter.js';
+import TableHeader from '../common/SellerTableHeader.jsx';
 
-function SellerInventoryContentTable({
+export function SellerInventoryTable({
   headers,
   inventories,
   actionButtonName,
@@ -14,7 +12,6 @@ function SellerInventoryContentTable({
 }) {
   const [modifiedInventories, setModifiedInventories] = useState(inventories);
 
-  // 사용자 재고의 입력값 변경 감지
   const handleInputChange = (e, inventoryId, field) => {
     setModifiedInventories(
       inventories.map((inventory) =>
@@ -25,7 +22,6 @@ function SellerInventoryContentTable({
     );
   };
 
-  // 재고 변경 수정
   const handleUpdate = (inventoryId) => {
     const updatedInventory = modifiedInventories.find(
       (inventory) => inventory.inventoryId === inventoryId,
@@ -36,14 +32,15 @@ function SellerInventoryContentTable({
   };
 
   return (
-    <div className={styles.sellerContentTableLayout}>
-      {!Array.isArray(inventories) || inventories.length === 0 ? (
-        <p>조회할 상품목록이 존재하지 않습니다.</p>
-      ) : (
-        <table className={styles.sellerContentTable}>
-          <TableHeader headers={headers} />
-          <tbody>
-            {inventories.map((inventory, index) => {
+    <div className='mt-10 w-full'>
+      <table className='w-full border-collapse'>
+        <TableHeader headers={headers} />
+
+        <tbody>
+          {!Array.isArray(inventories) || inventories.length === 0 ? (
+            <p className='mt-5'>조회할 재고 목록이 존재하지 않습니다.</p>
+          ) : (
+            inventories.map((inventory, index) => {
               const stockWarn =
                 inventory.stock < inventory.minStock
                   ? '재고부족'
@@ -53,14 +50,17 @@ function SellerInventoryContentTable({
               const isEditing = index === toggleId;
 
               return (
-                <tr key={inventory.inventoryId}>
-                  <td>{inventory.inventoryId}</td>
-                  <td>{inventory.productId}</td>
-                  <td>{inventory.name}</td>
-                  <td>
+                <tr
+                  key={inventory.inventoryId}
+                  className='hover:bg-gray-100 transition duration-200'
+                >
+                  <td className='p-2'>{inventory.inventoryId}</td>
+                  <td className='p-2'>{inventory.productId}</td>
+                  <td className='p-2'>{inventory.name}</td>
+                  <td className='p-2'>
                     {isEditing ? (
                       <input
-                        className={common.commonInput}
+                        className='border border-gray-400 rounded px-2 py-1 w-full'
                         type='number'
                         defaultValue={inventory.stock}
                         onChange={(e) => handleInputChange(e, inventory.inventoryId, 'stock')}
@@ -69,10 +69,10 @@ function SellerInventoryContentTable({
                       inventory.stock
                     )}
                   </td>
-                  <td>
+                  <td className='p-2'>
                     {isEditing ? (
                       <input
-                        className={common.commonInput}
+                        className='border border-gray-400 rounded px-2 py-1 w-full'
                         type='number'
                         defaultValue={inventory.minStock}
                         onChange={(e) => handleInputChange(e, inventory.inventoryId, 'minStock')}
@@ -81,15 +81,15 @@ function SellerInventoryContentTable({
                       inventory.minStock
                     )}
                   </td>
-                  <td>{formatDate(inventory.updatedDate)}</td>
-                  <td>{stockWarn}</td>
-                  <td>
+                  <td className='p-2'>{formatDate(inventory.updatedDate)}</td>
+                  <td className='p-2'>{stockWarn}</td>
+                  <td className='p-2'>
                     <button
-                      className={common.commonButtonNormal}
+                      className='bg-gray-700 text-white rounded px-3 py-1 text-sm hover:bg-gray-900'
                       onClick={() => {
                         if (!isEditing) onToggle(index);
                         else {
-                          handleUpdate(inventory.inventoryId); //해당 하는 재고 업데이트
+                          handleUpdate(inventory.inventoryId);
                           onToggle(null);
                         }
                       }}
@@ -98,8 +98,7 @@ function SellerInventoryContentTable({
                     </button>
                     {isEditing && (
                       <button
-                        style={{ marginTop: '5px' }}
-                        className={common.commonButtonNormal}
+                        className='ml-2 bg-white border border-gray-300 rounded px-3 py-1 text-sm hover:bg-gray-100'
                         onClick={() => onToggle(null)}
                       >
                         취소
@@ -108,12 +107,10 @@ function SellerInventoryContentTable({
                   </td>
                 </tr>
               );
-            })}
-          </tbody>
-        </table>
-      )}
+            })
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }
-
-export default SellerInventoryContentTable;

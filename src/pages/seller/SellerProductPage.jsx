@@ -1,5 +1,3 @@
-import styles from './styles/SellerProductPage.module.css';
-
 import { useEffect, useState } from 'react';
 import useToggle from '../../hooks/useToggle';
 
@@ -16,11 +14,11 @@ import SellerTitle from './components/common/SellerTitle';
 import SellerToolBar from './components/layout/SellerToolBar';
 import SellerSearch from './components/common/SellerSearch';
 import SellerActionButton from './components/common/SellerActionButton';
-import SellerProductTable from './components/pages/product/SellerTable';
-import SellerRegisterForm from './components/pages/product/SellerRegisterForm';
+import SellerProductTable from './components/pages/SellerProductTable';
+import SellerRegisterForm from './components/pages/SellerRegisterForm';
 
 const headers = ['선택', '상품ID', '상품명', '카테고리', '설명', '가격', '재고', '작업'];
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 10;
 function SellerProductPage() {
   const { onToggle, isOpen, toggleId } = useToggle();
   const { onToggle: onToggleNewProductForm, isOpen: isOpenNewProductForm } = useToggle();
@@ -28,14 +26,12 @@ function SellerProductPage() {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const [products, setProducts] = useState([
-    { productId: 1, name: '삼각김밥', price: 1200, categoryName: '도시락/즉석식', stock: 60 },
-  ]);
+  const [products, setProducts] = useState([]);
 
   // 상품 선택
   async function onCheck(e) {
     const isChecked = e.currentTarget.checked;
-    const id = e.currentTarget.value;
+    const id = Number(e.currentTarget.value);
 
     if (isChecked) {
       setProductIds((prev) => [...prev, id]);
@@ -64,6 +60,7 @@ function SellerProductPage() {
       ids: productIds,
     };
     const data = deleteSellerProduct(idsInfo);
+    console.log(data);
   }
 
   // 상품 조회
@@ -83,10 +80,9 @@ function SellerProductPage() {
   }
 
   // 상품 추가
-  async function onCreateProductSubmit(e) {
-    const { product } = await mappingSubmitData(e);
-
-    const data = await createSellerProduct([product]);
+  async function onCreateProductSubmit(e, images) {
+    const { requestData } = await mappingSubmitData(e, images);
+    createSellerProduct(requestData);
   }
 
   // 상품 수정
@@ -100,13 +96,14 @@ function SellerProductPage() {
     setProducts(updatedProducts);
 
     const data = await updateSellerProduct(product.productId, product);
+
     if (data.status === 'OK') {
       alert(data.data.productName + '의 정보가 수정되었습니다.');
     }
   }
 
   // 상품 추가/수정 시 데이터 맵핑
-  async function mappingSubmitData(e) {
+  async function mappingSubmitData(e, images) {
     const formData = new FormData(e.currentTarget);
     const productId = Number(formData.get('productId')) || 0;
     const name = formData.get('name')?.toString().trim() || '';
@@ -135,7 +132,16 @@ function SellerProductPage() {
       stock,
     };
 
-    return { productId, product };
+    // FormData를 보내기
+    const requestData = new FormData();
+    requestData.append('product', JSON.stringify(product));
+
+    // 다중 이미지 파일 추가
+    for (let i = 0; i < images.length; i++) {
+      requestData.append('images', images[i]);
+    }
+
+    return { productId, requestData };
   }
 
   useEffect(() => {
@@ -153,11 +159,14 @@ function SellerProductPage() {
           <p>상품 목록 및 관리</p>
           <SellerToolBar>
             <SellerSearch placeholder={'상품명을 입력하세요.'} onSearch={onSearch} />
-            <div className={styles.actionButtonLayout}>
+            <div className={`w-full flex justify-end mt-8 gap-2.5`}>
+              {/* 상품 선택 삭제 버튼 */}
               <SellerActionButton onClick={onDeleteProduct}>
                 <IoRemoveCircleOutline />
                 선택 삭제
               </SellerActionButton>
+
+              {/* 새상품 추가 버튼 */}
               <SellerActionButton onClick={onToggleNewProductForm}>
                 <IoAddCircleOutline />새 상품
               </SellerActionButton>
