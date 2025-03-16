@@ -32,6 +32,7 @@ import SellerInventoryPage from './pages/sellerDashboard/SellerInventoryPage.jsx
 import SellerSalesPage from './pages/sellerDashboard/SellerSalesPage.jsx';
 import SellerPaymentPage from './pages/sellerDashboard/SellerPaymentPage.jsx';
 import ProductDetailPage from './pages/ProductDetailPage';
+import PaymentPage from './pages/PaymentPage';
 
 import Footer from './components/layout/Footer'; // ✅ Footer import 추가
 
@@ -148,6 +149,7 @@ function App() {
               <Route path='/category/:categoryId' element={<CategoryPage />} />
               <Route path='/search' element={<SearchPage />} />
               <Route path='/product/:productId' element={<ProductDetailPage />} />
+              <Route path='/paymentpage' element={<PaymentPage />} />
               {/* <Route path="/product/recommend-text" element={<ChatBot />} /> */}
 
               {/* ✅ 판매자 대시보드 경로 유지 */}
