@@ -1,9 +1,18 @@
 const BASE_URL = 'http://localhost:5000';
 
 export const apiRoutes = {
+  // 상품
   products: {
     getAll: (page, size) => BASE_URL + `/products?page=${page}&size=${size}`,
     getById: (productId) => BASE_URL + `/products/${productId}`,
+  },
+
+  // 카테고리
+  categories: {
+    getAll: () => BASE_URL + `/category/root`,
+    getSubcategories: (categoryId) => BASE_URL + `/category/${categoryId}/subcategories`,
+    /** 대/중분류 전체 조회 */
+    getAllWithHierarchy: () => BASE_URL + `/category/hierarchy`,
   },
 
   // 판매자

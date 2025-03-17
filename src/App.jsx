@@ -158,7 +158,7 @@ function App() {
                 <Route path='order' element={<SellerOrderPage />} />
                 <Route path='inventory' element={<SellerInventoryPage />} />
                 <Route path='sales' element={<SellerSalesPage />} />
-                <Route path='payment' element={<SellerPaymentPage />} />
+                <Route path='settlement' element={<SellerPaymentPage />} />
               </Route>
 
               <Route path='/editor' element={<ShopEditorPage />}></Route>

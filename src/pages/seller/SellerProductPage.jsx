@@ -85,7 +85,7 @@ function SellerProductPage() {
     createSellerProduct(requestData);
   }
 
-  // 상품 수정
+  // 상품 수정cdc
   async function onUpdateProduct(product) {
     const updatedProducts = products.map((oldProduct) => {
       if (oldProduct.productId === product.productId) {

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import SortList from '../../../components/SortList';
 
 /**
@@ -5,16 +6,47 @@ import SortList from '../../../components/SortList';
  * @returns
  */
 export function TemplateHeader({ properties }) {
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+
   return (
-    <div className='relative w-full flex justify-between items-center gap-2 border-b border-[#E4E4E7]  p-2 cursor-move'>
-      {/* 팔로우 버튼 */}
-      <div className='bg-[#2477d5] flex items-center justify-center max-h-[35px] w-[100px] text-[0.9rem] text-white text-center rounded-sm p-2'>
-        <button>팔로우</button>
+    <div className='relative w-full flex justify-between items-center gap-2 border-b border-[#E4E4E7] p-2'>
+      {/* 카테고리 버튼 */}
+      <button
+        className='z-20 p-2 bg-gray-100 rounded-md'
+        onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+      >
+        ☰
+      </button>
+
+      {/* 카테고리 바 */}
+      <div
+        className={`fixed z-50 top-0 left-0 h-full w-[250px] bg-white shadow-lg transition-transform duration-300 ${
+          isCategoryOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <button className='p-2 text-right w-full' onClick={() => setIsCategoryOpen(false)}>
+          ✕
+        </button>
+        <ul className='p-4'>
+          {properties?.categories?.map((category) => (
+            <li key={category} className='p-2 border-b cursor-pointer hover:bg-gray-100'>
+              {category}
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* 로고 */}
-      <div className='w-[200px] text-center'>
-        <img src={properties.logoUrl} alt='로고 이미지' />
+      <div className='w-[60px] h-[55px] text-center relative '>
+        {properties.logoUrl ? (
+          <img
+            className='w-full h-full'
+            src={properties.logoUrl}
+            width={50}
+            height={50}
+            alt='로고 이미지'
+          />
+        ) : null}
       </div>
 
       {/* 네비게이션 */}
@@ -25,6 +57,14 @@ export function TemplateHeader({ properties }) {
           ))}
         </ul>
       </div>
+
+      {/* 오버레이 (카테고리 열렸을 때 클릭 시 닫힘) */}
+      {isCategoryOpen && (
+        <div
+          className='fixed inset-0 bg-black opacity-30 z-30'
+          onClick={() => setIsCategoryOpen(false)}
+        ></div>
+      )}
     </div>
   );
 }
@@ -44,13 +84,15 @@ export function TemplateBanner({ properties }) {
           <h2 className='text-3xl'>{properties.title}</h2>
           <h3 className='text-xl mt-3'>{properties.subtitle}</h3>
         </div>
-        <img
-          className='w-full h-full'
-          src={properties.imageUrl}
-          alt='배너 이미지'
-          width={1024}
-          height={300}
-        />
+        {properties.imageUrl ? (
+          <img
+            className='w-full h-full'
+            src={properties.imageUrl}
+            alt='배너 이미지'
+            width={1024}
+            height={300}
+          />
+        ) : null}
       </figure>
     </div>
   );

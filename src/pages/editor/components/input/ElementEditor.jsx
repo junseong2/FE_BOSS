@@ -1,11 +1,20 @@
 import { useState } from 'react';
-import { IoAdd, IoTrashOutline } from 'react-icons/io5';
 import Label from '../../../../components/Label';
 import Input from '../../../../components/Input';
+import EditorCategorySelector from '../../EditorCategorySelector';
+import { SingleImageUploader } from '../../../../components/ImageUploader';
 
-export default function ElementEditor({ element, onUpdate }) {
+export default function ElementEditor({ element, onUpdate, categories }) {
   const [editedElement, setEditedElement] = useState(element); // 수정된 요소 관리
 
+  const [isToggleCategoryEditor, setIsToggleCategoryEditor] = useState(false);
+
+  // 카테고리 에디터 토글 핸들러
+  const handleCategoryEditor = () => {
+    setIsToggleCategoryEditor((prev) => !prev);
+  };
+
+  // 편집 요소 수정 핸들러
   const handleChange = (key, value) => {
     setEditedElement((prev) => ({
       ...prev,
@@ -16,62 +25,46 @@ export default function ElementEditor({ element, onUpdate }) {
     }));
   };
 
+  // 편집 이미지 변경 핸들러
+  const handleChangeImage = (previewImgUrl) => {
+    setEditedElement((prev) => ({
+      ...prev,
+      properties: {
+        ...prev.properties,
+        logoUrl: previewImgUrl,
+      },
+    }));
+  };
+
+  // 편집 요소 수정
   const handleSave = () => {
     onUpdate(editedElement);
   };
 
+  // 편집기 렌더링
   const renderEditor = () => {
     switch (element.type) {
       // 헤더
       case 'header':
         return (
           <>
-            {/* 쇼핑몰 이름 */}
-            <div className='space-y-2 mb-4 flex-col flex w-full'>
-              <Label htmlFor={'title'} className={'w-full'} label={'제목'} />
-              <Input
-                id={'title'}
-                value={editedElement.properties.title}
-                onChange={(e) => handleChange('title', e.target.value)}
-              />
+            {/* 로고 설정 */}
+            <div className='space-y-2'>
+              <Label label={'로고 설정'} />
+
+              <SingleImageUploader onUpdateImage={handleChangeImage} />
             </div>
 
             {/* 메뉴 항목 */}
             <div className='space-y-2'>
-              <Label label={'메뉴 항목'} />
-              {editedElement.properties.menuItems.map((item, index) => (
-                <div key={index} className='flex gap-2 mb-2'>
-                  <Input
-                    value={item}
-                    onChange={(e) => {
-                      const newItems = [...editedElement.properties.menuItems];
-                      newItems[index] = e.target.value;
-                      handleChange('menuItems', newItems);
-                    }}
-                  />
-                  {/* 항목 삭제 버튼 */}
-                  <button
-                    onClick={() => {
-                      const newItems = editedElement.properties.menuItems.filter(
-                        (_, i) => i !== index,
-                      );
-                      handleChange('menuItems', newItems);
-                    }}
-                  >
-                    <IoTrashOutline className='h-4 w-4' />
-                  </button>
-                </div>
-              ))}
+              <Label label={'메뉴 설정'} />
 
-              {/* 메뉴 항목 추가 버튼 */}
+              {/* 임시 토글 버튼 */}
               <button
                 className='mt-3 border rounded-[3px] text-sm p-1 flex gap-2 items-center justify-end hover:cursor-pointer border-[#4294F2] text-[#4294F2]'
-                onClick={() => {
-                  handleChange('menuItems', [...editedElement.properties.menuItems, '새 항목']);
-                }}
+                onClick={handleCategoryEditor}
               >
-                <IoAdd />
-                추가
+                편집창 오픈
               </button>
             </div>
           </>
@@ -162,14 +155,21 @@ export default function ElementEditor({ element, onUpdate }) {
   };
 
   return (
-    <div className='space-y-6'>
-      {renderEditor()}
-      <button
-        onClick={handleSave}
-        className='w-full rounded-sm p-2 bg-[#4294F2] text-white md:text-[14px] text-sm'
-      >
-        적용
-      </button>
-    </div>
+    <>
+      <div className='space-y-6'>
+        {renderEditor()}
+        <button
+          onClick={handleSave}
+          className='w-full rounded-sm p-2 bg-[#4294F2] text-white md:text-[14px] text-sm'
+        >
+          적용
+        </button>
+      </div>
+
+      {/* 카테고리 편집기 */}
+      {isToggleCategoryEditor ? (
+        <EditorCategorySelector onCancel={handleCategoryEditor} categories={categories} />
+      ) : null}
+    </>
   );
 }

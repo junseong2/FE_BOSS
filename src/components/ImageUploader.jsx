@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { IoImageOutline } from 'react-icons/io5';
+import { IoImageOutline, IoTrash } from 'react-icons/io5';
 
 /** 단일 이미지 업로드 기능 */
-export function SingleImageUploader() {
+export function SingleImageUploader({ onUpdateImage }) {
   const [preview, setPreview] = useState(null);
   const imageRef = useRef(null);
 
+  // 이미지 업로드
   function imageUpload(e) {
     if (!imageRef.current) return;
 
@@ -18,6 +19,13 @@ export function SingleImageUploader() {
     const imgSrc = URL.createObjectURL(file);
 
     setPreview(imgSrc);
+    onUpdateImage(imgSrc);
+  }
+
+  // 이미지 제거
+  function handleDeleteImage() {
+    onUpdateImage(null);
+    setPreview(null);
   }
 
   useEffect(() => {
@@ -27,12 +35,12 @@ export function SingleImageUploader() {
   }, [preview]);
 
   return (
-    <div className='mt-5'>
-      <strong>이미지 업로드</strong>
+    <div className='relative'>
+      {/* 업로드 인풋 */}
       <label
         ref={imageRef}
-        htmlFor='uploader'
-        className='cursor-pointer mt-2 w-24 h-24 border border-[#75b5ff] flex items-center justify-center rounded-2xl '
+        htmlFor='uploader-single'
+        className='cursor-pointer mt-2 w-full h-[128px] border border-[#75b5ff] flex items-center justify-center rounded-2xl '
       >
         {preview ? (
           <img src={preview} alt='미리보기 이미지' className='w-full h-full' />
@@ -42,12 +50,21 @@ export function SingleImageUploader() {
       </label>
       <input
         onChange={imageUpload}
-        id='uploader'
+        id='uploader-single'
         type='file'
         className={'appearance-none hidden'}
         accept='image/*'
         required
       />
+
+      {/* 임시 토글 버튼 */}
+      <button
+        title='제거 버튼'
+        className='absolute right-1 top-1 rounded-[3px] text-md p-1 flex gap-2 items-center justify-end hover:cursor-pointer text-[#4294F2]'
+        onClick={handleDeleteImage}
+      >
+        <IoTrash />
+      </button>
     </div>
   );
 }
@@ -102,10 +119,10 @@ export function MultipleImageUploader() {
   return (
     <div className='mt-5'>
       <strong>이미지 업로드</strong>
-      <label htmlFor='uploader'></label>
+      <label htmlFor='uploader-multiple'></label>
       <input
         ref={inputRef}
-        id='uploader'
+        id='uploader-multiple'
         onChange={imageUpload}
         type='file'
         className={''}

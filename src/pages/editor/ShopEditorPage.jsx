@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import EditorHeader from './components/layout/EditorHeader';
 import EditorSidebar from './components/layout/EditorSidebar';
 import EditorTab from './components/tab/EditorTab';
@@ -8,15 +8,18 @@ import ElementEditor from './components/input/ElementEditor';
 
 import { elementTemplates, initialElements } from '../../data/shop-templates';
 import { IoCloseOutline } from 'react-icons/io5';
+import { getCategories } from '../../services/category.service';
 
 const sidebarTabList = ['요소', '설정'];
 const canvasTabList = ['미리보기'];
 
 export default function ShopEditorPage() {
-  const [elements, setElements] = useState(initialElements);
-  const [selectedElement, setSelectedElement] = useState(null);
+  const [elements, setElements] = useState(initialElements); // 보여질 요소
+  const [selectedElement, setSelectedElement] = useState(null); // 선택된 요소
   const [sidebarSelectedTabName, setSidebarSelectedTapName] = useState('요소');
   const [canvasSelectedTabName, setCanvasSelectedTabName] = useState('에디터');
+
+  const [categories, setCategories] = useState([]); // 상품 카테고리
 
   // 요소 수정
   const onElementUpdate = (updatedElement) => {
@@ -44,7 +47,6 @@ export default function ShopEditorPage() {
 
   // 판매자의 레이아웃 설정 저장
   const handleSave = () => {
-    console.log('쇼핑몰 구성 저장:', { elements });
     alert('쇼핑몰 구성이 성공적으로 저장되었습니다!');
   };
 
@@ -57,6 +59,16 @@ export default function ShopEditorPage() {
   function onCanvasTabChange(tabName) {
     setCanvasSelectedTabName(tabName);
   }
+
+  // 대/중분류 카테고리 조회
+  async function getCategoriesFetch() {
+    const categories = await getCategories();
+    setCategories(categories);
+  }
+
+  useEffect(() => {
+    getCategoriesFetch();
+  }, []);
 
   return (
     <div className='w-full h-full absolute left-0 top-0 flex'>
@@ -108,7 +120,12 @@ export default function ShopEditorPage() {
               <IoCloseOutline className='w-4 h-4' />
             </button>
           </div>
-          <ElementEditor element={selectedElement} onUpdate={onElementUpdate} />
+
+          <ElementEditor
+            element={selectedElement}
+            onUpdate={onElementUpdate}
+            categories={categories}
+          />
         </div>
       )}
     </div>

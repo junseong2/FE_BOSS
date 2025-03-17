@@ -7,6 +7,7 @@ export const elementTemplates = {
       title: '내 쇼핑몰',
       logoUrl: 'https://placehold.co/50x50',
       menuItems: ['홈', '상품', '카테고리', '소개', '연락처'],
+      categories: [],
     },
   },
   banner: {
@@ -24,9 +25,10 @@ export const elementTemplates = {
     id: 'template-product-grid',
     type: 'productGrid',
     name: '상품 그리드',
+    version: 1,
     properties: {
       sortList: ['실시간', '일간', '주간', '월간'],
-      title: '추천 상품',
+      title: {},
       columns: 3,
     },
   },
@@ -50,6 +52,7 @@ export const initialElements = [
       title: '내 쇼핑몰',
       logoUrl: 'https://placehold.co/50x50',
       menuItems: ['홈', '상품', '카테고리', '소개', '연락처'],
+      categories: [],
     },
   },
   {
