@@ -1,21 +1,17 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import bossLogo from "../../assets/boss_logo.png";
+import bossLogo from '../../assets/boss_logo.png';
 import { useCart } from '../../context/CartContext';
 import fetchUserInfo from '../../utils/api.js';
-import { useUser } from "../../context/UserContext"; // ✅ 전역 상태 사용
-import { useEffect, useState, useRef } from "react";
-import Draggable from "react-draggable"; 
-import SignIn from "../../pages/SignIn"; 
+import { useUser } from '../../context/UserContext'; // ✅ 전역 상태 사용
+import { useEffect, useState, useRef } from 'react';
+import Draggable from 'react-draggable';
+import SignIn from '../../pages/SignIn';
 
 import { IoSearch, IoGiftOutline } from 'react-icons/io5';
 
 function Top() {
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
-
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
-
-  
   const { userId, setUserId, userName, setUserName } = useUser(); // ✅ 전역 상태 사용
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -23,7 +19,9 @@ function Top() {
 
   const [emails, setEmails] = useState(['']);
   const [phones, setPhones] = useState(['']);
-  const [addresses, setAddresses] = useState([{ address1: '', address2: '', post: '', isDefault: false }]);
+  const [addresses, setAddresses] = useState([
+    { address1: '', address2: '', post: '', isDefault: false },
+  ]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showCartPopup, setShowCartPopup] = useState(false);
   const { cartItems, loadCart } = useCart();
@@ -44,16 +42,7 @@ function Top() {
     console.log('현재 URL:', currentUrl);
 
     setIsModalOpen(true);
-  
-  
   };
-
-
-
-
-
-
-    
 
   const handleLogoutClick = async () => {
     await fetch('http://localhost:5000/auth/logout', { method: 'GET', credentials: 'include' });
@@ -96,89 +85,90 @@ function Top() {
   };
 
   return (
-    <div className="fixed top-0 left-0 w-full h-20 bg-blue-200 flex items-center px-4 z-950">
-      <img 
-            src={`${BASE_URL}/uploads/boss_logo.png`} 
-  style={{ width: '64px', height: 'auto', maxWidth: '64px', maxHeight: '64px' }}
-  onClick={() => navigate('/')}
-/>
+    <>
+    <div className='h-20'></div>
+      <div className='fixed top-0 left-0 w-full h-20 bg-blue-200 flex items-center px-4 z-950'>
+        <img
+          src={`${BASE_URL}/uploads/boss_logo.png`}
+          style={{ width: '64px', height: 'auto', maxWidth: '64px', maxHeight: '64px' }}
+          onClick={() => navigate('/')}
+        />
 
+        <form className='flex items-center gap-2 ml-8' onSubmit={handleSearch}>
+          <input
+            type='text'
+            className='w-80 p-2 border border-gray-400 bg-white rounded-md text-lg'
+            placeholder='검색어 입력'
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
 
-      <form className="flex items-center gap-2 ml-8" onSubmit={handleSearch}>
-      <input
-  type="text"
-  className="w-80 p-2 border border-gray-400 bg-white rounded-md text-lg"
-  placeholder="검색어 입력"
-  value={searchQuery}
-  onChange={(e) => setSearchQuery(e.target.value)}
-/>
+          <button type='submit' className='p-2 text-gray-600 text-3xl'>
+            <IoSearch />
+          </button>
+        </form>
 
-        <button type="submit" className="p-2 text-gray-600 text-3xl">
-          <IoSearch />
-        </button>
-      </form>
-
-      {/* 유저 정보 */}
-      <div className="ml-auto flex flex-col items-end px-6 ">
-        {userId && userName && (
-          <p className="text-sm font-semibold">{userName}님 <span>유저 ID: {userId}</span></p>
-        )}
+        {/* 유저 정보 */}
+        <div className='ml-auto flex flex-col items-end px-6 '>
+          {userId && userName && (
+            <p className='text-sm font-semibold'>
+              {userName}님 <span>유저 ID: {userId}</span>
+            </p>
+          )}
         </div>
-        <div className="flex gap-2 mt-2">
+        <div className='flex gap-2 mt-2'>
           {userId ? (
             <>
+              <div className='flex justify-center space-x-2 mt-0'>
+                <button
+                  className='bg-transparent text-black rounded-full px-6 py-0 text-sm font-bold w-38 h-14 hover:scale-105 transition-transform duration-300'
+                  onClick={() => navigate('/mypage')}
+                >
+                  마이페이지
+                </button>
+                <button
+                  className='bg-transparent text-black rounded-full px-6 py-3 text-sm font-bold w-38 h-14  hover:scale-105 transition-transform duration-300'
+                  onClick={handleLogoutClick}
+                >
+                  로그아웃
+                </button>
+                <button
+                  className='bg-transparent text-black rounded-full px-6 py-3 text-sm font-bold w-38 h-14 hover:scale-105 transition-transform duration-300'
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  onClick={() => navigate('/cart')}
+                >
+                  장바구니
+                </button>
+              </div>
 
-
-
-
-      <div className="flex justify-center space-x-2 mt-0">
-        <button 
-          className="bg-transparent text-black rounded-full px-6 py-0 text-sm font-bold w-38 h-14 hover:scale-105 transition-transform duration-300"
-          onClick={() => navigate('/mypage')}
-        >
-          마이페이지
-        </button>
-        <button 
-          className="bg-transparent text-black rounded-full px-6 py-3 text-sm font-bold w-38 h-14  hover:scale-105 transition-transform duration-300"
-          onClick={handleLogoutClick}
-        >
-          로그아웃
-        </button>
-        <button 
-          className="bg-transparent text-black rounded-full px-6 py-3 text-sm font-bold w-38 h-14 hover:scale-105 transition-transform duration-300"
-          onMouseEnter={handleMouseEnter} 
-          onMouseLeave={handleMouseLeave} 
-          onClick={() => navigate('/cart')}
-        >
-          장바구니
-        </button>
-      </div>
-   
-
-  
-{showCartPopup && (
-                <div className="absolute top-20 right-4 bg-white border border-gray-400 rounded-md p-2 w-40 shadow-lg">
+              {showCartPopup && (
+                <div className='absolute top-20 right-4 bg-white border border-gray-400 rounded-md p-2 w-40 shadow-lg'>
                   {loadingCart ? <p>장바구니 로딩 중...</p> : getCartItemList()}
                 </div>
               )}
             </>
-          ) :(
-            <button className="border-2 border-black rounded-md px-3 py-1 text-xs font-bold" onClick={handleSignInClick}>
+          ) : (
+            <button
+              className='border-2 border-black rounded-md px-3 py-1 text-xs font-bold'
+              onClick={handleSignInClick}
+            >
               로그인
             </button>
           )}
         </div>
-  
+
         {/* ✅ 로그인 모달 */}
         {isModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
+          <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
+            <div className='bg-white p-6 rounded-lg shadow-lg'>
               <SignIn onClose={() => setIsModalOpen(false)} />
             </div>
           </div>
         )}
       </div>
-    );
-  }
+    </>
+  );
+}
 
 export default Top;

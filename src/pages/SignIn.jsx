@@ -111,6 +111,7 @@ function SignIn({ onClose }) {
         <div className='flex justify-between mt-3'>
           <button
             onClick={() => {
+           
               navigate('/signup');
               onClose();
             }}
