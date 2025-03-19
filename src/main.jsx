@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'; // ✅ 여기만 사용!
 import './index.css';
 import './menubar.css';
 import './animations.css';
+import React from "react";
 
 import './responsive.css';
 import 'bootstrap/dist/css/bootstrap.min.css';

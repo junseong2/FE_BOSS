@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import fetchUserInfo from '../utils/api';
 
-import './styles/signin.css'; // ✅ signin.css 추가!
 
 function SignIn({ onClose }) {
   // ✅ 모달 닫기 함수 추가
@@ -13,6 +12,7 @@ function SignIn({ onClose }) {
   const [redirectUrl, setRedirectUrl] = useState('/');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
   const getRedirectUrl = async () => {
     try {
@@ -60,7 +60,7 @@ function SignIn({ onClose }) {
         const data = await response.json();
         console.log('로그인된 사용자 정보:', data);
         setUserName(data.userName);
-        navigate('/');
+        navigate('-1');
       } else {
         console.error('로그인 상태 확인 실패:', response.status);
       }
@@ -86,22 +86,24 @@ function SignIn({ onClose }) {
   }, [location.search]);
 
   const handleLogin = async () => {
-    try {
+    try {    console.log("onClose prop:", onClose); // ✅ onClose가 제대로 전달되었는지 확인
+
       const response = await fetch('http://localhost:5000/auth/locallogin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
         credentials: 'include',
       });
-
+  
       const result = await response.json();
-
+  
       if (response.ok) {
-        alert('로그인 성공!');
+        if (onClose) onClose();
         setUserName(result.userName);
+        const redirectPath = location.state?.from || '/'; // ✅ 원래 페이지가 있으면 이동, 없으면 홈으로
+        navigate(redirectPath);
         await fetchUserInfo(setUserId, setUserName);
-
-        onClose(); // ✅ 로그인 성공 시 모달 닫기
+  
       } else {
         alert('로그인 실패: ' + result.error);
       }
@@ -110,66 +112,62 @@ function SignIn({ onClose }) {
       alert('로그인 중 오류가 발생했습니다.');
     }
   };
-
-  const handleKakaoLogin = () => {
-    window.location.href = `http://localhost:5000/auth/kakao`;
-  };
-
-  const handleNaverLogin = () => {
-    window.location.href = 'http://localhost:5000/auth/naver';
-  };
-
-  const handleGoogleLogin = () => {
-    window.location.href = `http://localhost:5000/auth/google`;
-  };
-
-  const handleSignUpRedirect = () => {
-    navigate('/signup');
-  };
-
+  
   return (
-    <div className='signin-modal-overlay'>
-      <div className='signin-modal-content'>
-        <button className='signin-modal-close-btn' onClick={onClose}>
-          X
-        </button>{' '}
-        {/* ✅ 닫기 버튼 */}
-        <h2>로그인</h2>
+    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm relative">
+        <button 
+          className="absolute top-4 right-4 text-gray-600 hover:text-blue-500 text-2xl font-bold transition-transform transform hover:rotate-90" 
+          onClick={onClose}>
+          ×
+        </button>
+        <h2 className="text-2xl font-bold text-center text-black-800 mb-6">로그인</h2>
         <input
-          type='email'
-          placeholder='이메일 입력'
+          type="email"
+          placeholder="이메일 입력"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <input
-          type='password'
-          placeholder='비밀번호 입력'
+          type="password"
+          placeholder="비밀번호 입력"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <button onClick={handleLogin} className='login-btn'>
+
+        <button 
+          onClick={handleLogin} 
+          className="w-full bg-blue-600 hover:bg-blue-700 text-black py-3 text-center rounded-lg font-bold transition-all">
           로그인
         </button>
-        <button onClick={handleSignUpRedirect} className='signup-redirect-btn'>
+
+        <button 
+          onClick={() => window.location.href = '/signup'} 
+          className="w-full mt-4 text-blue-500 text-center">
           회원가입
         </button>
-        <h1>
-          또는<br></br>소셜 로그인
-        </h1>
-        <img
-          src='src/assets/kakao_login_logo.png'
-          alt='Kakao 로그인'
-          className='login-btn'
-          onClick={handleKakaoLogin}
-          style={{ cursor: 'pointer', width: '100px', height: 'auto' }}
-        />
-        <img
-          src='src/assets/naver_login_logo.png'
-          alt='Naver 로그인'
-          className='login-btn'
-          onClick={handleNaverLogin}
-          style={{ cursor: 'pointer', width: '100px', height: 'auto', marginLeft: '50px' }}
-        />
+        <h1 className="text-lg font-semibold text-center text-gray-700 mt-6">또는 소셜 로그인</h1>
+        <div className="flex justify-center gap-4 mt-4">
+          
+          
+          <img
+            src={`${BASE_URL}/uploads/kakao_login_logo.png`} 
+            alt='Kakao 로그인'
+            className='cursor-pointer w-24 h-auto'
+            onClick={() => window.location.href = 'http://localhost:5000/auth/kakao'}
+          />
+
+
+          
+          <img
+            src={`${BASE_URL}/uploads/naver_login_logo.png`} 
+            alt='Naver 로그인'
+            className='cursor-pointer w-24 h-auto'
+            onClick={() => window.location.href = 'http://localhost:5000/auth/naver'}
+          />
+        </div>
       </div>
     </div>
   );

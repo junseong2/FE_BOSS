@@ -1,0 +1,77 @@
+.footer-container {
+  background-color: #333;
+  color: white;
+  padding: 40px 0; /* ✅ 패딩을 더 크게 조정하여 웹에서 넓게 보이게 설정 */
+  text-align: center;
+  width: 100%;
+  position: relative;
+  bottom: 0;
+  left: 0;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 20px 0;
+  max-width: 1400px; /* ✅ 웹에서는 더 넓게 */
+  margin: 0 auto;
+}
+
+.footer-link-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1400px; /* ✅ 최대 너비 확장 */
+  margin: 0 auto;
+}
+
+.footer-link-items {
+  flex: 1;
+  min-width: 200px; /* ✅ 각 링크 그룹이 적절한 크기를 가지도록 설정 */
+  margin: 10px 20px;
+  text-align: left;
+}
+
+.footer-link-items h2 {
+  font-size: 18px; /* ✅ 글자 크기를 키움 */
+  margin-bottom: 10px;
+}
+
+.footer-link-items a {
+  color: white;
+  text-decoration: none;
+  margin-bottom: 5px;
+  display: block;
+  font-size: 14px; /* ✅ 웹에서는 글씨 크기 증가 */
+}
+
+.footer-link-items a:hover {
+  text-decoration: underline;
+}
+
+.social-media {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.social-media-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  max-width: 1400px; /* ✅ 웹에서 너비 확장 */
+  margin: 0 auto;
+  padding: 10px 20px;
+}
+
+.social-icons {
+  display: flex;
+  gap: 15px;
+}
+
+.social-icon-link {
+  color: white;
+  font-size: 24px;
+}

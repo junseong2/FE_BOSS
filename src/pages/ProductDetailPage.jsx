@@ -10,8 +10,11 @@ function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const BASE_IMAGE_URL = 'http://localhost:5000/uploads'; // Spring Boot 서버 URL,차후 배포할때 수정
+  const DEFAULT_IMAGE_PATH = `${BASE_IMAGE_URL}/default-product.jpg`;
+  
+  const [imageError, setImageError] = useState(false);
 
-  // ✅ 로그인 정보 가져오기
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -19,22 +22,16 @@ function ProductDetailPage() {
           method: 'GET',
           credentials: 'include',
         });
-
-        if (!response.ok) {
-          throw new Error('로그인 정보 조회 실패');
-        }
-
+        if (!response.ok) throw new Error('로그인 정보 조회 실패');
         const data = await response.json();
         setUserId(data.userId);
       } catch (error) {
         console.error('사용자 정보 조회 오류:', error.message);
       }
     };
-
     fetchUserInfo();
   }, []);
 
-  // ✅ 상품 정보 가져오기
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -44,126 +41,121 @@ function ProductDetailPage() {
         console.error('상품 정보를 불러오는 데 실패했습니다.', error);
       }
     };
-
     fetchProduct();
   }, [productId]);
 
-  // ✅ product가 바뀌면 currentImageIndex 초기화
   useEffect(() => {
-    if (product?.gImage && product.gImage.length > 0) {
+    if (product?.gimage) {
       setCurrentImageIndex(0);
     }
   }, [product]);
 
-  // ✅ 수량 증가 함수
-  const increaseQuantity = () => {
-    setQuantity((prev) => prev + 1);
-  };
+  const increaseQuantity = () => setQuantity((prev) => prev + 1);
+  const decreaseQuantity = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
-  // ✅ 수량 감소 함수 (최소 1)
-  const decreaseQuantity = () => {
-    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
-  };
-
-  const addToCart = async (event, productId) => {
-    event.stopPropagation(); // ✅ 상세 페이지 이동 방지
-
-    if (!productId) {
-      console.error('❌ productId가 없음! API 요청 중단');
-      return;
-    }
-
-    console.log(`🛒 장바구니 추가 요청: productId=${productId}, quantity=${quantity}`);
-
+  const addToCart = async (event) => {
+    event.stopPropagation();
+    if (!product) return;
     try {
+
       const response = await fetch('http://localhost:5000/cart/add', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // ✅ JWT 쿠키 자동 전송
-        body: JSON.stringify({ productId, quantity }),
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ productId: product.productId, quantity }),
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`장바구니 추가 실패: ${errorText}`);
-      }
-
-      const data = await response.json();
-      console.log('✅ 장바구니 추가 성공:', data);
+      if (!response.ok) throw new Error('장바구니 추가 실패');
       alert('✅ 장바구니에 상품이 추가되었습니다!');
     } catch (error) {
       console.error('❌ 장바구니 추가 오류:', error);
     }
   };
 
-  if (!product) {
-    console.log('🚀 상품 정보가 없음! 데이터를 불러오는 중...');
+
+  let imageList = [DEFAULT_IMAGE_PATH];
+
+  if (product?.gimage) {
+    if (typeof product.gimage === 'string') {
+      imageList = product.gimage
+        .split(',')
+        .map((img) => img.trim())
+        .filter((img) => img !== '')
+        .map((img) => `${BASE_IMAGE_URL}/${img}`); // 상대 경로 유지
+    } else if (Array.isArray(product.gimage)) {
+      imageList = product.gimage
+        .map((img) => img.trim())
+        .filter((img) => img !== '')
+        .map((img) => `${BASE_IMAGE_URL}/${img}`);
+    }
   }
-
-  const imageList =
-    product?.gimage && product.gimage.length > 0 ? product.gimage : ['/default-product.jpg'];
-
-  // ✅ 스와이프 기능 추가
+  
+  if (imageList.length === 0) {
+    imageList = [DEFAULT_IMAGE_PATH]; // 이미지가 없을 경우 기본 이미지
+  }
+  
+  // 🛠 최종 이미지 리스트 로그 확인
+  console.log('📸 최종 이미지 리스트:', imageList);
+  
   const handlers = useSwipeable({
     onSwipedLeft: () => {
-      if (!imageList || imageList.length === 0) return;
-      setCurrentImageIndex((prevIndex) => (prevIndex === imageList.length - 1 ? 0 : prevIndex + 1));
+      setCurrentImageIndex((prev) => (prev === imageList.length - 1 ? 0 : prev + 1));
     },
     onSwipedRight: () => {
-      if (!imageList || imageList.length === 0) return;
-      setCurrentImageIndex((prevIndex) => (prevIndex === 0 ? imageList.length - 1 : prevIndex - 1));
+      setCurrentImageIndex((prev) => (prev === 0 ? imageList.length - 1 : prev - 1));
     },
     preventDefaultTouchmoveEvent: true,
     trackMouse: true,
   });
-
-  useEffect(() => {
-    console.log('📸 현재 이미지 인덱스:', currentImageIndex);
-  }, [currentImageIndex]);
-
+  
+  // ✅ product가 없을 경우에는 `return` 실행
   if (!product) {
     return <p>상품 정보를 불러오는 중...</p>;
   }
+  
 
   return (
-    <div className='product-detail-container'>
-      <div className='image-carousel' {...handlers}>
-        <img
-          src={encodeURI(imageList[currentImageIndex])}
-          alt={product?.name || '상품 이미지'}
-          className='product-image'
-          onError={(e) => (e.target.src = '/default-product.jpg')}
-          style={{
-            width: '400px',
-            height: 'auto',
-            maxHeight: '300px',
-            objectFit: 'cover',
-            borderRadius: '10px',
-          }}
-        />
+    <div className="flex flex-col items-center p-5 max-w-3xl mx-auto bg-white rounded-lg shadow-md">
+      <div className="w-full max-w-md flex justify-center items-center relative mb-5" {...handlers}>
+        <button className="absolute left-2 bg-gray-300 p-2 rounded-full" onClick={() => setCurrentImageIndex((prev) => (prev === 0 ? imageList.length - 1 : prev - 1))}>&lt;</button>
+        
+        
+        
+        
+        <img 
+  src={!imageError ? imageList[currentImageIndex % imageList.length] : DEFAULT_IMAGE_PATH}
+  alt={product?.name || '상품 이미지'} 
+  className="w-full max-h-96 object-cover rounded-lg" 
+  onError={() => setImageError(true)} // 이미지 로드 실패 시 상태 업데이트
+/>
+
+        
+        
+        <button className="absolute right-2 bg-gray-300 p-2 rounded-full" onClick={() => 
+          setCurrentImageIndex((prev) => (prev + 1) % imageList.length)}>&gt;</button>
       </div>
-
-      <div className='product-info'>
-        <h2>{product.name}</h2>
-        <p className='price'>{product.price.toLocaleString()}원</p>
-        <p className='description'>{product.description}</p>
-
-        {/* ✅ 수량 조절 UI */}
-        <div className='quantity-selector'>
-          <button onClick={decreaseQuantity}>➖</button>
-          <span>{quantity}</span>
-          <button onClick={increaseQuantity}>➕</button>
+      <div className="text-center w-full px-4">
+        <h2 className="text-2xl font-bold mb-3">{product.name}</h2>
+        {product.discountPrice && <p className="text-lg text-red-500 font-bold">{product.discountPrice.toLocaleString()}원</p>}
+        <p className="text-xl font-bold text-orange-500 mb-3">{product.price.toLocaleString()}원</p>
+        <p className="text-gray-700 mb-4">{product.description}</p>
+        <div className="flex justify-center items-center mb-5">
+          <button className="px-4 py-2 bg-gray-300 rounded-l" onClick={decreaseQuantity}>➖</button>
+          <span className="px-4 text-lg font-bold">{quantity}</span>
+          <button className="px-4 py-2 bg-gray-300 rounded-r" onClick={increaseQuantity}>➕</button>
         </div>
-
-        <button onClick={(event) => addToCart(event, product.productId)}>장바구니 추가</button>
-        <button className='back-btn' onClick={() => navigate(-1)}>
-          뒤로 가기
-        </button>
+        <button className="w-full max-w-sm py-3 bg-blue-500 text-white rounded-lg mb-3" onClick={addToCart}>장바구니 추가</button>
+        <button className="w-full max-w-sm py-3 bg-[#99E6FC] text-white rounded-lg">구매하기</button>
+      </div>
+      <div className="w-full max-w-lg mt-6 p-4 border-t">
+        <h3 className="text-lg font-bold mb-2">배송 및 주문 정보</h3>
+        <p>📦 배송기간: {product.deliveryTime || '2~3일 소요'}</p>
+        <p>🚚 배송비: {product.deliveryFee ? `${product.deliveryFee.toLocaleString()}원` : '무료 배송'}</p>
+        <p>🔄 반품 정책: {product.returnPolicy || '반품 불가'}</p>
+        <p>📍 판매자: {product.seller || '알 수 없음'}</p>
       </div>
     </div>
   );
 }
+
 
 export default ProductDetailPage;

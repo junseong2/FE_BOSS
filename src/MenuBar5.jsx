@@ -63,7 +63,9 @@ function MenuBar5() {
           <FaBars className={styles.iconChange} />
         )}
       </div>
-
+   {/* 추가된 Intro와 Shop 버튼 */}
+ 
+   
       <div className={`${styles.menuBar2} ${isMenuOpen ? styles.open : styles.closed}`}>
         <div className={styles.menuItem}>
           <Link to='/' className={styles.menuLink}>
@@ -96,6 +98,9 @@ function MenuBar5() {
             <IoPersonOutline /> 등록된 얼굴 목록
           </Link>
         </div>
+
+
+        
       </div>
     </>
   );

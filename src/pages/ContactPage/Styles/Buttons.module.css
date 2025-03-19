@@ -1,0 +1,21 @@
+/* ContactPage/Styles/Buttons.module.css */
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+}
+
+.submitButton {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.submitButton:hover {
+  background-color: #0056b3;
+}
