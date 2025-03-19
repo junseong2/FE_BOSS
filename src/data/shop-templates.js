@@ -27,18 +27,12 @@ export const elementTemplates = {
     name: '상품 그리드',
     version: 1,
     properties: {
-      sortList: ['실시간', '일간', '주간', '월간'],
+      sortList: {
+        new: [],
+        best: [],
+        recommend: [],
+      }[('실시간', '일간', '주간', '월간')],
       title: {},
-      columns: 3,
-    },
-  },
-  categoryList: {
-    id: 'template-category-list',
-    type: 'categoryList',
-    name: '카테고리 목록',
-    properties: {
-      title: '카테고리별 쇼핑',
-      categories: ['의류', '전자제품', '가정용품', '뷰티', '스포츠'],
     },
   },
 };
