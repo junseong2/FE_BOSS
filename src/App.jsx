@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
-import AppLayout from './AppLayout'; // ✅ AppLayout import 추가
-import ShopPage from './pages/ShopPage';
+import { UserProvider } from "./context/UserContext.jsx";
 
-import './App.css';
-import './layout.css';
+import AppLayout from './AppLayout';
+import ShopPage from './pages/ShopPage';
+import IntroPage from './pages/IntroPage';
+
+import './index.css'; // ✅ Tailwind가 적용된 index.css 사용
 import Top from './components/layout/Top';
 import MenuBar from './MenuBar';
 import BottomNavigation from './components/layout/BottomNavigation';
@@ -18,18 +20,20 @@ import CameraCapturePage from './pages/CameraCapturePage';
 import ContactPage from './pages/ContactPage';
 import MyPage from './pages/MyPage';
 import EventPage from './pages/EventPage';
+import PaymentPage from './pages/PaymentPage';
 import ChatBot from './components/layout/ChatBot';
 
 import SignUp from './pages/SignUp';
 import CategoryPage from './pages/CategoryPage';
 import SearchPage from './pages/SearchPage';
-import SellerPage from './pages/seller/SellerPage.jsx';
-import SellerDashboardPage from './pages/seller/SellerDashboardPage.jsx';
-import SellerProductPage from './pages/seller/SellerProductPage.jsx';
-import SellerOrderPage from './pages/seller/SellerOrderPage.jsx';
-import SellerInventoryPage from './pages/seller/SellerInventoryPage.jsx';
-import SellerSalesPage from './pages/seller/SellerSalesPage.jsx';
-import SellerPaymentPage from './pages/seller/SellerPaymentPage.jsx';
+
+import SellerPage from './pages/sellerDashboard/SellerPage.jsx';
+import SellerDashboardPage from './pages/sellerDashboard/SellerDashboardPage.jsx';
+import SellerProductPage from './pages/sellerDashboard/SellerProductPage.jsx';
+import SellerOrderPage from './pages/sellerDashboard/SellerOrderPage.jsx';
+import SellerInventoryPage from './pages/sellerDashboard/SellerInventoryPage.jsx';
+import SellerSalesPage from './pages/sellerDashboard/SellerSalesPage.jsx';
+import SellerPaymentPage from './pages/sellerDashboard/SellerPaymentPage.jsx';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ShopEditorPage from './pages/editor/ShopEditorPage.jsx';
 
@@ -42,13 +46,14 @@ function App() {
   const [menuBarId, setMenuBarId] = useState(null);
   const [navigationId, setNavigationId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [sellerMenubarColor, setSellerMenubarColor] = useState('#ffffff');
 
   const location = useLocation();
   const isAdminPage =
-    location.pathname.toLowerCase().startsWith('/editor') || // `/admin`으로 시작하면 true
     location.pathname.toLowerCase().startsWith('/seller') ||
     location.pathname.toLowerCase().startsWith('/admin');
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // ✅ 모바일 여부 체크
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
     if (!storename) {
@@ -70,15 +75,15 @@ function App() {
 
         const sellerData = await sellerResponse.json();
 
-        console.log('📌 [fetchSellerInfo] 응답 데이터:', sellerData); // ✅ API 응답 확인
+        console.log('📌 [fetchSellerInfo] 응답 데이터:', sellerData);
 
         setSellerId(sellerData.sellerData ?? null);
         setHeaderId(sellerData.headerId ?? null);
         setMenuBarId(sellerData.menuBarId ?? null);
         setSellerId(sellerData.sellerId ?? null);
         setNavigationId(sellerData.navigationId ?? null);
+        setSellerMenubarColor(sellerData.seller_menubar_color ?? '#ffffff');
 
-        console.log('seller:' + sellerData);
       } catch (error) {
         console.error('API 호출 실패:', error);
       } finally {
@@ -99,18 +104,23 @@ function App() {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
   return (
     <CartProvider>
-      <div className='app-container'>
+          <UserProvider>
+
+      <div className="relative flex-col min-h-screen">
         {/* ✅ 관리자 페이지가 아닐 때만 `Top`과 `MenuBar` 렌더링 */}
         {!isAdminPage && <Top />}
         {!isAdminPage && <MenuBar />}
 
-        <div className={`flex-1 ${!isAdminPage ? 'ml-60' : ''}`}>
-          <ChatBot />
-
-          <div className='main-content'>
-            <Routes>
+        
+        <ChatBot />
+    
+        <div className="flex flex-col min-h-screen">
+  <main className="relative flex-1 min-h-[calc(100vh-150px)] pb-[50px] pt-[5px] mt-[10px]">
+{/*150px는 header와 footer높이 합 */}
+          <Routes>
               <Route
                 path='/:storename/*'
                 element={
@@ -120,10 +130,11 @@ function App() {
                     menuBarId={menuBarId}
                     navigationId={navigationId}
                     setStorename={setStorename}
+                    sellerMenubarColor={sellerMenubarColor} 
                   />
                 }
               >
-                <Route
+                             <Route
                   path='shop'
                   element={
                     <ShopPage
@@ -131,10 +142,25 @@ function App() {
                       headerId={headerId}
                       menuBarId={menuBarId}
                       navigationId={navigationId}
+                      sellerMenubarColor={sellerMenubarColor} 
                     />
                   }
-                />
-              </Route>
+              />
+              
+              <Route
+                  path='intro'
+                  element={
+                    <IntroPage
+                      sellerId={sellerId}
+                      headerId={headerId}
+                      menuBarId={menuBarId}
+                      navigationId={navigationId}
+                      sellerMenubarColor={sellerMenubarColor} 
+                    />
+                  }
+              />
+              </Route> 
+
 
               {/* ✅ 일반적인 페이지 경로 유지 */}
               <Route path='/' element={<HomePage />} />
@@ -148,6 +174,7 @@ function App() {
               <Route path='/cart' element={<CartPage />} />
               <Route path='/category/:categoryId' element={<CategoryPage />} />
               <Route path='/search' element={<SearchPage />} />
+              <Route path='/payment' element={<PaymentPage />} />
               <Route path='/product/:productId' element={<ProductDetailPage />} />
               {/* <Route path="/product/recommend-text" element={<ChatBot />} /> */}
 
@@ -163,13 +190,22 @@ function App() {
 
               <Route path='/editor' element={<ShopEditorPage />}></Route>
             </Routes>
-          </div>
+          </main>
 
-          {/* <Footer /> */}
+          <Footer />
         </div>
 
         {!isAdminPage && isMobile && <BottomNavigation />}
       </div>
+
+      {/* ✅ 로딩 스피너 */}
+      {loading && (
+        <div className="fixed inset-0 w-full h-screen bg-white/90 flex justify-center items-center text-lg font-bold z-[9999]">
+          로딩 중...
+        </div>
+      )}
+          </UserProvider>
+
     </CartProvider>
   );
 }

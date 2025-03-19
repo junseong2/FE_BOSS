@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
+import './styles/mypage.css';
 
 function MyPage() {
   const [userId, setUserId] = useState(null);
@@ -129,106 +130,38 @@ function MyPage() {
   };
 
   return (
-    <div className='mypage-container'>
-      <h2>마이페이지</h2>
-      <form onSubmit={handleUpdate} className='mypage-form'>
-        <label>이름:</label>
-
-        <input type='text' value={userName} disabled />
-        <br></br>
-        <label>비밀번호:</label>
-        <input type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
-        <br></br>
-        <label>이메일:</label>
+    <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
+      <h2 className="text-2xl font-bold text-center mb-6">마이페이지</h2>
+      <form onSubmit={handleUpdate} className="space-y-4">
+        <label className="block text-gray-700">이름</label>
+        <input className="w-full p-2 border rounded" type="text" value={userName} disabled />
+        
+        <label className="block text-gray-700">비밀번호</label>
+        <input className="w-full p-2 border rounded" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        
+        <label className="block text-gray-700">이메일</label>
         {emails.map((email, index) => (
-          <input
-            key={index}
-            type='email'
-            value={email}
-            onChange={(e) => {
-              const newEmails = [...emails];
-              newEmails[index] = e.target.value;
-              setEmails(newEmails);
-            }}
-            required
-          />
+          <input key={index} className="w-full p-2 border rounded" type="email" value={email} onChange={(e) => {
+            const newEmails = [...emails];
+            newEmails[index] = e.target.value;
+            setEmails(newEmails);
+          }} required />
         ))}
-        <button type='button' onClick={() => setEmails([...emails, ''])}>
-          이메일 추가
-        </button>
-        <br></br>
-        <label>전화번호:</label>
+        <button type="button" className="bg-blue-500 text-white p-2 rounded" onClick={() => setEmails([...emails, ''])}>이메일 추가</button>
+        
+        <label className="block text-gray-700">전화번호</label>
         {phones.map((phone, index) => (
-          <input
-            key={index}
-            type='text'
-            value={phone}
-            onChange={(e) => {
-              const newPhones = [...phones];
-              newPhones[index] = e.target.value;
-              setPhones(newPhones);
-            }}
-          />
+          <input key={index} className="w-full p-2 border rounded" type="text" value={phone} onChange={(e) => {
+            const newPhones = [...phones];
+            newPhones[index] = e.target.value;
+            setPhones(newPhones);
+          }} />
         ))}
-        <button type='button' onClick={() => setPhones([...phones, ''])}>
-          전화번호 추가
-        </button>
-
-        <label>주소:</label>
-        {addresses.map((address, index) => (
-          <div key={index}>
-            <input type='text' placeholder='주소1' value={address.address1} readOnly />
-            <button type='button' onClick={() => handleAddressSearch(index)}>
-              주소 검색
-            </button>
-
-            <input
-              type='text'
-              placeholder='주소2 (상세주소)'
-              value={address.address2}
-              onChange={(e) => {
-                const newAddresses = [...addresses];
-                newAddresses[index].address2 = e.target.value;
-                setAddresses(newAddresses);
-              }}
-            />
-            <input type='text' placeholder='우편번호' value={address.post} readOnly />
-            <label>
-              <input
-                type='checkbox'
-                checked={address.isDefault}
-                onChange={() => {
-                  const newAddresses = [...addresses];
-                  newAddresses[index].isDefault = !newAddresses[index].isDefault;
-                  setAddresses(newAddresses);
-                }}
-              />
-              기본 주소
-            </label>
-          </div>
-        ))}
-        {addresses.length < 3 && (
-          <button
-            type='button'
-            onClick={() =>
-              setAddresses([
-                ...addresses,
-                { address1: '', address2: '', post: '', isDefault: false },
-              ])
-            }
-          >
-            주소 추가
-          </button>
-        )}
-        <br></br>
-        <button type='submit' className='update-btn'>
-          정보 수정
-        </button>
+        <button type="button" className="bg-blue-500 text-white p-2 rounded" onClick={() => setPhones([...phones, ''])}>전화번호 추가</button>
+        
+        <button type="submit" className="w-full bg-green-500 text-white p-2 rounded">정보 수정</button>
       </form>
-
-      <button className='back-btn' onClick={() => navigate('/')}>
-        홈으로 돌아가기
-      </button>
+      <button className="mt-4 w-full bg-gray-500 text-white p-2 rounded" onClick={() => navigate('/')}>홈으로 돌아가기</button>
     </div>
   );
 }

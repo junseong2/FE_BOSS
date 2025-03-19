@@ -6,6 +6,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import './index.css';
 import './menubar.css';
 import './animations.css';
+import React from "react";
 
 import './responsive.css';
 import App from './App.jsx';
