@@ -27,13 +27,13 @@ import SignUp from './pages/SignUp';
 import CategoryPage from './pages/CategoryPage';
 import SearchPage from './pages/SearchPage';
 
-import SellerPage from './pages/sellerDashboard/SellerPage.jsx';
-import SellerDashboardPage from './pages/sellerDashboard/SellerDashboardPage.jsx';
-import SellerProductPage from './pages/sellerDashboard/SellerProductPage.jsx';
-import SellerOrderPage from './pages/sellerDashboard/SellerOrderPage.jsx';
-import SellerInventoryPage from './pages/sellerDashboard/SellerInventoryPage.jsx';
-import SellerSalesPage from './pages/sellerDashboard/SellerSalesPage.jsx';
-import SellerPaymentPage from './pages/sellerDashboard/SellerPaymentPage.jsx';
+import SellerPage from './pages/seller/SellerPage.jsx';
+import SellerDashboardPage from './pages/seller/SellerDashboardPage.jsx';
+import SellerProductPage from './pages/seller/SellerProductPage.jsx';
+import SellerOrderPage from './pages/seller/SellerOrderPage.jsx';
+import SellerInventoryPage from './pages/seller/SellerInventoryPage.jsx';
+import SellerSalesPage from './pages/seller/SellerSalesPage.jsx';
+import SellerPaymentPage from './pages/seller/SellerPaymentPage.jsx';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ShopEditorPage from './pages/editor/ShopEditorPage.jsx';
 
@@ -118,7 +118,7 @@ function App() {
         <ChatBot />
     
         <div className="flex flex-col min-h-screen">
-  <main className="relative flex-1 min-h-[calc(100vh-150px)] pb-[50px] pt-[5px] mt-[10px]">
+  <main className="relative flex-1 min-h-[calc(100vh-150px)] pb-[50px] pt-[55px] mt-[10px]">
 {/*150px는 header와 footer높이 합 */}
           <Routes>
               <Route

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import fetchUserInfo from '../utils/api';
-
+import { getUserInfo, loginRequest } from '../services/auth.service';
+import { getToken } from '../utils/storage';
 
 function SignIn({ onClose }) {
-  // ✅ 모달 닫기 함수 추가
   const [userId, setUserId] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
@@ -12,98 +12,52 @@ function SignIn({ onClose }) {
   const [redirectUrl, setRedirectUrl] = useState('/');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
-  const getRedirectUrl = async () => {
-    try {
-      console.log('리디렉션 URL 가져오는 중...');
-      const response = await fetch('http://localhost:5000/auth/get-redirect-url', {
-        method: 'GET',
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        throw new Error('서버에서 리디렉션 URL을 가져오지 못함');
-      }
-
-      const data = await response.json();
-      console.log('가져온 리디렉션 URL:', data.redirectUrl);
-      setRedirectUrl(data.redirectUrl);
-    } catch (error) {
-      console.error('리디렉션 URL 가져오기 실패:', error);
-    }
-
-    await fetchUserInfo(setUserId, setUserName);
-    console.log('현재 사용자 ID:', userId);
-    console.log('현재 사용자 이름:', userName);
-  };
-
+  // 로그인 상태 추적
   const checkLoginStatus = async () => {
     try {
-      console.log('로그인 상태 확인 중...');
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.error('토큰이 없습니다. 로그인 필요');
-        return;
-      }
-
-      const response = await fetch('http://localhost:5000/auth/user-info', {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log('로그인된 사용자 정보:', data);
-        setUserName(data.userName);
-        navigate('-1');
-      } else {
-        console.error('로그인 상태 확인 실패:', response.status);
-      }
+      const token = getToken();
+      if (!token) return;
+      const data = getUserInfo();
+      setUserName(data.userName);
+      navigate('-1');
     } catch (error) {
       console.error('로그인 상태 확인 중 오류 발생:', error);
     }
   };
 
+  // 소셜 로그인 인증 경로 리디렉트
+  const getRedirectUrl = async () => {
+    try {
+      const data = getRedirectUrl();
+      setRedirectUrl(data.redirectUrl);
+    } catch (error) {
+      console.error('리디렉션 URL 가져오기 실패:', error);
+    }
+  };
+
   useEffect(() => {
-    console.log('SignIn useEffect 실행됨');
     checkLoginStatus();
     getRedirectUrl();
-
-    const params = new URLSearchParams(location.search);
-    const userId = params.get('userId');
-    const userName = params.get('userName');
-
-    console.log('URL Params:', { userId, userName });
-
-    if (userId && userName) {
-      setUserName(userName);
-    }
   }, [location.search]);
 
-  const handleLogin = async () => {
-    try {    console.log("onClose prop:", onClose); // ✅ onClose가 제대로 전달되었는지 확인
 
-      const response = await fetch('http://localhost:5000/auth/locallogin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include',
-      });
-  
-      const result = await response.json();
-  
-      if (response.ok) {
-        if (onClose) onClose();
+  // 로그인 폼 요청
+  const handleLogin = async () => {
+    const formData = {
+      email,
+      password,
+    };
+
+    try {
+      const status = await loginRequest(formData);
+      if (status < 400) {
+        onClose?.();
         setUserName(result.userName);
-        const redirectPath = location.state?.from || '/'; // ✅ 원래 페이지가 있으면 이동, 없으면 홈으로
-        navigate(redirectPath);
+        navigate(location.state?.from || '/');
+
         await fetchUserInfo(setUserId, setUserName);
-  
       } else {
         alert('로그인 실패: ' + result.error);
       }
@@ -112,60 +66,86 @@ function SignIn({ onClose }) {
       alert('로그인 중 오류가 발생했습니다.');
     }
   };
-  
-  return (
-    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm relative">
-        <button 
-          className="absolute top-4 right-4 text-gray-600 hover:text-blue-500 text-2xl font-bold transition-transform transform hover:rotate-90" 
-          onClick={onClose}>
-          ×
-        </button>
-        <h2 className="text-2xl font-bold text-center text-black-800 mb-6">로그인</h2>
-        <input
-          type="email"
-          placeholder="이메일 입력"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <input
-          type="password"
-          placeholder="비밀번호 입력"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
 
-        <button 
-          onClick={handleLogin} 
-          className="w-full bg-blue-600 hover:bg-blue-700 text-black py-3 text-center rounded-lg font-bold transition-all">
+  return (
+    <div className='fixed inset-0 flex items-center justify-center bg-transparent z-50'>
+      <div className='bg-white p-6 rounded-xl shadow-xl w-full max-w-sm relative'>
+        <button
+          className='absolute top-4 right-4 text-gray-600 hover:text-blue-500 text-xl font-bold'
+          onClick={onClose}
+        >
+          &times;
+        </button>
+        <h2 className='text-2xl font-semibold text-center text-gray-800 mb-6'>로그인</h2>
+        <div>
+          <label htmlFor='email' className='text-gray-500'>
+            이메일
+          </label>
+          <input
+            type='email'
+            placeholder='이메일 입력'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className='w-full px-4 py-2 mb-3 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500'
+          />
+        </div>
+        <div className='mt-1.5'>
+          <label htmlFor='password' className='text-gray-500'>
+            비밀번호
+          </label>
+          <input
+            type='password'
+            placeholder='비밀번호 입력'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className='w-full px-4 py-2 mb-4 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500'
+          />
+        </div>
+        <button
+          onClick={handleLogin}
+          className='w-full bg-[#4294F2] hover:bg-[#5d8ee4] cursor-pointer text-white py-2 rounded font-semibold transition'
+        >
           로그인
         </button>
 
-        <button 
-          onClick={() => window.location.href = '/signup'} 
-          className="w-full mt-4 text-blue-500 text-center">
-          회원가입
-        </button>
-        <h1 className="text-lg font-semibold text-center text-gray-700 mt-6">또는 소셜 로그인</h1>
-        <div className="flex justify-center gap-4 mt-4">
-          
-          
+        <div className='flex justify-between mt-3'>
+          <button
+            onClick={() => {
+              navigate('/signup');
+              onClose();
+            }}
+            className='text-blue-500 hover:text-blue-700 text-sm'
+          >
+            회원가입
+          </button>
+          <button
+            onClick={() => navigate('/reset-password')}
+            className='text-blue-500 hover:text-blue-700 text-sm'
+          >
+            비밀번호 찾기
+          </button>
+        </div>
+
+        <div className='flex flex-col relative'>
+          <div className=' absolute w-full h-[0.15px] bg-gray-200 top-[50%] translate-y-[-50%]'></div>
+          <span className='text-2sm font-medium text-center text-gray-400 my-5 bg-white z-10 w-[60px] mx-auto '>
+            또는
+          </span>
+        </div>
+        <div className='flex justify-center gap-4 mt-3'>
           <img
-            src={`${BASE_URL}/uploads/kakao_login_logo.png`} 
+            src={`${BASE_URL}/uploads/kakao_login_logo.png`}
+            width={15}
+            height={15}
             alt='Kakao 로그인'
-            className='cursor-pointer w-24 h-auto'
-            onClick={() => window.location.href = 'http://localhost:5000/auth/kakao'}
+            className='cursor-pointer w-12 h-12 rounded-full bg-gray-200'
+            onClick={() => (window.location.href = `${BASE_URL}/auth/kakao`)}
           />
-
-
-          
           <img
-            src={`${BASE_URL}/uploads/naver_login_logo.png`} 
+            src={`${BASE_URL}/uploads/naver_login_logo.png`}
             alt='Naver 로그인'
-            className='cursor-pointer w-24 h-auto'
-            onClick={() => window.location.href = 'http://localhost:5000/auth/naver'}
+            className='cursor-pointer  w-12 h-12 rounded-full bg-gray-200'
+            onClick={() => (window.location.href = `${BASE_URL}/auth/naver`)}
           />
         </div>
       </div>

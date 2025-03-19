@@ -35,4 +35,11 @@ export const apiRoutes = {
       update: () => BASE_URL + `/seller/inventories`,
     },
   },
+  // 인증
+  auth: {
+    singup:()=> BASE_URL + `/auth/signup`,
+    signin:()=> BASE_URL +`/auth/locallogin`,
+    userInfo:()=> BASE_URL + `/auth/user-info`,
+    redirect:()=> BASE_URL +`/auth/get-redirect-url`
+  },
 };

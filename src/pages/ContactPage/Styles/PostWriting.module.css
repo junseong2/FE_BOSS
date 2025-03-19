@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /* ContactPage/Styles/PostWriting.module.css */
 
 .container {
@@ -8,14 +7,3 @@
   border: 1px solid #ddd;
   background-color: #fff;
 }
-=======
-/* ContactPage/Styles/PostWriting.module.css */
-
-.container {
-  max-width: 600px;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  background-color: #fff;
-}
->>>>>>> 9a46fdb7f53d7fa652d3a25dce333bc76eef7b3e
