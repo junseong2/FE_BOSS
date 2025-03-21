@@ -9,7 +9,7 @@ export const apiRoutes = {
 
   // 카테고리
   categories: {
-    getAll: () => BASE_URL + `/category/root`,
+    getAllMajor: () => BASE_URL + `/category/root`,
     getSubcategories: (categoryId) => BASE_URL + `/category/${categoryId}/subcategories`,
     /** 대/중분류 전체 조회 */
     getAllWithHierarchy: () => BASE_URL + `/category/hierarchy`,
@@ -40,6 +40,8 @@ export const apiRoutes = {
     singup:()=> BASE_URL + `/auth/signup`,
     signin:()=> BASE_URL +`/auth/locallogin`,
     userInfo:()=> BASE_URL + `/auth/user-info`,
-    redirect:()=> BASE_URL +`/auth/get-redirect-url`
+    redirect:()=> BASE_URL +`/auth/get-redirect-url`,
+    emailAuthCode:()=> BASE_URL +`/auth/email/send-code`, //  인증 코드 발송
+    emailCodeVerify:()=> BASE_URL +`/auth/email/code-verify`, // 인증 코드 검증
   },
 };

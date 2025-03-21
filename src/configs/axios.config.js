@@ -31,6 +31,12 @@ instance.interceptors.request.use(function(request){
     // 2xx 외의 범위에 있는 상태 코드는 이 함수를 트리거 함.
     // 응답 오류가 있는 작업 수행
 
+
+    if(error.status === 400){
+      alert(error.response.data.message)
+    }
+
+
     if(error.status === 403){
       alert("로그인 후 이용 가능한 서비스 입니다.")
     }

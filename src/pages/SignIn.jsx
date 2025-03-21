@@ -120,10 +120,10 @@ function SignIn({ onClose }) {
             회원가입
           </button>
           <button
-            onClick={() => navigate('/reset-password')}
+            onClick={() => navigate('/auth/account-recovery')}
             className='text-blue-500 hover:text-blue-700 text-sm'
           >
-            비밀번호 찾기
+            아이디/비밀번호 찾기
           </button>
         </div>
 

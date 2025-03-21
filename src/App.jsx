@@ -36,6 +36,7 @@ import SellerSalesPage from './pages/seller/SellerSalesPage.jsx';
 import SellerPaymentPage from './pages/seller/SellerPaymentPage.jsx';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ShopEditorPage from './pages/editor/ShopEditorPage.jsx';
+import AccountRecoveryPage from './pages/accountRecovery/AccountRecoveryPage.jsx';
 
 import Footer from './components/layout/Footer'; // ✅ Footer import 추가
 
@@ -185,6 +186,9 @@ function App() {
                 </Route>
 
                 <Route path='/editor' element={<ShopEditorPage />}></Route>
+
+                {/* 비밀번호/아이디 찾기 */}
+                <Route path='/auth/account-recovery' element={<AccountRecoveryPage/>}></Route> 
               </Routes>
             </main>
 
