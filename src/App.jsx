@@ -20,7 +20,6 @@ import CameraCapturePage from './pages/CameraCapturePage';
 import ContactPage from './pages/ContactPage';
 import MyPage from './pages/MyPage';
 import EventPage from './pages/EventPage';
-import PaymentPage from './pages/PaymentPage';
 import ChatBot from './components/layout/ChatBot';
 
 import CategoryPage from './pages/CategoryPage';
@@ -36,6 +35,7 @@ import SellerPaymentPage from './pages/seller/SellerPaymentPage.jsx';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ShopEditorPage from './pages/editor/ShopEditorPage.jsx';
 import AccountRecoveryPage from './pages/accountRecovery/AccountRecoveryPage.jsx';
+import PaymentPage from './pages/PaymentPage';
 
 import Footer from './components/layout/Footer'; // ✅ Footer import 추가
 import SignUpPage from './pages/signup/SignUpPage.jsx';
@@ -158,7 +158,6 @@ function App() {
                     }
                   />
                 </Route>
-
                 {/* ✅ 일반적인 페이지 경로 유지 */}
                 <Route path='/' element={<HomePage />} />
                 <Route path='/about' element={<AboutPage />} />
@@ -171,7 +170,7 @@ function App() {
                 <Route path='/cart' element={<CartPage />} />
                 <Route path='/category/:categoryId' element={<CategoryPage />} />
                 <Route path='/search' element={<SearchPage />} />
-                <Route path='/payment' element={<PaymentPage />} />
+                <Route path='/paymentpage' element={<PaymentPage />} />
                 <Route path='/product/:productId' element={<ProductDetailPage />} />
                 {/* <Route path="/product/recommend-text" element={<ChatBot />} /> */}
 
