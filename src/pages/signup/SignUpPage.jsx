@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { registerUser, sendEmailAuthCode, verifyEmailAuthCode } from '../services/auth.service';
+import { emailCheck, formErrorsValidation, phoneNumberCheck } from '../../utils/validation';
+import { registerUser, sendEmailAuthCode, verifyEmailAuthCode } from '../../services/auth.service';
+import { IoBagHandle } from "react-icons/io5";
 
 const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-const phonePattern = /^[0-9]{10,11}$/;
 
-export default function SignUp() {
+export default function SignUpPage() {
+  const [code, setCode] = useState(''); // 이메일 인증 코드
+  const [isSendCode, setIsSendCode] = useState(false);
+  const [isAuthEmail, setIsAuthEmail] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // 전송 로딩 상태
+
   // 폼 데이터 메시지
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
     confirmPassword: '',
-    phone: '',
+    phone1: '',
+    phone2: '',
+    phone3: '',
     zipcode: '',
     address1: '',
     address2: '',
@@ -36,10 +44,6 @@ export default function SignUp() {
     phone: '',
     address1: '',
   });
-
-  const [code, setCode] = useState(''); // 이메일 인증 코드
-  const [isSendCode, setIsSendCode] = useState(false);
-  const [isAuthEmail, setIsAuthEmail] = useState(false);
 
   // 다음 우편번호 스크립트 로드
   useEffect(() => {
@@ -77,14 +81,16 @@ export default function SignUp() {
   };
 
   // 이메일 유효성 -> 이게 통과되어야 발송 버튼 활성화
-  const isValidEmail = emailPattern.test(formData.email);
+  const isValidEmail = emailCheck(formData.email);
 
   // 폼 유효성 검사 결과
-  const isSuccessValidationForm = Object.values(errors).every((error) => error === '');
+  const isSuccessValidationForm = formErrorsValidation(errors);
 
   // 사용자 입력값 처리
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    console.log(name, value);
 
     setFormData({
       ...formData,
@@ -96,6 +102,7 @@ export default function SignUp() {
 
   // 이메일 코드 인증
   const handleEmailVerify = async () => {
+    setIsLoading(true);
     if (formData.email === '') {
       alert('이메일을 입력하세요.');
     }
@@ -110,6 +117,11 @@ export default function SignUp() {
         email: '이메일이 인증되었습니다.',
       }));
 
+      setErrors((prev) => ({
+        ...prev,
+        email: '',
+      }));
+
       // 인증 실패시
     } else {
       alert('이메일 인증에 실패했습니다. 다시 시도해주세요.');
@@ -122,10 +134,13 @@ export default function SignUp() {
         email: '인증에 실패했습니다. 다시 시도해주세요.',
       }));
     }
+
+    setIsLoading(false);
   };
 
   // 이메일 인증코드 전송
   const handleSendEmailAuthCode = async () => {
+    setIsLoading(true);
     if (formData.email === '') {
       alert('이메일을 입력하세요.');
       return;
@@ -135,7 +150,8 @@ export default function SignUp() {
       setIsSendCode(isSuccess);
     } catch (error) {
       alert('이메일 인증 코드 전송 실패');
-      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -147,13 +163,12 @@ export default function SignUp() {
       return alert('폼에 오류가 있습니다. 다시 확인해주세요.');
     }
 
-    try {
-      await registerUser(formData);
+    const isLogin = await registerUser(formData);
+    if (isLogin) {
       alert('회원가입이 완료되었습니다!');
-      window.location.href = '/signin';
-    } catch (error) {
-      console.error('회원가입 실패:', error);
-      alert('회원가입 중 오류가 발생했습니다.');
+      // window.location.href = '/signin';
+    } else {
+      alert('회원가입에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -170,6 +185,8 @@ export default function SignUp() {
     }));
   };
 
+  // 휴대폰 유효성
+  const isValidPhone = phoneNumberCheck(formData.phone1 + formData.phone2 + formData.phone3);
   // 폼 유효성 검사
   const validate = (name, value) => {
     let errorMessage = '';
@@ -185,6 +202,7 @@ export default function SignUp() {
           successMessage = '이름이 확인되었습니다.';
         }
         break;
+
       case 'email':
         if (!value) {
           errorMessage = '이메일을 입력하세요.';
@@ -194,6 +212,7 @@ export default function SignUp() {
           successMessage = '이메일 형식이 올바릅니다.';
         }
         break;
+
       case 'password':
         if (!value) {
           errorMessage = '비밀번호를 입력하세요.';
@@ -208,6 +227,7 @@ export default function SignUp() {
           validate('confirmPassword', formData.confirmPassword);
         }
         break;
+
       case 'confirmPassword':
         if (!value) {
           errorMessage = '비밀번호 확인을 입력하세요.';
@@ -217,15 +237,19 @@ export default function SignUp() {
           successMessage = '비밀번호가 일치합니다.';
         }
         break;
-      case 'phone':
+
+      case 'phone1':
+      case 'phone2':
+      case 'phone3':
         if (!value) {
           errorMessage = '전화번호를 입력하세요.';
-        } else if (!phonePattern.test(value)) {
+        } else if (!isValidPhone) {
           errorMessage = '유효한 전화번호를 입력하세요.';
         } else {
           successMessage = '전화번호가 확인되었습니다.';
         }
         break;
+
       case 'address1':
         if (!value) {
           errorMessage = '주소를 입력하세요.';
@@ -235,7 +259,9 @@ export default function SignUp() {
         break;
       default:
     }
-
+    if (name === 'phone1' || name === 'phone2' || name === 'phone3') {
+      return updateValidateField('phone', errorMessage, successMessage);
+    }
     updateValidateField(name, errorMessage, successMessage);
   };
 
@@ -243,9 +269,11 @@ export default function SignUp() {
     <div className='relative bg-gray-100 min-h-screen flex flex-col justify-center items-center py-12'>
       <div className='max-w-7xl w-full px-6 lg:px-0 flex flex-col lg:flex-row items-center'>
         <div className='lg:w-1/2 text-center lg:text-left mb-8 lg:mb-0'>
-          <h1 className='text-3xl lg:text-4xl font-bold text-[#4294F2] mb-4'>BOSS</h1>
+          <h1 className='text-3xl lg:text-4xl font-bold text-[#4294F2] pl-1 mb-4'>BOSS</h1>
           <p className='lg:block hidden text-lg text-gray-600 mb-6 max-w-lg mx-auto lg:mx-0'>
             간편하게 로그인하고 서비스를 이용해보세요. 아직 회원이 아니신가요? 지금 바로 가입하세요!
+            <IoBagHandle className='text-9xl mx-auto mt-3 rotate-5 animate-pulse' color='#4294F2'/>
+
           </p>
         </div>
 
@@ -265,9 +293,11 @@ export default function SignUp() {
                   onChange={handleChange}
                   className='w-full p-2 py-1.5 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4294F2]'
                 />
-                {errors.username && <p className='text-sm text-red-500 mt-1'>{errors.username}</p>}
+                {errors.username && (
+                  <p className='text-sm text-red-500 pl-1 mt-1'>{errors.username}</p>
+                )}
                 {success.username && (
-                  <p className='text-sm text-green-500 mt-1'>{success.username}</p>
+                  <p className='text-sm text-[#4294F2] pl-1 mt-1'>{success.username}</p>
                 )}
               </div>
 
@@ -284,9 +314,11 @@ export default function SignUp() {
                   onChange={handleChange}
                   className='w-full p-2 py-1.5 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4294F2]'
                 />
-                {errors.password && <p className='text-sm text-red-500 mt-1'>{errors.password}</p>}
+                {errors.password && (
+                  <p className='text-sm text-red-500 pl-1 mt-1'>{errors.password}</p>
+                )}
                 {success.password && (
-                  <p className='text-sm text-green-500 mt-1'>{success.password}</p>
+                  <p className='text-sm text-[#4294F2] pl-1 mt-1'>{success.password}</p>
                 )}
               </div>
 
@@ -307,29 +339,60 @@ export default function SignUp() {
                   className='w-full p-2 py-1.5 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4294F2]'
                 />
                 {errors.confirmPassword && (
-                  <p className='text-sm text-red-500 mt-1'>{errors.confirmPassword}</p>
+                  <p className='text-sm text-red-500 pl-1 mt-1'>{errors.confirmPassword}</p>
                 )}
                 {success.confirmPassword && (
-                  <p className='text-sm text-green-500 mt-1'>{success.confirmPassword}</p>
+                  <p className='text-sm text-[#4294F2] pl-1 mt-1'>{success.confirmPassword}</p>
                 )}
               </div>
 
               {/* 전화번호 */}
               <div className='mb-1'>
-                <label htmlFor='phone' className='block text-sm font-medium text-gray-700'>
-                  전화번호
-                </label>
-                <input
-                  type='text'
-                  id='phone'
-                  name='phone'
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="'-' 없이 입력"
-                  className='w-full p-2 py-1.5 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4294F2]'
-                />
-                {errors.phone && <p className='text-sm text-red-500 mt-1'>{errors.phone}</p>}
-                {success.phone && <p className='text-sm text-green-500 mt-1'>{success.phone}</p>}
+                <div className='flex flex-col items-start'>
+                  <label htmlFor='phone' className='block text-sm font-medium text-gray-700'>
+                    전화번호
+                  </label>
+                  <div className='flex items-center gap-1'>
+                    {/* 3자리 */}
+                    <input
+                      type='text'
+                      id='phone1'
+                      name='phone1'
+                      maxLength={3}
+                      value={formData.phone1}
+                      onChange={handleChange}
+                      placeholder='010'
+                      className='w-full p-2 py-1.5 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4294F2]'
+                    />
+                    -{/* 4자리 */}
+                    <input
+                      type='text'
+                      id='phone2'
+                      name='phone2'
+                      maxLength={4}
+                      value={formData.phone2}
+                      onChange={handleChange}
+                      placeholder='0000'
+                      className='w-full p-2 py-1.5 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4294F2]'
+                    />
+                    -{/* 4자리 */}
+                    <input
+                      type='text'
+                      id='phone3'
+                      name='phone3'
+                      maxLength={4}
+                      value={formData.phone3}
+                      onChange={handleChange}
+                      placeholder='0000'
+                      className='w-full p-2 py-1.5 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4294F2]'
+                    />
+                  </div>
+                  {errors.phone && <p className='text-sm text-red-500 pl-1 mt-1'>{errors.phone}</p>}
+
+                  {success.phone && (
+                    <p className='text-sm text-[#4294F2] pl-1 mt-1'>{success.phone}</p>
+                  )}
+                </div>
               </div>
 
               {/* 주소 검색 */}
@@ -369,9 +432,11 @@ export default function SignUp() {
                   readOnly
                   className='w-full p-2 py-1.5 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4294F2] bg-gray-50'
                 />
-                {errors.address1 && <p className='text-sm text-red-500 mt-1'>{errors.address1}</p>}
+                {errors.address1 && (
+                  <p className='text-sm text-red-500 pl-1 mt-1'>{errors.address1}</p>
+                )}
                 {success.address1 && (
-                  <p className='text-sm text-green-500 mt-1'>{success.address1}</p>
+                  <p className='text-sm text-[#4294F2] pl-1 mt-1'>{success.address1}</p>
                 )}
               </div>
 
@@ -411,22 +476,24 @@ export default function SignUp() {
                   <button
                     onClick={() => {
                       if (!isValidEmail) return alert('이메일 형식을 확인 후 다시 시도하세요.');
+
                       if (isSendCode) {
+                        // 인증코드 전송이 성공한 경우 코드 인증
                         handleEmailVerify();
                       } else {
                         handleSendEmailAuthCode();
                       }
                     }}
                     type='button'
-                    className='w-full py-1 max-w-[120px] text-white bg-[#4294F2] hover:bg-[#357BC2] rounded-md'
-                    disabled={!isSendCode}
+                    className='disabled:opacity-70 disabled:cursor-not-allowed w-full py-1 max-w-[120px] text-white bg-[#4294F2] hover:bg-[#357BC2] rounded-md'
+                    disabled={isAuthEmail || isLoading}
                   >
-                    {isSendCode ? '인증하기' : '발송하기'}
+                    {isLoading ? '처리중' : isSendCode ? '인증하기' : '발송하기'}
                   </button>
                 </div>
               </div>
-              {errors.email && <p className='text-sm text-red-500 mt-1'>{errors.email}</p>}
-              {success.email && <p className='text-sm text-green-500 mt-1'>{success.email}</p>}
+              {errors.email && <p className='text-sm text-red-500 pl-1 mt-1'>{errors.email}</p>}
+              {success.email && <p className='text-sm text-[#4294F2] pl-1 mt-1'>{success.email}</p>}
             </div>
 
             {/* 이메일 인증번호 */}
@@ -453,16 +520,17 @@ export default function SignUp() {
                 required
               />
               <label htmlFor='terms' className='text-sm text-gray-700'>
-                <span className='text-[#4294F2]'>이용약관</span>과{' '}
-                <span className='text-[#4294F2]'>개인정보처리방침</span>에 동의합니다
+                <span className='text-[#4294F2] pl-1'>이용약관</span>과{' '}
+                <span className='text-[#4294F2] pl-1'>개인정보처리방침</span>에 동의합니다
               </label>
             </div>
 
             <button
               type='submit'
-              className='w-full py-3 text-white bg-[#4294F2] hover:bg-[#357BC2] rounded-md'
+              disabled={isLoading || !isSuccessValidationForm || !isAuthEmail}
+              className='disabled:opacity-70 disabled:cursor-not-allowed w-full py-3 text-white bg-[#4294F2] hover:bg-[#357BC2] rounded-md'
             >
-              가입하기
+              {isLoading ? '처리중..' : '가입하기'}
             </button>
           </form>
         </div>

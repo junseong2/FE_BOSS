@@ -23,7 +23,6 @@ import EventPage from './pages/EventPage';
 import PaymentPage from './pages/PaymentPage';
 import ChatBot from './components/layout/ChatBot';
 
-import SignUp from './pages/SignUp';
 import CategoryPage from './pages/CategoryPage';
 import SearchPage from './pages/SearchPage';
 
@@ -39,6 +38,7 @@ import ShopEditorPage from './pages/editor/ShopEditorPage.jsx';
 import AccountRecoveryPage from './pages/accountRecovery/AccountRecoveryPage.jsx';
 
 import Footer from './components/layout/Footer'; // ✅ Footer import 추가
+import SignUpPage from './pages/signup/SignUpPage.jsx';
 
 function App() {
   const [storename, setStorename] = useState(null);
@@ -167,7 +167,7 @@ function App() {
                 <Route path='/camera' element={<CameraCapturePage />} />
                 <Route path='/signin' element={<SignIn />} />
                 <Route path='/mypage' element={<MyPage />} />
-                <Route path='/signup' element={<SignUp />} />
+                <Route path='/signup' element={<SignUpPage />} />
                 <Route path='/cart' element={<CartPage />} />
                 <Route path='/category/:categoryId' element={<CategoryPage />} />
                 <Route path='/search' element={<SearchPage />} />

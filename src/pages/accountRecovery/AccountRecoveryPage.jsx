@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import PasswordRecoveryForm from './components/PasswordRecoveryForm';
 import AccountRecoveryForm from './components/AccountRecoveryForm';
+import { findUserEmail } from '../../services/auth.service';
 
 export default function AccountRecoveryPage() {
   // 탭 상태 관리 (아이디 찾기 또는 비밀번호 찾기)
@@ -43,10 +44,15 @@ export default function AccountRecoveryPage() {
   };
 
   // 아이디 찾기 제출
-  const handleFindIdSubmit = (e) => {
+  const handleFindIdSubmit = async (e) => {
     e.preventDefault();
 
-
+    const email = await findUserEmail({ email, username });
+    if (email) {
+      alert(idRecoveryData.username + '님이 찾으신 아이디는' + email + ' 입니다.');
+    } else {
+      alert('일치하는 정보가 없습니다.');
+    }
 
     // TODO: 실제 서버 처리 후 응답 메시지를 설정해야 함.
     setIdRecoveryResult('회원님의 아이디는 user123@example.com 입니다.');
