@@ -6,7 +6,8 @@
 
 .main-content {
   flex: 1; /* ✅ 본문이 남은 공간을 차지하도록 설정 */
-  padding-bottom: 20px; /* ✅ 푸터와 본문 사이 여백 추가 */
+  padding-bottom: 200px; /* ✅ 푸터와 본문 사이 여백 추가 */
+  margin-top: 110px; /* 탑오브탑(100px) 아래에 위치*/
 }
 
 .footer {
