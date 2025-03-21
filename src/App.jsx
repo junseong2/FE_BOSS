@@ -36,7 +36,7 @@ import SellerSalesPage from './pages/seller/SellerSalesPage.jsx';
 import SellerPaymentPage from './pages/seller/SellerPaymentPage.jsx';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ShopEditorPage from './pages/editor/ShopEditorPage.jsx';
-
+import MobileShopEditorPage from './pages/editor/MobileShopEditorPage.jsx';
 import Footer from './components/layout/Footer'; // ✅ Footer import 추가
 
 function App() {
@@ -51,7 +51,9 @@ function App() {
   const location = useLocation();
   const isAdminPage =
     location.pathname.toLowerCase().startsWith('/seller') ||
-    location.pathname.toLowerCase().startsWith('/admin');
+    location.pathname.toLowerCase().startsWith('/admin')||
+    location.pathname.toLowerCase().startsWith('/editor')||
+    location.pathname.toLowerCase().startsWith('/mobileeditor');
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -115,7 +117,7 @@ function App() {
           <ChatBot />
 
           <div className='flex flex-col min-h-screen'>
-            <main className='relative flex-1 min-h-[calc(100vh-150px)]'>
+            <main className='flex-grow flex-1 min-h-[calc(100vh-150px) ]'>
               {/*150px는 header와 footer높이 합 */}
               <Routes>
                 <Route
@@ -185,15 +187,19 @@ function App() {
                 </Route>
 
                 <Route path='/editor' element={<ShopEditorPage />}></Route>
+                
+                <Route path='/mobileeditor' element={<MobileShopEditorPage />}></Route>
               </Routes>
+
+              <div className='h-300'></div>
             </main>
 
-            <Footer />
+      
           </div>
 
           {!isAdminPage && isMobile && <BottomNavigation />}
         </div>
-
+        {!isAdminPage && <Footer />}
         {/* ✅ 로딩 스피너 */}
         {loading && (
           <div className='fixed inset-0 w-full h-screen bg-white/90 flex justify-center items-center text-lg font-bold z-[9999]'>

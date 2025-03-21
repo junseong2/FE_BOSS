@@ -43,6 +43,8 @@ function ShopPage({ sellerId }) {
     };
 
     fetchUserInfo();
+    fetchProducts();
+
   }, []);
 
   // ✅ 카테고리명 가져오기
@@ -59,6 +61,9 @@ function ShopPage({ sellerId }) {
     fetchCategoryName();
   }, [categoryId]);
 
+
+
+  
   // ✅ 상품 가져오기 (스크롤 시 추가 로드)
   const fetchProducts = useCallback(async () => {
     if (!hasMore || loading) return; // ✅ 중복 실행 방지

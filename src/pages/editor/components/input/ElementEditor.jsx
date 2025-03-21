@@ -149,6 +149,92 @@ export default function ElementEditor({ element, onUpdate, categories }) {
           </>
         );
 
+
+        /*
+
+        case 'bottomnvigationbar':
+
+
+          return (
+            <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md py-2 flex justify-around items-center border-t border-gray-200 z-50">
+              <Link to="/" className="flex flex-col items-center text-gray-700 hover:text-blue-500 transition-colors">
+                <Home size={24} />
+                <span className="text-xs md:text-sm text-gray-600">홈</span>
+              </Link>
+              <Link to="/category" className="flex flex-col items-center text-gray-700 hover:text-blue-500 transition-colors">
+                <MapPin size={24} />
+                <span className="text-xs md:text-sm text-gray-600">카티고리</span>
+              </Link>
+              <Link to="/cart" className="flex flex-col items-center text-gray-700 hover:text-blue-500 transition-colors">
+                <ShoppingCart size={24} />
+                <span className="text-xs md:text-sm text-gray-600">장바구니</span>
+              </Link>
+              <Link to="/mypage" className="flex flex-col items-center text-gray-700 hover:text-blue-500 transition-colors">
+                <User size={24} />
+                <span className="text-xs md:text-sm text-gray-600">마이페이지</span>
+              </Link>
+            </nav>
+          );
+
+          */
+
+          
+          case 'bottomnvigationbar':
+            return (
+              <>
+                <div className="space-y-2 mb-4">
+                  <Label htmlFor="title" label="제목" />
+                  <Input
+                    id="title"
+                    value={editedElement?.properties?.title || ''}
+                    onChange={(e) => handleChange('title', e.target.value)}
+                  />
+                </div>
+          
+                <div className="space-y-2 mb-4">
+                  <Label htmlFor="subtitle" label="부제목" />
+                  <Input
+                    id="subtitle"
+                    value={editedElement?.properties?.subtitle || ''}
+                    onChange={(e) => handleChange('subtitle', e.target.value)}
+                  />
+                </div>
+          
+                <div className="space-y-2 mb-4">
+                  <Label htmlFor="imageUrl" label="이미지 URL" />
+                  <Input
+                    id="imageUrl"
+                    value={editedElement?.properties?.imageUrl || ''}
+                    onChange={(e) => handleChange('imageUrl', e.target.value)}
+                  />
+                </div>
+          
+                <div className="space-y-2 mb-4">
+                  <Label htmlFor="backgroundColor" label="배경 색상" />
+                  <div className="flex gap-2">
+                    <Input
+                      id="backgroundColor"
+                      type="color"
+                      className="w-12 h-10 p-1"
+                      value={editedElement?.properties?.backgroundColor || '#ffffff'}
+                      onChange={(e) => handleChange('backgroundColor', e.target.value)}
+                    />
+                    <Input
+                      value={editedElement?.properties?.backgroundColor || '#ffffff'}
+                      onChange={(e) => handleChange('backgroundColor', e.target.value)}
+                    />
+                  </div>
+                </div>
+              </>
+            );
+          
+        
+
+
+
+
+
+
       default:
         return <div>이 요소 유형에 대한 편집기는 준비중입니다. </div>;
     }

@@ -1,4 +1,6 @@
-import { IoGridOutline, IoImageOutline, IoBagHandleOutline } from 'react-icons/io5';
+import { IoGridOutline, IoImageOutline, IoBagHandleOutline,IoPhonePortraitOutline  } from 'react-icons/io5';
+
+
 import { MultipleImageUploader } from '../../../../components/ImageUploader';
 
 export default function EditorTabContent({ targetTabName, onSelectElement, elements }) {
@@ -18,7 +20,8 @@ function EditorElementGrid({ onSelectElement, elements }) {
   const items = [
     { icon: <IoGridOutline />, label: '헤더', type: 'header' },
     { icon: <IoImageOutline />, label: '배너', type: 'banner' },
-    { icon: <IoBagHandleOutline />, label: '상품 그리드', type: 'productGrid' },
+    { icon: <IoBagHandleOutline />, label: '상품 그리드', type: 'productGrid' },    
+    { icon: <IoPhonePortraitOutline/>, label: '바텀네비게이션바', type: 'bottomNavigationbar' },
   ];
 
   return (
@@ -26,10 +29,18 @@ function EditorElementGrid({ onSelectElement, elements }) {
       <p className='text-center w-full py-[1rem]'>요소를 클릭하여 쇼핑몰을 꾸며보세요!</p>
       {items.map(({ icon, label, type }, index) => (
         <div key={index} className='relative group'>
-          <button
-            onClick={() => onSelectElement(elements[type]?.type === type ? elements[type] : null)}
-            className='border border-gray-400 rounded-lg flex flex-col justify-center items-center gap-2 w-[115px] h-[100px] transition duration-300 hover:text-blue-500 hover:border-blue-500'
-          >
+         <button
+  onClick={() => {
+    console.log("현재 type:", type);
+    console.log("현재 elements[type]:", elements[type]);
+
+    const selectedElement = elements[type]?.type === type ? elements[type] : null;
+    console.log("선택된 요소:", selectedElement);
+
+    onSelectElement(selectedElement);
+  }}
+  className='border border-gray-400 rounded-lg flex flex-col justify-center items-center gap-2 w-[115px] h-[100px] transition duration-300 hover:text-blue-500 hover:border-blue-500'
+>
             <span className='text-2xl'>{icon}</span>
             <span className='text-[0.95rem]'>{label}</span>
           </button>
@@ -46,6 +57,10 @@ function EditorElementGrid({ onSelectElement, elements }) {
           {index === 2 && (
             <div className='absolute top-4 right-[-22.5rem] hidden group-hover:block border border-gray-500 px-4 py-1 rounded-md bg-white shadow-md'>
               상품 그리드를 유동적으로 추가할 수 있어요!
+            </div>
+          )}    {index ===3  && (
+            <div className='absolute top-4 right-[-25.2rem] hidden group-hover:block border border-gray-500 px-4 py-1 rounded-md bg-white shadow-md'>
+              모바일 환경에서 사용할 UI를 추가할 수 있어요!
             </div>
           )}
         </div>

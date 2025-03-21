@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useParams, Outlet, useLocation } from 'react-router-dom';
 import Top from './components/layout/Top';
 import Top5 from './components/layout/Top5';
+import Top6 from './components/layout/Top6';
 import MenuBar from './MenuBar';
 import MenuBar5 from './MenuBar5';
 import MenuBarNull from './MenuBarNull';
@@ -36,14 +37,19 @@ function AppLayout({
   let SelectedTop;
   if (headerId === 2) {
     SelectedTop = Top5;
-  } else {
+  } 
+  else if (headerId === 3) {
+    SelectedTop = Top6;
+  }else {
     SelectedTop = Top;
   }
 
   let SelectedMenuBar;
   if (menuBarId === 2) {
-    SelectedMenuBar = MenuBar5;
-  } else if (menuBarId === 0) {
+    SelectedMenuBar = MenuBarNull;
+ // } else if (menuBarId === 3) {
+ //   SelectedMenuBar = MenuBar6;
+  }else if (menuBarId === 0) {
     SelectedMenuBar = MenuBarNull;
   } else {
     SelectedMenuBar = MenuBar;

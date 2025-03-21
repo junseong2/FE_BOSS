@@ -3,30 +3,39 @@ import EditorHeader from './components/layout/EditorHeader';
 import EditorSidebar from './components/layout/EditorSidebar';
 import EditorTab from './components/tab/EditorTab';
 import EditorTabContent from './components/tab/EditorTabContent';
-import EditorCanvas from './components/EditorCanvas';
+import MobileEditorCanvas from './components/MobileEditorCanvas';
 import ElementEditor from './components/input/ElementEditor';
+import { Link } from 'react-router-dom';
 
-import { elementTemplates, initialElements } from '../../data/shop-templates';
+import { mobileelementTemplates, mobileinitialElements } from '../../data/shop-templates';
 import { IoCloseOutline } from 'react-icons/io5';
 import { getCategories } from '../../services/category.service';
 
 const sidebarTabList = ['요소', '설정'];
-const canvasTabList = ['미리보기'];
+const canvasTabList = ['모바일 미리보기'];
 
-export default function ShopEditorPage() {
-  const [elements, setElements] = useState(initialElements); // 보여질 요소
+export default function MobileShopEditorPage() {
+  const [elements, setElements] = useState(mobileinitialElements); // 보여질 요소
   const [selectedElement, setSelectedElement] = useState(null); // 선택된 요소
   const [sidebarSelectedTabName, setSidebarSelectedTapName] = useState('요소');
   const [canvasSelectedTabName, setCanvasSelectedTabName] = useState('에디터');
 
   const [categories, setCategories] = useState([]); // 상품 카테고리
+  console.log("selectedElement:",elements);
+
+
+
 
   // 요소 수정
   const onElementUpdate = (updatedElement) => {
- //   if (updatedElement.name === '헤더') return; // 헤더는 수정 가능, 위치 변경 X
-
+    if (updatedElement.name === '헤더') return; // 헤더는 수정 가능, 위치 변경 X
     setElements(elements.map((el) => (el.id === updatedElement.id ? updatedElement : el)));
   };
+
+
+
+
+  
 
   // 요소 추가
   const onAddElement = (element) => {
@@ -40,18 +49,10 @@ export default function ShopEditorPage() {
 
   // 요소 이동(드래그)
   const onMoveElement = (dragIndex, hoverIndex) => {
-
     const newElements = [...elements];
     const draggedElement = newElements[dragIndex];
     newElements.splice(dragIndex, 1);
     newElements.splice(hoverIndex, 0, draggedElement);
-
-
-    if (updatedElement.name === '헤1더') return;
-
-
-
-    
     setElements(newElements);
   };
 
@@ -97,12 +98,12 @@ export default function ShopEditorPage() {
             <EditorTabContent
               targetTabName={sidebarSelectedTabName}
               onSelectElement={onAddElement}
-              elements={elementTemplates}
+              elements={mobileelementTemplates}
             />
           </EditorSidebar>
 
           {/* 편집기 설정 미리보기 */}
-          <EditorCanvas
+          <MobileEditorCanvas
             tab='editor'
             editorTab={
               <EditorTab
@@ -121,10 +122,9 @@ export default function ShopEditorPage() {
         </div>
       </div>
 
-      {/* 각 요소(헤더, 배너 등) 세부 편집기 */}
       {selectedElement && (
         <div className='w-80 border-l border-[#E4E4E7] p-4 overflow-auto'>
-          <div className='flex justify-between items-center  mb-4'>
+          <div className='flex items-center  mb-4'>
             <h3 className='font-medium'>{selectedElement.name} 편집</h3>
             <button className='border rounded-xl' onClick={() => setSelectedElement(null)}>
               <IoCloseOutline className='w-4 h-4' />
