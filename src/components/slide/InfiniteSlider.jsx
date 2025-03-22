@@ -5,11 +5,17 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
-import { Pagination, Navigation } from 'swiper/modules';
+import { Pagination, Navigation, Autoplay } from 'swiper/modules';
 
 export default function InfiniteSlider() {
+  const progressCircle = useRef(null);
+  const progressContent = useRef(null);
+  const onAutoplayTimeLeft = (s, time, progress) => {
+    progressCircle.current.style.setProperty('--progress', 1 - progress);
+    progressContent.current.textContent = `${Math.ceil(time / 1000)}s`;
+  };
   return (
-    <div className=' w-full h-1/3 bg-[#4294f2]'>
+    <div className=' w-full h-1/3 bg-[#dadcdd]'>
       <Swiper
         slidesPerView={1}
         spaceBetween={30}
@@ -17,8 +23,12 @@ export default function InfiniteSlider() {
         pagination={{
           clickable: true,
         }}
-        navigation={true}
-        modules={[Pagination, Navigation]}
+        autoplay={{
+          delay: 2500,
+          disableOnInteraction: false,
+        }}
+        modules={[Pagination, Navigation, Autoplay]}
+        onAutoplayTimeLeft={onAutoplayTimeLeft}
         className='mySwiper h-[580px]'
       >
         <SwiperSlide>Slide 1</SwiperSlide>
@@ -30,6 +40,12 @@ export default function InfiniteSlider() {
         <SwiperSlide>Slide 7</SwiperSlide>
         <SwiperSlide>Slide 8</SwiperSlide>
         <SwiperSlide>Slide 9</SwiperSlide>
+        <div className='autoplay-progress z-10' slot='container-end'>
+          <svg viewBox='0 0 48 48' ref={progressCircle}>
+            <circle cx='24' cy='24' r='20'></circle>
+          </svg>
+          <span ref={progressContent}></span>
+        </div>
       </Swiper>
     </div>
   );

@@ -10,7 +10,7 @@ export default function HomeProducts({ title, products, customClassName }) {
         <CenteredSlider>
           {products?.map((product) => {
             return (
-              <SwiperSlide key={product.productId} >
+              <SwiperSlide key={product.productId}>
                 <Link to={`/product/${product.productId}`}>
                   <div className='border-gray-100 border w-full min-w-[200px] h-[250px] bg-gray-100'></div>
                   <div className='mt-1.5 text-center'>{product.name}</div>
