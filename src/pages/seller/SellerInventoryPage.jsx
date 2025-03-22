@@ -7,20 +7,18 @@ import {
   updateSellerInventories,
 } from '../../services/inventory.service';
 import SellerTitle from './components/common/SellerTitle';
-import SellerToolBar from './components/layout/SellerToolBar';
-import SellerContentHeader from './components/common/SellerContentHeader';
 import SellerSearch from './components/common/SellerSearch';
 import { SellerInventoryTable } from './components/pages/SellerInventoryTable';
+import SellerContentHeader from './components/common/SellerContentHeader';
+import SellerTabs from './components/common/SellerTabs';
+import TableSkeleton from '../../components/skeleton/TableSkeleton';
+import Pagination from '../../components/Pagination';
 
-const headers = [
-  '카테고리ID',
-  '상품ID',
-  '상품명',
-  '재고',
-  '최소 재고',
-  '최근 입고일',
-  '상태',
-  '작업',
+const sortList = [
+  // 탭 목 데이터
+  { key: 'all', label: '전체 목록' },
+  { key: 'warn', label: '재고 부족' },
+  { key: 'soldOut', label: '품절' },
 ];
 
 const PAGE_SIZE = 15;
@@ -29,6 +27,10 @@ function SellerInventoryPage() {
   const [inventoryIds, setInventoryIds] = useState([]);
   const [inventories, setInventories] = useState([]);
   const [page, setPage] = useState(0);
+
+  const [selectedTab, setSelectedTab] = useState('all');
+  const [loading, setLoading] = useState(false);
+  const [totalPageCount, setTotalPageCount] = useState(100);
 
   // 재고 선택
   async function onCheck(e) {
@@ -90,29 +92,49 @@ function SellerInventoryPage() {
 
   useEffect(() => {
     getInventoriesFetch();
-  }, []);
+  }, [page]);
 
   return (
-    <section>
+    <section className='bg-[#f3f4f6] h-auto p-3 border border-gray-200 rounded-[5px] w-full'>
       {/* 헤더 */}
       <SellerContentHeader>
         <SellerTitle type={'main'}>재고관리</SellerTitle>
-        <p>재고 목록 및 관리</p>
-
-        {/* 도구 */}
-        <SellerToolBar>
-          <SellerSearch placeholder={'상품명을 입력하세요.'} onSearch={onSearch} />
-        </SellerToolBar>
       </SellerContentHeader>
-      <SellerInventoryTable
-        headers={headers}
-        inventories={inventories}
-        actionButtonName={'수정'}
-        onCheck={onCheck}
-        onToggle={onToggle}
-        isToggle={isOpen}
-        toggleId={toggleId}
-        onUpdate={onUpdateInventories}
+
+      {/* 탭(메뉴) */}
+      <SellerTabs
+        tabList={sortList}
+        selectedTab={selectedTab}
+        onTabChange={(e) => setSelectedTab(e.currentTarget.dataset.tabId)}
+      />
+
+      {/*  컨텐츠 */}
+      <div className='bg-white mt-5 border border-gray-200 p-3 py-0'>
+        {/* 검색창 */}
+        <div className='py-3'>
+          <SellerSearch placeholder={'주문번호를 입력하세요.'} />
+        </div>
+
+        {/* 테이블 */}
+        {loading ? (
+          <TableSkeleton />
+        ) : (
+          <SellerInventoryTable
+            inventories={inventories}
+            actionButtonName={'수정'}
+            onCheck={onCheck}
+            onToggle={onToggle}
+            isToggle={isOpen}
+            toggleId={toggleId}
+            onUpdate={onUpdateInventories}
+          />
+        )}
+      </div>
+      <Pagination
+        totalPageCount={Math.max(totalPageCount/PAGE_SIZE) }
+        handlePageClick={({ selected }) => {
+          setPage(selected);
+        }}
       />
     </section>
   );

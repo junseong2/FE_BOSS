@@ -20,7 +20,7 @@ export default function SignUpPage() {
     phone1: '',
     phone2: '',
     phone3: '',
-    zipcode: '',
+    post: '',
     address1: '',
     address2: '',
   });
@@ -397,15 +397,15 @@ export default function SignUpPage() {
 
               {/* 주소 검색 */}
               <div className='mb-1'>
-                <label htmlFor='zipcode' className='block text-sm font-medium text-gray-700'>
+                <label htmlFor='post' className='block text-sm font-medium text-gray-700'>
                   우편번호
                 </label>
                 <div className='flex gap-3 mt-1'>
                   <input
                     type='text'
-                    id='zipcode'
-                    name='zipcode'
-                    value={formData.zipcode}
+                    id='post'
+                    name='post'
+                    value={formData.post}
                     readOnly
                     className='w-full p-2 py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4294F2] bg-gray-50'
                   />

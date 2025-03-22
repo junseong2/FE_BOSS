@@ -1,5 +1,19 @@
 import { useEffect, useState } from 'react';
 import { getMajorCategories } from '../../../services/category.service';
+import CenteredSlider from '../../../components/slide/CenteredSlider';
+import { SwiperSlide } from 'swiper/react';
+import { Link } from 'react-router';
+
+const breakpoints = {
+  768: {
+    slidesPerView: 4,
+    spaceBetween: 40,
+  },
+  1024: {
+    slidesPerView: 5,
+    spaceBetween: 50,
+  },
+};
 
 export default function HomeCategories() {
   const [categories, setCategories] = useState([]);
@@ -23,17 +37,24 @@ export default function HomeCategories() {
   }, []);
 
   return (
-    <div className='w-full h-96 pt-14'>
-      <h2 className='text-3xl'>전체 카테고리</h2>
+    <div className='w-full h-96 pt-14  pl-5'>
+      <h2 className='text-2xl font-bold'>전체 카테고리</h2>
       <div className='mt-5 flex flex-wrap gap-3'>
-        {categories.map((category) => {
-          return (
-            <div key={category.id} className='w-[86px] border border-gray-100 p-2 rounded-xl'>
-              <div className='border-gray-100 border w-9 h-9 mx-auto rounded-full bg-gray-100'></div>
-              <div className='mt-1.5 text-center'>{category.name}</div>
-            </div>
-          );
-        })}
+        <CenteredSlider breakpoints={breakpoints}>
+          {categories.map((category) => {
+            return (
+              <SwiperSlide key={category.id}>
+                <Link
+                  to={`/category/${category.id}`}
+                  className='w-[130px] h-[120px]  p-2 rounded-xl'
+                >
+                  <div className='border-gray-100 border w-9 h-9 mx-auto rounded-full bg-gray-100'></div>
+                  <div className='mt-1.5 text-center'>{category.name}</div>
+                </Link>
+              </SwiperSlide>
+            );
+          })}
+        </CenteredSlider>
       </div>
     </div>
   );

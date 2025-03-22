@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { formatDate } from '../../../../utils/formatter.js';
-import TableHeader from '../common/SellerTableHeader.jsx';
 
 export function SellerInventoryTable({
   headers,
@@ -32,9 +31,20 @@ export function SellerInventoryTable({
   };
 
   return (
-    <div className='mt-10 w-full'>
-      <table className='w-full border-collapse'>
-        <TableHeader headers={headers} />
+    <div className='w-full'>
+      <table className='w-full min-w-[600px]'>
+        <thead>
+          <tr className='bg-[#F3F4F6] text-gray-600 text-sm'>
+            <th className='py-3 px-4 text-left font-medium'>카테고리ID</th>
+            <th className='py-3 px-4 text-left font-medium'>상품ID</th>
+            <th className='py-3 px-4 text-left font-medium'>상품명</th>
+            <th className='py-3 px-4 text-center font-medium'>재고</th>
+            <th className='py-3 px-4 text-left font-medium'>최소 재고</th>
+            <th className='py-3 px-4 text-left font-medium'>최근 입고일</th>
+            <th className='py-3 px-4 text-left font-medium'>상태</th>
+            <th className='py-3 px-4 text-center font-medium'>작업</th>
+          </tr>
+        </thead>
 
         <tbody>
           {!Array.isArray(inventories) || inventories.length === 0 ? (
@@ -98,7 +108,7 @@ export function SellerInventoryTable({
                     </button>
                     {isEditing && (
                       <button
-                        className='ml-2 bg-white border border-gray-300 rounded px-3 py-1 text-sm hover:bg-gray-100'
+                        className='mt-1 bg-white border border-gray-300 rounded px-3 py-1 text-sm hover:bg-gray-100'
                         onClick={() => onToggle(null)}
                       >
                         취소

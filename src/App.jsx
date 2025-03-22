@@ -30,7 +30,6 @@ import SellerDashboardPage from './pages/seller/SellerDashboardPage.jsx';
 import SellerProductPage from './pages/seller/SellerProductPage.jsx';
 import SellerOrderPage from './pages/seller/SellerOrderPage.jsx';
 import SellerInventoryPage from './pages/seller/SellerInventoryPage.jsx';
-import SellerSalesPage from './pages/seller/SellerSalesPage.jsx';
 import SellerPaymentPage from './pages/seller/SellerPaymentPage.jsx';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ShopEditorPage from './pages/editor/ShopEditorPage.jsx';
@@ -39,6 +38,7 @@ import PaymentPage from './pages/PaymentPage';
 
 import Footer from './components/layout/Footer'; // ✅ Footer import 추가
 import SignUpPage from './pages/signup/SignUpPage.jsx';
+import SellerSettlementPage from './pages/seller/SellerSettlementPage.jsx';
 
 function App() {
   const [storename, setStorename] = useState(null);
@@ -180,8 +180,8 @@ function App() {
                   <Route path='product' element={<SellerProductPage />} />
                   <Route path='order' element={<SellerOrderPage />} />
                   <Route path='inventory' element={<SellerInventoryPage />} />
-                  <Route path='sales' element={<SellerSalesPage />} />
-                  <Route path='settlement' element={<SellerPaymentPage />} />
+                  <Route path='payment' element={<SellerPaymentPage/>} />
+                  <Route path='settlement' element={<SellerSettlementPage />} />
                 </Route>
 
                 <Route path='/editor' element={<ShopEditorPage />}></Route>
@@ -191,7 +191,7 @@ function App() {
               </Routes>
             </main>
 
-            <Footer />
+            {/* <Footer /> */}
           </div>
 
           {!isAdminPage && isMobile && <BottomNavigation />}

@@ -3,30 +3,31 @@ import useToggle from '../../hooks/useToggle';
 
 import { IoAddCircleOutline, IoRemoveCircleOutline } from 'react-icons/io5';
 import {
-  createSellerProduct,
   deleteSellerProduct,
   getAllSellerProducts,
-  getSearchSellerProducts,
+  registerSellerProduct,
   updateSellerProduct,
 } from '../../services/product.service';
 import SellerContentHeader from './components/common/SellerContentHeader';
 import SellerTitle from './components/common/SellerTitle';
-import SellerToolBar from './components/layout/SellerToolBar';
 import SellerSearch from './components/common/SellerSearch';
 import SellerActionButton from './components/common/SellerActionButton';
 import SellerProductTable from './components/pages/SellerProductTable';
 import SellerRegisterForm from './components/pages/SellerRegisterForm';
+import Pagination from '../../components/Pagination';
+import TableSkeleton from '../../components/skeleton/TableSkeleton';
 
 const headers = ['선택', '상품ID', '상품명', '카테고리', '설명', '가격', '재고', '작업'];
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 6;
 function SellerProductPage() {
   const { onToggle, isOpen, toggleId } = useToggle();
   const { onToggle: onToggleNewProductForm, isOpen: isOpenNewProductForm } = useToggle();
   const [productIds, setProductIds] = useState([]);
   const [page, setPage] = useState(0);
+  const [productName, setProductName] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]); // 상품 목록
+  const [totalCount, setTotalCount] = useState(0); // 전체 상품 수
 
   // 상품 선택
   async function onCheck(e) {
@@ -59,33 +60,27 @@ function SellerProductPage() {
     const idsInfo = {
       ids: productIds,
     };
-    const data = deleteSellerProduct(idsInfo);
-    console.log(data);
+    deleteSellerProduct(idsInfo);
   }
 
   // 상품 조회
-  async function getProductsFetch() {
-    const data = await getAllSellerProducts(page, PAGE_SIZE);
-    setProducts(data);
-  }
-
-  // 상품 검색
-  async function onSearch(e) {
-    e.preventDefault();
-
-    const formData = new FormData(e.currentTarget);
-    const search = formData.get('search');
-    const data = await getSearchSellerProducts(page, PAGE_SIZE, search);
-    setProducts(data);
+  async function getProductsFetch(page, productName) {
+    setLoading(true);
+    const data = await getAllSellerProducts(Math.max(0, page), PAGE_SIZE, productName);
+    if (data) {
+      setProducts(data.products ?? []);
+      setTotalCount(data.totalCount ?? 0);
+    }
+    setLoading(false);
   }
 
   // 상품 추가
   async function onCreateProductSubmit(e, images) {
     const { requestData } = await mappingSubmitData(e, images);
-    createSellerProduct(requestData);
+    registerSellerProduct(requestData);
   }
 
-  // 상품 수정cdc
+  // 상품 수정
   async function onUpdateProduct(product) {
     const updatedProducts = products.map((oldProduct) => {
       if (oldProduct.productId === product.productId) {
@@ -145,46 +140,68 @@ function SellerProductPage() {
   }
 
   useEffect(() => {
-    setLoading(true);
-    getProductsFetch();
-    setLoading(false);
-  }, []);
+    getProductsFetch(page, productName);
+  }, [page, productName]);
 
   return (
     <>
-      <section>
+      <section className='border bg-[#f3f4f6] border-gray-200 rounded-[5px] p-3'>
         {/* 헤더 */}
         <SellerContentHeader>
           <SellerTitle type={'main'}>상품관리</SellerTitle>
-          <p>상품 목록 및 관리</p>
-          <SellerToolBar>
-            <SellerSearch placeholder={'상품명을 입력하세요.'} onSearch={onSearch} />
-            <div className={`w-full flex justify-end mt-8 gap-2.5`}>
-              {/* 상품 선택 삭제 버튼 */}
-              <SellerActionButton onClick={onDeleteProduct}>
-                <IoRemoveCircleOutline />
-                선택 삭제
-              </SellerActionButton>
-
-              {/* 새상품 추가 버튼 */}
-              <SellerActionButton onClick={onToggleNewProductForm}>
-                <IoAddCircleOutline />새 상품
-              </SellerActionButton>
-            </div>
-          </SellerToolBar>
         </SellerContentHeader>
 
         {/* 테이블 */}
-        <SellerProductTable
-          headers={headers}
-          products={products}
-          actionButtonName={'수정'}
-          onCheck={onCheck}
-          onToggle={onToggle}
-          isToggle={isOpen}
-          toggleId={toggleId}
-          onUpdate={onUpdateProduct}
-          onDelete={onDeleteProduct}
+
+        <div className='flex p-3 bg-white items-center mt-5 border border-gray-200 '>
+          <SellerSearch
+            placeholder={'상품명을 입력하세요.'}
+            onSearch={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const search = formData.get('search') || '';
+              setProductName(search);
+            }}
+          />
+
+          <div className={`w-full flex justify-end gap-2.5 `}>
+            {/* 상품 선택 삭제 버튼 */}
+            <SellerActionButton onClick={onDeleteProduct}>
+              <IoRemoveCircleOutline />
+              선택 삭제
+            </SellerActionButton>
+
+            {/* 새상품 추가 버튼 */}
+            <SellerActionButton onClick={onToggleNewProductForm}>
+              <IoAddCircleOutline />새 상품
+            </SellerActionButton>
+          </div>
+        </div>
+
+        {loading ? (
+          <TableSkeleton />
+        ) : (
+          <div className='w-full p-3 bg-white border border-gray-200  mt-3'>
+            <SellerProductTable
+              headers={headers}
+              products={products}
+              actionButtonName={'수정'}
+              onCheck={onCheck}
+              onToggle={onToggle}
+              isToggle={isOpen}
+              toggleId={toggleId}
+              onUpdate={onUpdateProduct}
+              onDelete={onDeleteProduct}
+            />
+          </div>
+        )}
+
+        {/* 페이지네이션 */}
+        <Pagination
+          handlePageClick={({ selected }) => {
+            setPage(selected);
+          }}
+          totalPageCount={Math.ceil(totalCount / PAGE_SIZE)}
         />
       </section>
       {isOpenNewProductForm ? (

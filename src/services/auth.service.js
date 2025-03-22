@@ -21,9 +21,7 @@ export const registerUser = async (formData) => {
 /** 로그인 요청 */
 export const loginRequest = async (formData) => {
   const url = apiRoutes.auth.signin();
-  const response = await instance.post(url, {
-    data: JSON.stringify(formData),
-  });
+  const response = await instance.post(url, formData);
 
   return response.status;
 };

@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
-import SellerTableHeader from '../common/SellerTableHeader';
 import SellerEditButton from '../common/SellerEditButton';
 
 export default function SellerProductTable({
-  headers,
   products,
   actionButtonName,
   onToggle,
@@ -30,7 +28,6 @@ export default function SellerProductTable({
 
   // 상품 정보 업데이트
   const handleUpdate = (productId) => {
-    console.log(modifiedProducts);
     const updatedProduct = modifiedProducts.find((product) => product.productId === productId);
     if (updatedProduct) {
       onUpdate(updatedProduct); // 수정된 상품 정보를 부모에게 전달
@@ -39,12 +36,23 @@ export default function SellerProductTable({
   };
 
   return (
-    <div className='mt-5 w-full overflow-x-auto'>
+    <div className='mt-2 w-full overflow-x-auto'>
       {!Array.isArray(products) ? (
         <p>조회할 상품목록이 존재하지 않습니다.</p>
       ) : (
-        <table className='w-full table-auto border-separate border-spacing-1'>
-          <SellerTableHeader headers={headers} />
+        <table className='w-full table-auto '>
+                 <thead>
+          <tr className='bg-[#F3F4F6] text-gray-600 text-sm'>
+            <th className='py-3 px-4 text-left font-medium'>선택</th>
+            <th className='py-3 px-4 text-left font-medium'>상품ID</th>
+            <th className='py-3 px-4 text-left font-medium'>상품명</th>
+            <th className='py-3 px-4 text-center font-medium'>분류</th>
+            <th className='py-3 px-4 text-left font-medium'>설명</th>
+            <th className='py-3 px-4 text-left font-medium'>가격</th>
+            <th className='py-3 px-4 text-left font-medium'>재고</th>
+            <th className='py-3 px-4 text-center font-medium'>작업</th>
+          </tr>
+        </thead>
 
           <tbody>
             {products.map((product, index) => {
@@ -53,7 +61,7 @@ export default function SellerProductTable({
               return (
                 <tr
                   key={product.productId}
-                  className='transition-colors duration-200 hover:bg-gray-100'
+                  className='transition-colors duration-200 hover:bg-gray-100 '
                 >
                   <td className='px-2 py-1 text-sm'>
                     <input
