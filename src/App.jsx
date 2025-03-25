@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
-import AppLayout from './AppLayout'; // ✅ AppLayout import 추가
-import ShopPage from './pages/ShopPage';
+import { UserProvider } from './context/UserContext.jsx';
 
-import './App.css';
-import './layout.css';
+import AppLayout from './AppLayout';
+import ShopPage from './pages/ShopPage';
+import IntroPage from './pages/IntroPage';
+
+import './index.css'; // ✅ Tailwind가 적용된 index.css 사용
 import Top from './components/layout/Top';
 import MenuBar from './MenuBar';
 import BottomNavigation from './components/layout/BottomNavigation';
 
 import SignIn from './pages/SignIn.jsx';
-import HomePage from './pages/HomePage';
+import HomePage from './pages/home/HomePage';
 import AboutPage from './pages/AboutPage';
 import CartPage from './pages/CartPage';
 import CameraCapturePage from './pages/CameraCapturePage';
@@ -20,21 +22,23 @@ import MyPage from './pages/MyPage';
 import EventPage from './pages/EventPage';
 import ChatBot from './components/layout/ChatBot';
 
-import SignUp from './pages/SignUp';
 import CategoryPage from './pages/CategoryPage';
 import SearchPage from './pages/SearchPage';
 
-import SellerPage from './pages/sellerDashboard/SellerPage.jsx';
-import SellerDashboardPage from './pages/sellerDashboard/SellerDashboardPage.jsx';
-import SellerProductPage from './pages/sellerDashboard/SellerProductPage.jsx';
-import SellerOrderPage from './pages/sellerDashboard/SellerOrderPage.jsx';
-import SellerInventoryPage from './pages/sellerDashboard/SellerInventoryPage.jsx';
-import SellerSalesPage from './pages/sellerDashboard/SellerSalesPage.jsx';
-import SellerPaymentPage from './pages/sellerDashboard/SellerPaymentPage.jsx';
+import SellerPage from './pages/seller/SellerPage.jsx';
+import SellerDashboardPage from './pages/seller/SellerDashboardPage.jsx';
+import SellerProductPage from './pages/seller/SellerProductPage.jsx';
+import SellerOrderPage from './pages/seller/SellerOrderPage.jsx';
+import SellerInventoryPage from './pages/seller/SellerInventoryPage.jsx';
+import SellerPaymentPage from './pages/seller/SellerPaymentPage.jsx';
 import ProductDetailPage from './pages/ProductDetailPage';
+import ShopEditorPage from './pages/editor/ShopEditorPage.jsx';
+import AccountRecoveryPage from './pages/accountRecovery/AccountRecoveryPage.jsx';
 import PaymentPage from './pages/PaymentPage';
 
 import Footer from './components/layout/Footer'; // ✅ Footer import 추가
+import SignUpPage from './pages/signup/SignUpPage.jsx';
+import SellerSettlementPage from './pages/seller/SellerSettlementPage.jsx';
 
 function App() {
   const [storename, setStorename] = useState(null);
@@ -43,12 +47,14 @@ function App() {
   const [menuBarId, setMenuBarId] = useState(null);
   const [navigationId, setNavigationId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [sellerMenubarColor, setSellerMenubarColor] = useState('#ffffff');
 
   const location = useLocation();
   const isAdminPage =
     location.pathname.toLowerCase().startsWith('/seller') ||
     location.pathname.toLowerCase().startsWith('/admin');
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // ✅ 모바일 여부 체크
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
     if (!storename) {
@@ -70,15 +76,14 @@ function App() {
 
         const sellerData = await sellerResponse.json();
 
-        console.log('📌 [fetchSellerInfo] 응답 데이터:', sellerData); // ✅ API 응답 확인
+        console.log('📌 [fetchSellerInfo] 응답 데이터:', sellerData);
 
         setSellerId(sellerData.sellerData ?? null);
         setHeaderId(sellerData.headerId ?? null);
         setMenuBarId(sellerData.menuBarId ?? null);
         setSellerId(sellerData.sellerId ?? null);
         setNavigationId(sellerData.navigationId ?? null);
-
-        console.log('seller:' + sellerData);
+        setSellerMenubarColor(sellerData.seller_menubar_color ?? '#ffffff');
       } catch (error) {
         console.error('API 호출 실패:', error);
       } finally {
@@ -99,76 +104,106 @@ function App() {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
   return (
     <CartProvider>
-      <div className='app-container'>
-        {/* ✅ 관리자 페이지가 아닐 때만 `Top`과 `MenuBar` 렌더링 */}
-        {!isAdminPage && <Top />}
-        {!isAdminPage && <MenuBar />}
+      <UserProvider>
+        <div className='relative flex-col min-h-screen'>
+          {/* ✅ 관리자 페이지가 아닐 때만 `Top`과 `MenuBar` 렌더링 */}
+          {!isAdminPage && <Top />}
+          {!isAdminPage && <MenuBar />}
 
-        <div className={`flex-1 ${!isAdminPage ? 'ml-60' : ''}`}>
           <ChatBot />
 
-          <div className='main-content'>
-            <Routes>
-              <Route
-                path='/:storename/*'
-                element={
-                  <AppLayout
-                    sellerId={sellerId}
-                    headerId={headerId}
-                    menuBarId={menuBarId}
-                    navigationId={navigationId}
-                    setStorename={setStorename}
-                  />
-                }
-              >
+          <div className='flex flex-col min-h-screen'>
+            <main className='relative flex-1 min-h-[calc(100vh-150px)]'>
+              {/*150px는 header와 footer높이 합 */}
+              <Routes>
                 <Route
-                  path='shop'
+                  path='/:storename/*'
                   element={
-                    <ShopPage
+                    <AppLayout
                       sellerId={sellerId}
                       headerId={headerId}
                       menuBarId={menuBarId}
                       navigationId={navigationId}
+                      setStorename={setStorename}
+                      sellerMenubarColor={sellerMenubarColor}
                     />
                   }
-                />
-              </Route>
+                >
+                  <Route
+                    path='shop'
+                    element={
+                      <ShopPage
+                        sellerId={sellerId}
+                        headerId={headerId}
+                        menuBarId={menuBarId}
+                        navigationId={navigationId}
+                        sellerMenubarColor={sellerMenubarColor}
+                      />
+                    }
+                  />
 
-              {/* ✅ 일반적인 페이지 경로 유지 */}
-              <Route path='/' element={<HomePage />} />
-              <Route path='/about' element={<AboutPage />} />
-              <Route path='/contact/*' element={<ContactPage />} />
-              <Route path='/event' element={<EventPage />} />
-              <Route path='/camera' element={<CameraCapturePage />} />
-              <Route path='/signin' element={<SignIn />} />
-              <Route path='/mypage' element={<MyPage />} />
-              <Route path='/signup' element={<SignUp />} />
-              <Route path='/cart' element={<CartPage />} />
-              <Route path='/category/:categoryId' element={<CategoryPage />} />
-              <Route path='/search' element={<SearchPage />} />
-              <Route path='/product/:productId' element={<ProductDetailPage />} />
-              <Route path='/paymentpage' element={<PaymentPage />} />
-              {/* <Route path="/product/recommend-text" element={<ChatBot />} /> */}
+                  <Route
+                    path='intro'
+                    element={
+                      <IntroPage
+                        sellerId={sellerId}
+                        headerId={headerId}
+                        menuBarId={menuBarId}
+                        navigationId={navigationId}
+                        sellerMenubarColor={sellerMenubarColor}
+                      />
+                    }
+                  />
+                </Route>
+                {/* ✅ 일반적인 페이지 경로 유지 */}
+                <Route path='/' element={<HomePage />} />
+                <Route path='/about' element={<AboutPage />} />
+                <Route path='/contact/*' element={<ContactPage />} />
+                <Route path='/event' element={<EventPage />} />
+                <Route path='/camera' element={<CameraCapturePage />} />
+                <Route path='/signin' element={<SignIn />} />
+                <Route path='/mypage' element={<MyPage />} />
+                <Route path='/signup' element={<SignUpPage />} />
+                <Route path='/cart' element={<CartPage />} />
+                <Route path='/category/:categoryId' element={<CategoryPage />} />
+                <Route path='/search' element={<SearchPage />} />
+                <Route path='/paymentpage' element={<PaymentPage />} />
+                <Route path='/product/:productId' element={<ProductDetailPage />} />
+                {/* <Route path="/product/recommend-text" element={<ChatBot />} /> */}
 
-              {/* ✅ 판매자 대시보드 경로 유지 */}
-              <Route path='/seller' element={<SellerPage />}>
-                <Route index path='dashboard' element={<SellerDashboardPage />} />
-                <Route path='product' element={<SellerProductPage />} />
-                <Route path='order' element={<SellerOrderPage />} />
-                <Route path='inventory' element={<SellerInventoryPage />} />
-                <Route path='sales' element={<SellerSalesPage />} />
-                <Route path='payment' element={<SellerPaymentPage />} />
-              </Route>
-            </Routes>
+                {/* ✅ 판매자 대시보드 경로 유지 */}
+                <Route path='/seller' element={<SellerPage />}>
+                  <Route index path='dashboard' element={<SellerDashboardPage />} />
+                  <Route path='product' element={<SellerProductPage />} />
+                  <Route path='order' element={<SellerOrderPage />} />
+                  <Route path='inventory' element={<SellerInventoryPage />} />
+                  <Route path='payment' element={<SellerPaymentPage/>} />
+                  <Route path='settlement' element={<SellerSettlementPage />} />
+                </Route>
+
+                <Route path='/editor' element={<ShopEditorPage />}></Route>
+
+                {/* 비밀번호/아이디 찾기 */}
+                <Route path='/auth/account-recovery' element={<AccountRecoveryPage/>}></Route> 
+              </Routes>
+            </main>
+
+            {/* <Footer /> */}
           </div>
 
-          <Footer />
+          {!isAdminPage && isMobile && <BottomNavigation />}
         </div>
 
-        {!isAdminPage && isMobile && <BottomNavigation />}
-      </div>
+        {/* ✅ 로딩 스피너 */}
+        {loading && (
+          <div className='fixed inset-0 w-full h-screen bg-white/90 flex justify-center items-center text-lg font-bold z-[9999]'>
+            로딩 중...
+          </div>
+        )}
+      </UserProvider>
     </CartProvider>
   );
 }

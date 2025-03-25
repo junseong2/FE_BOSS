@@ -1,60 +1,51 @@
-import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import '../../App.css';
-import './topbar.css';
+import bossLogo from '../../assets/boss_logo.png';
+import { useCart } from '../../context/CartContext';
+import fetchUserInfo from '../../utils/api.js';
+import { useUser } from '../../context/UserContext'; // ✅ 전역 상태 사용
+import { useEffect, useState, useRef } from 'react';
+import Draggable from 'react-draggable';
+import SignIn from '../../pages/SignIn';
 
-import { useCart } from '../../context/CartContext'; // CartContext에서 useCart 훅 import
-import fetchUserInfo from '../../utils/api.js'; // API 함수 import
-import { IoSearch, IoGiftOutline } from 'react-icons/io5'; // IoSearch 아이콘 import
+import { IoSearch, IoGiftOutline } from 'react-icons/io5';
 
 function Top() {
-  const [userId, setUserId] = useState(null);
-  const [userName, setUserName] = useState(null);
-  const [emails, setEmails] = useState(['']); // 추가된 상태
-  const [phones, setPhones] = useState(['']); // 추가된 상태
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
+  const { userId, setUserId, userName, setUserName } = useUser(); // ✅ 전역 상태 사용
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const nodeRef = useRef(null);
+
+  const [emails, setEmails] = useState(['']);
+  const [phones, setPhones] = useState(['']);
   const [addresses, setAddresses] = useState([
-    {
-      address1: '',
-      address2: '',
-      post: '',
-      isDefault: false,
-    },
-  ]); // 추가된 상태
+    { address1: '', address2: '', post: '', isDefault: false },
+  ]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showCartPopup, setShowCartPopup] = useState(false); // 팝업 상태
-  const { cartItems, loadCart } = useCart(); // useCart 훅을 통해 cartItems 상태 가져오기
-  const [loadingCart, setLoadingCart] = useState(false); // 장바구니 로딩 상태 추가
+  const [showCartPopup, setShowCartPopup] = useState(false);
+  const { cartItems, loadCart } = useCart();
+  const [loadingCart, setLoadingCart] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const [showSignIn, setShowSignIn] = useState(false);
 
   useEffect(() => {
     const getUserInfo = async () => {
-      await fetchUserInfo(setUserId, setUserName, setEmails, setPhones, setAddresses); // 사용자 정보 불러오기
+      await fetchUserInfo(setUserId, setUserName, setEmails, setPhones, setAddresses);
     };
-
-    getUserInfo(); // 사용자 정보 불러오기
-  }, []); // 빈 배열로 수정하여 처음 렌더링될 때만 호출
+    getUserInfo();
+  }, []);
 
   const handleSignInClick = async () => {
     const currentUrl = location.pathname + location.search;
     console.log('현재 URL:', currentUrl);
 
-    await fetch('http://localhost:5000/save-redirect-url', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ redirectUrl: currentUrl }),
-      credentials: 'include',
-    });
-
-    navigate('/signin');
+    setIsModalOpen(true);
   };
 
   const handleLogoutClick = async () => {
-    await fetch('http://localhost:5000/auth/logout', {
-      method: 'GET',
-      credentials: 'include',
-    });
-
+    await fetch('http://localhost:5000/auth/logout', { method: 'GET', credentials: 'include' });
     setUserId(null);
     setUserName(null);
     navigate('/');
@@ -68,21 +59,20 @@ function Top() {
   };
 
   const handleMouseEnter = async () => {
-    setLoadingCart(true); // 장바구니 로딩 시작
-    await loadCart(); // 장바구니 데이터를 불러옵니다.
-    setLoadingCart(false); // 로딩 완료
-    setShowCartPopup(true); // 팝업 표시
+    setLoadingCart(true);
+    await loadCart();
+    setLoadingCart(false);
+    setShowCartPopup(true);
   };
 
   const handleMouseLeave = () => {
-    setShowCartPopup(false); // 팝업 숨김
+    setShowCartPopup(false);
   };
 
   const getCartItemList = () => {
     if (cartItems.length === 0) {
       return <p>장바구니가 비어 있습니다.</p>;
     }
-
     return (
       <ul>
         {cartItems.map((item, index) => (
@@ -95,63 +85,89 @@ function Top() {
   };
 
   return (
-    <div className='top-bar'>
-      <img
-        src='src/assets/boss_logo.png' // 이미지 경로를 public 폴더 기준으로 설정
-        alt='Boss Logo'
-        className='logo'
-        onClick={() => navigate('/')} // 로고 클릭 시 홈으로 이동
-      />
-
-      <form className='search-form' onSubmit={handleSearch}>
-        <input
-          type='text'
-          className='search-input'
-          placeholder='검색어 입력'
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+    <>
+    <div className='h-20'></div>
+      <div className='fixed top-0 left-0 w-full h-20 bg-blue-200 flex items-center px-4 z-950'>
+        <img
+          src={`${BASE_URL}/uploads/boss_logo.png`}
+          style={{ width: '64px', height: 'auto', maxWidth: '64px', maxHeight: '64px' }}
+          onClick={() => navigate('/')}
         />
-        <button type='submit' className='search-button'>
-          <IoSearch /> {/* 돋보기 아이콘으로 변경 */}
-        </button>
-      </form>
-      <div className='user-info-container'>
-        {userId && userName && (
-          <p className='welcome-message'>
-            {userName}님, <span>유저 ID: {userId}</span>
-          </p>
-        )}
-      </div>
-      <div className='Mypagebutton-container'>
-        {userId ? (
-          <>
-            <button className='MypageBt' onClick={handleLogoutClick}>
-              로그아웃
-            </button>
-            <button className='MypageBt' onClick={() => navigate('/mypage')}>
-              마이페이지
-            </button>
-            <button
-              className='MypageBt'
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-              onClick={() => navigate('/cart')}
-            >
-              장바구니
-            </button>
-            {showCartPopup && (
-              <div className='cart-popup'>
-                {loadingCart ? <p>장바구니 로딩 중...</p> : getCartItemList()}
-              </div>
-            )}
-          </>
-        ) : (
-          <button className='MypageBt' onClick={handleSignInClick}>
-            로그인
+
+        <form className='flex items-center gap-2 ml-8' onSubmit={handleSearch}>
+          <input
+            type='text'
+            className='w-80 p-2 border border-gray-400 bg-white rounded-md text-lg'
+            placeholder='검색어 입력'
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+
+          <button type='submit' className='p-2 text-gray-600 text-3xl'>
+            <IoSearch />
           </button>
+        </form>
+
+        {/* 유저 정보 */}
+        <div className='ml-auto flex flex-col items-end px-6 '>
+          {userId && userName && (
+            <p className='text-sm font-semibold'>
+              {userName}님 <span>유저 ID: {userId}</span>
+            </p>
+          )}
+        </div>
+        <div className='flex gap-2 mt-2'>
+          {userId ? (
+            <>
+              <div className='flex justify-center space-x-2 mt-0'>
+                <button
+                  className='bg-transparent text-black rounded-full px-6 py-0 text-sm font-bold w-38 h-14 hover:scale-105 transition-transform duration-300'
+                  onClick={() => navigate('/mypage')}
+                >
+                  마이페이지
+                </button>
+                <button
+                  className='bg-transparent text-black rounded-full px-6 py-3 text-sm font-bold w-38 h-14  hover:scale-105 transition-transform duration-300'
+                  onClick={handleLogoutClick}
+                >
+                  로그아웃
+                </button>
+                <button
+                  className='bg-transparent text-black rounded-full px-6 py-3 text-sm font-bold w-38 h-14 hover:scale-105 transition-transform duration-300'
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  onClick={() => navigate('/cart')}
+                >
+                  장바구니
+                </button>
+              </div>
+
+              {showCartPopup && (
+                <div className='absolute top-20 right-4 bg-white border border-gray-400 rounded-md p-2 w-40 shadow-lg'>
+                  {loadingCart ? <p>장바구니 로딩 중...</p> : getCartItemList()}
+                </div>
+              )}
+            </>
+          ) : (
+            <button
+              className='border-2 border-black rounded-md px-3 py-1 text-xs font-bold'
+              onClick={handleSignInClick}
+            >
+              로그인
+            </button>
+          )}
+        </div>
+
+        {/* ✅ 로그인 모달 */}
+        {isModalOpen && (
+          <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
+            <div className='bg-white p-6 rounded-lg shadow-lg'>
+              <SignIn onClose={() => setIsModalOpen(false)} />
+            </div>
+          </div>
         )}
       </div>
-    </div>
+    </>
   );
 }
 
