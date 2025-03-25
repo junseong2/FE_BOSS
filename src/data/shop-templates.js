@@ -175,7 +175,7 @@ export const mobileinitialElements = [
       sortList: ['실시간', '일간', '주간', '월간'],
       title: '추천 상품',
       columns: 3,
-    },
+    }
   },
 
 

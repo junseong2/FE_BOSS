@@ -8,3 +8,11 @@ export const getCategories = async () => {
 
   return response.data;
 };
+
+/** 카테고리 대분류 */
+export const getMajorCategories = async () => {
+  const url = apiRoutes.categories.getAllMajor();
+  const response = await instance.get(url);
+
+  return response;
+};

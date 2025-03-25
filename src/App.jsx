@@ -19,10 +19,8 @@ import CameraCapturePage from './pages/CameraCapturePage';
 import ContactPage from './pages/ContactPage';
 import MyPage from './pages/MyPage';
 import EventPage from './pages/EventPage';
-import PaymentPage from './pages/PaymentPage';
 import ChatBot from './components/layout/ChatBot';
 
-import SignUp from './pages/SignUp';
 import CategoryPage from './pages/CategoryPage';
 import SearchPage from './pages/SearchPage';
 
@@ -31,12 +29,18 @@ import SellerDashboardPage from './pages/seller/SellerDashboardPage.jsx';
 import SellerProductPage from './pages/seller/SellerProductPage.jsx';
 import SellerOrderPage from './pages/seller/SellerOrderPage.jsx';
 import SellerInventoryPage from './pages/seller/SellerInventoryPage.jsx';
-import SellerSalesPage from './pages/seller/SellerSalesPage.jsx';
 import SellerPaymentPage from './pages/seller/SellerPaymentPage.jsx';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ShopEditorPage from './pages/editor/ShopEditorPage.jsx';
+
 import MobileShopEditorPage from './pages/editor/MobileShopEditorPage.jsx';
+
+import AccountRecoveryPage from './pages/accountRecovery/AccountRecoveryPage.jsx';
+import PaymentPage from './pages/PaymentPage';
+
 import Footer from './components/layout/Footer'; // ✅ Footer import 추가
+import SignUpPage from './pages/signup/SignUpPage.jsx';
+import SellerSettlementPage from './pages/seller/SellerSettlementPage.jsx';
 
 function App() {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -169,7 +173,6 @@ function App() {
                     }
                   />
                 </Route>
-
                 {/* ✅ 일반적인 페이지 경로 유지 */}
                 <Route path='/' element={<HomePage />} />
                 <Route path='/about' element={<AboutPage />} />
@@ -179,11 +182,11 @@ function App() {
                 <Route path='/camera' element={<CameraCapturePage />} />
                 <Route path='/signin' element={<SignIn />} />
                 <Route path='/mypage' element={<MyPage />} />
-                <Route path='/signup' element={<SignUp />} />
+                <Route path='/signup' element={<SignUpPage />} />
                 <Route path='/cart' element={<CartPage />} />
                 <Route path='/category/:categoryId' element={<CategoryPage />} />
                 <Route path='/search' element={<SearchPage />} />
-                <Route path='/payment' element={<PaymentPage />} />
+                <Route path='/paymentpage' element={<PaymentPage />} />
                 <Route path='/product/:productId' element={<ProductDetailPage />} />
                 {/* <Route path="/product/recommend-text" element={<ChatBot />} /> */}
 
@@ -193,19 +196,27 @@ function App() {
                   <Route path='product' element={<SellerProductPage />} />
                   <Route path='order' element={<SellerOrderPage />} />
                   <Route path='inventory' element={<SellerInventoryPage />} />
-                  <Route path='sales' element={<SellerSalesPage />} />
-                  <Route path='settlement' element={<SellerPaymentPage />} />
+                  <Route path='payment' element={<SellerPaymentPage/>} />
+                  <Route path='settlement' element={<SellerSettlementPage />} />
                 </Route>
 
                 <Route path='/editor' element={<ShopEditorPage />}></Route>
+
                 
                 <Route path='/mobileeditor' element={<MobileShopEditorPage />}></Route>
+
+
+                {/* 비밀번호/아이디 찾기 */}
+                <Route path='/auth/account-recovery' element={<AccountRecoveryPage/>}></Route> 
+
               </Routes>
 
               <div className='h-300'></div>
             </main>
 
-      
+
+            {/* <Footer /> */}
+
           </div>
 
           {!isAdminPage && isMobile && <BottomNavigation />}
