@@ -104,57 +104,55 @@ function CategoryPage() {
   };
 
   return (
-    <div className='product-container'>
-      <h2>카테고리: {categoryName}</h2>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold text-center">상품 목록</h1>
+      {categoryName && <h2 className="text-xl text-center mt-2">카테고리: {categoryName}</h2>}
 
-      {/* ✅ 가격 정렬 버튼 */}
-      <div className='sort-buttons'>
-        <button onClick={() => sortProducts('asc')} disabled={sortOrder === 'asc'}>
-          가격 낮은순
-        </button>
-        <button onClick={() => sortProducts('desc')} disabled={sortOrder === 'desc'}>
-          가격 높은순
-        </button>
+      <div className="flex justify-center gap-4 mt-4">
+        <button 
+          onClick={() => sortProducts('asc')} 
+          disabled={sortOrder === 'asc'}
+          className="px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 disabled:opacity-50"
+        >가격 낮은순</button>
+        <button 
+          onClick={() => sortProducts('desc')} 
+          disabled={sortOrder === 'desc'}
+          className="px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 disabled:opacity-50"
+        >가격 높은순</button>
       </div>
+      <br />
 
-      <ul className='product-list'>
+      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-4">
         {products.length > 0 ? (
           products.map((product) => (
-            <li
-              key={product.productId}
-              className='product-item'
-              onClick={() => navigate(`/product/${product.productId}`)}
-              style={{ cursor: 'pointer' }}
+            <li 
+              key={product.productId} 
+              onClick={() => navigate(`/product/${product.productId}`)} 
+              className="flex flex-col items-center p-4 border border-gray-300 rounded-lg bg-white text-center shadow-md transition-transform hover:scale-105"
             >
               <img
-                src={
-                  Array.isArray(product.gimage)
-                    ? product.gimage[0] || '/default-product.jpg'
-                    : product.gimage || '/default-product.jpg'
-                }
+                src={product.gimage?.[0] || '/default-product.jpg'}
                 alt={product.name}
-                style={{
-                  width: '400px',
-                  height: 'auto',
-                  maxHeight: '300px',
-                  objectFit: 'cover',
-                  borderRadius: '10px',
-                }}
+                className="w-full max-w-[250px] h-60 object-cover rounded-lg"
+                onError={(e) => (e.target.src = 'http://localhost:5173/src/assets/default-product.jpg')}
               />
-              <p>상품명: {product.name}</p>
-              <p>가격: {product.price.toLocaleString()}원</p>
-              <p>설명: {product.description}</p>
-              <button onClick={(event) => addToCart(event, product.productId)}>
-                장바구니 추가
-              </button>
+              <p className="text-lg font-bold mt-3">{product.name}</p>
+              <p className="text-sm text-gray-600 mt-1 line-clamp-2">{product.description}</p>
+              <p className="text-lg font-semibold text-gray-800 mt-2">{product.price.toLocaleString()}원</p>
+              {product.expiry_date && <p className="text-sm text-red-500">유통기한: {product.expiry_date}</p>}
+              <button 
+                onClick={(e) => addToCart(e, product.productId)} 
+                className="mt-3 px-4 py-2 bg-orange-500 text-white rounded-md text-sm hover:bg-orange-600"
+              >장바구니 담기</button>
             </li>
           ))
         ) : (
-          <p>해당 카테고리에 상품이 없습니다.</p>
+          <p className="col-span-4 text-center text-gray-500">상품이 없습니다.</p>
         )}
       </ul>
     </div>
   );
 }
+
 
 export default CategoryPage;
