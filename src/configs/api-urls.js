@@ -19,8 +19,9 @@ export const apiRoutes = {
   seller: {
     // 상품 관리
     products: {
-      getAll: (page, size, productName) =>
-        BASE_URL + `/seller/products?page=${page}&size=${size}&search=${productName}`,
+      getAll: (page, size, productName, state) =>
+        BASE_URL +
+        `/seller/products?page=${page}&size=${size}&search=${productName}&state=${state}`,
       insertMany: () => BASE_URL + `/seller/products/multiple`,
       insert: () => BASE_URL + `/seller/products`,
       delete: () => BASE_URL + `/seller/products`,
@@ -28,12 +29,30 @@ export const apiRoutes = {
     },
     // 재고 관리
     inventories: {
-      getAll: (page, size) => BASE_URL + `/seller/inventories?page=${page}&size=${size}`,
-      search: (page, size, search) =>
-        BASE_URL + `/seller/inventories/search?search=${search}&page=${page}&size=${size}`,
+      getAll: (page, size, search, state) =>
+        BASE_URL + `/seller/inventories?page=${page}&size=${size}&search=${search}&state=${state}`,
       update: () => BASE_URL + `/seller/inventories`,
     },
+    // 주문 관리
+    orders: {
+      getAll: (page, size, search, status, sort) =>
+        BASE_URL +
+        `/seller/orders?page=${page}&size=${size}&search=${search}&status=${status}&sort=${sort}`,
+    },
+    // 결제 관리
+    payments: {
+      getAll: (page, size, search, status, sort) =>
+        BASE_URL +
+        `/seller/payments?page=${page}&size=${size}&search=${search}&status=${status}&sort=${sort}`,
+    },
+    // 정산 관리
+    settlements: {
+      getAll: (page, size, search, status, sort) =>
+        BASE_URL +
+        `/seller/settlements?page=${page}&size=${size}&search=${search}&status=${status}&sort=${sort}`,
+    },
   },
+
   // 인증
   auth: {
     singup: () => BASE_URL + `/auth/signup`,
@@ -45,4 +64,15 @@ export const apiRoutes = {
     findUserEmail: () => BASE_URL + `/auth/find-email`, // 이메일 찾기
     resetPassword: () => BASE_URL + `/auth/reset-password`, // 비밀번호 재설정
   },
+
+  // 주문
+  orders:{
+    create: ()=> BASE_URL + `/orders/create`
+  },
+
+  // 결제
+  payments: {
+    create: ()=> BASE_URL + `/payment/portone`,
+    updateStatus: ()=> BASE_URL +`/payment/update-status` 
+  }
 };

@@ -40,7 +40,7 @@ export default function SellerProductTable({
       {!Array.isArray(products) ? (
         <p>조회할 상품목록이 존재하지 않습니다.</p>
       ) : (
-        <table className='w-full table-auto '>
+        <table className='w-full table-auto min-w-[768px] '>
                  <thead>
           <tr className='bg-[#F3F4F6] text-gray-600 text-sm'>
             <th className='py-3 px-4 text-left font-medium'>선택</th>
@@ -61,7 +61,7 @@ export default function SellerProductTable({
               return (
                 <tr
                   key={product.productId}
-                  className='transition-colors duration-200 hover:bg-gray-100 '
+                  className='transition-colors duration-200 hover:bg-gray-50 '
                 >
                   <td className='px-2 py-1 text-sm'>
                     <input
@@ -146,7 +146,7 @@ export default function SellerProductTable({
                     {/* 편집 취소 버튼 */}
                     {isEditableRow && (
                       <button
-                        className='flex items-center gap-2 justify-center bg-white text-black font-normal py-1 px-4 rounded-md mt-2 border border-gray-300 w-full text-sm hover:bg-gray-200 transition-colors'
+                        className='flex items-center gap-2 justify-center cursor-pointer hover:placeholder-gray-100 bg-white text-black font-normal py-1 px-4 rounded-md mt-2 border border-gray-300 w-full text-sm hover:bg-gray-200 transition-colors'
                         onClick={() => onToggle(-1)} // 취소 버튼 클릭 시 수정 모드 해제
                       >
                         취소

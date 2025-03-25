@@ -11,8 +11,14 @@ const getStatusClassName = (status) => {
   }
 };
 
-export default function SellerPaymentsTable({ payments }) {
+export default function SellerPaymentsTable({ payments, paymentMethods }) {
   const [showDropdown, setShowDropdown] = useState(null);
+
+
+  function getPaymentLabel(key) {
+    const method = paymentMethods.find(item => item.key === key);
+    return method ? method.label : '보류'; // 일치하는 키가 없으면 기본값 반환
+  }
 
   /** 필터 드롭다운 토글 */
   const toggleDropdown = (id) => {
@@ -25,55 +31,57 @@ export default function SellerPaymentsTable({ payments }) {
         <thead>
           <tr className='bg-[#F3F4F6] text-gray-600 text-sm'>
             <th className='py-3 px-4 text-left font-medium'>결제번호</th>
-            <th className='py-3 px-4 text-left font-medium'>주문번호</th>
             <th className='py-3 px-4 text-left font-medium'>고객명</th>
             <th className='py-3 px-4 text-left font-medium'>결제일자</th>
             <th className='py-3 px-4 text-left font-medium'>결제방법</th>
-            <th className='py-3 px-4 text-left font-medium'>결제정보</th>
             <th className='py-3 px-4 text-left font-medium'>금액</th>
             <th className='py-3 px-4 text-left font-medium'>상태</th>
             <th className='py-3 px-4 text-center font-medium'>관리</th>
           </tr>
         </thead>
         <tbody className='divide-y divide-gray-200'>
-          {payments.map((payment) => (
-            <tr key={payment.paymentId} className='hover:bg-gray-50'>
-              <td className='py-3 px-4 text-sm'>{payment.paymentId}</td>
-              <td className='py-3 px-4 text-sm'>{payment.orderId}</td>
-              <td className='py-3 px-4 text-sm font-medium text-black'>{payment.customerName}</td>
-              <td className='py-3 px-4 text-sm text-gray-700'>{payment.paymentDate}</td>
-              <td className='py-3 px-4 text-sm'>{payment.paymentMethod}</td>
-              <td className='py-3 px-4 text-sm'>{payment.paymentInfo}</td>
-              <td className='py-3 px-4 text-sm font-medium'>₩{payment.amount.toLocaleString()}</td>
-              <td className='py-3 px-4'>
-                <span
-                  className={`inline-block px-3 py-1 text-xs rounded-full ${getStatusClassName(payment.status)}`}
-                >
-                  {payment.status}
-                </span>
-              </td>
-              <td className='py-3 px-4 text-center relative'>
-                <button
-                  onClick={() => toggleDropdown(payment.paymentId)}
-                  className='text-gray-400 hover:text-gray-600'
-                >
-                  <IoEllipsisHorizontal className='h-5 w-5' />
-                </button>
-                {showDropdown === payment.paymentId && (
-                  <div className='absolute right-12 z-10 mt-2 w-48 bg-white border rounded-md shadow-lg'>
-                    <div className='py-1'>
-                      <button className='flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left'>
-                        결제 상세보기
-                      </button>
-                      <button className='flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left'>
-                        환불 처리
-                      </button>
+          {payments?.map((payment) => {
+
+            const paymentStatus = getPaymentLabel(payment)
+            return (
+              <tr key={payment.paymentId} className='hover:bg-gray-50'>
+                <td className='py-3 px-4 text-sm'>{payment.paymentId}</td>
+                <td className='py-3 px-4 text-sm font-medium text-black'>{payment.customerName}</td>
+                <td className='py-3 px-4 text-sm text-gray-700'>{payment.paymentDate}</td>
+                <td className='py-3 px-4 text-sm'>{payment.paymentMethod}</td>
+                <td className='py-3 px-4 text-sm font-medium'>
+                  ₩{payment.amount?.toLocaleString()}
+                </td>
+                <td className='py-3 px-4'>
+                  <span
+                    className={`inline-block px-3 py-1 text-xs rounded-full ${getStatusClassName(paymentStatus)}`}
+                  >
+                    {payment.status}
+                  </span>
+                </td>
+                <td className='py-3 px-4 text-center relative'>
+                  <button
+                    onClick={() => toggleDropdown(payment.paymentId)}
+                    className='text-gray-400 hover:text-gray-600'
+                  >
+                    <IoEllipsisHorizontal className='h-5 w-5' />
+                  </button>
+                  {showDropdown === payment.paymentId && (
+                    <div className='absolute right-12 z-10 mt-2 w-48 bg-white border rounded-md shadow-lg'>
+                      <div className='py-1'>
+                        <button className='flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left'>
+                          결제 상세보기
+                        </button>
+                        <button className='flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left'>
+                          환불 처리
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </td>
-            </tr>
-          ))}
+                  )}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

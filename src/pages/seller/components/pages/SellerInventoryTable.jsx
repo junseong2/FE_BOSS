@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { formatDate } from '../../../../utils/formatter.js';
 
 export function SellerInventoryTable({
-  headers,
   inventories,
   actionButtonName,
   onToggle,
@@ -11,6 +10,7 @@ export function SellerInventoryTable({
 }) {
   const [modifiedInventories, setModifiedInventories] = useState(inventories);
 
+  // 변경된 재고 상태를 실시간으로 수정
   const handleInputChange = (e, inventoryId, field) => {
     setModifiedInventories(
       inventories.map((inventory) =>
@@ -21,6 +21,7 @@ export function SellerInventoryTable({
     );
   };
 
+  // 앞서 수정된 재고 상태 항목을 인벤토리 ID와 일치하는 경우 실제로 반영처리
   const handleUpdate = (inventoryId) => {
     const updatedInventory = modifiedInventories.find(
       (inventory) => inventory.inventoryId === inventoryId,
@@ -31,8 +32,8 @@ export function SellerInventoryTable({
   };
 
   return (
-    <div className='w-full'>
-      <table className='w-full min-w-[600px]'>
+    <div className='overflow-x-auto'>
+      <table className='w-full min-w-[1024px] '>
         <thead>
           <tr className='bg-[#F3F4F6] text-gray-600 text-sm'>
             <th className='py-3 px-4 text-left font-medium'>카테고리ID</th>
@@ -48,11 +49,11 @@ export function SellerInventoryTable({
 
         <tbody>
           {!Array.isArray(inventories) || inventories.length === 0 ? (
-            <p className='mt-5'>조회할 재고 목록이 존재하지 않습니다.</p>
+            <p className='mt-5 pb-5 text-gray-500'>조회할 재고 목록이 존재하지 않습니다.</p>
           ) : (
             inventories.map((inventory, index) => {
               const stockWarn =
-                inventory.stock < inventory.minStock
+                inventory.stock < inventory.minStock && inventory.stock > 0
                   ? '재고부족'
                   : inventory.stock === 0
                     ? '품절'
@@ -62,7 +63,7 @@ export function SellerInventoryTable({
               return (
                 <tr
                   key={inventory.inventoryId}
-                  className='hover:bg-gray-100 transition duration-200'
+                  className='hover:bg-gray-50 transition duration-200'
                 >
                   <td className='p-2'>{inventory.inventoryId}</td>
                   <td className='p-2'>{inventory.productId}</td>
@@ -92,10 +93,16 @@ export function SellerInventoryTable({
                     )}
                   </td>
                   <td className='p-2'>{formatDate(inventory.updatedDate)}</td>
-                  <td className='p-2'>{stockWarn}</td>
-                  <td className='p-2'>
+                  <td className={`p-2`}>
+                    <span
+                      className={`${getStatusClassName(stockWarn)} py-1 px-2 rounded-3xl text-[12px]`}
+                    >
+                      {stockWarn}
+                    </span>
+                  </td>
+                  <td className='p-2 flex flex-col'>
                     <button
-                      className='bg-gray-700 text-white rounded px-3 py-1 text-sm hover:bg-gray-900'
+                      className='min-w-[70px] bg-gray-700 text-white rounded px-3 py-1 text-sm hover:bg-gray-900'
                       onClick={() => {
                         if (!isEditing) onToggle(index);
                         else {
@@ -108,7 +115,7 @@ export function SellerInventoryTable({
                     </button>
                     {isEditing && (
                       <button
-                        className='mt-1 bg-white border border-gray-300 rounded px-3 py-1 text-sm hover:bg-gray-100'
+                        className='min-w-[70px mt-1.5 bg-white border border-gray-300 rounded px-3 py-1 text-sm hover:bg-gray-100'
                         onClick={() => onToggle(null)}
                       >
                         취소
@@ -124,3 +131,15 @@ export function SellerInventoryTable({
     </div>
   );
 }
+
+/** 재고 상태별 색상처리 */
+const getStatusClassName = (status) => {
+  switch (status) {
+    case '정상':
+      return 'bg-green-100 text-green-800';
+    case '재고부족':
+      return 'bg-purple-100 text-purple-800';
+    case '품절':
+      return 'bg-red-100 text-red-800';
+  }
+};

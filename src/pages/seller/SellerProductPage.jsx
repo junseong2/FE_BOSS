@@ -145,7 +145,7 @@ function SellerProductPage() {
 
   return (
     <>
-      <section className='border bg-[#f3f4f6] border-gray-200 rounded-[5px] p-3'>
+      <section className='border bg-[#f3f4f6] border-gray-200 rounded-[5px] p-3 h-auto min-h-screen'>
         {/* 헤더 */}
         <SellerContentHeader>
           <SellerTitle type={'main'}>상품관리</SellerTitle>

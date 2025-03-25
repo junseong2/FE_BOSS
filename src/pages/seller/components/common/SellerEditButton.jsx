@@ -8,7 +8,7 @@ export default function SellerEditButton({
 }) {
   return (
     <button
-      className={`flex items-center gap-2 ${isEditable ? 'bg-[#1a416e] text-white hover:bg-[#357ab7]' : 'bg-white text-black border border-gray-300'} font-medium py-2 px-6 rounded-md justify-center w-full text-sm`}
+      className={`min-w-[75px] cursor-pointer hover:placeholder-gray-100 flex items-center gap-2 ${isEditable ? 'bg-[#1a2b3e] text-white hover:bg-[#1a2b3eeb]' : 'bg-white text-black border border-gray-300'} font-medium py-1 px-6 rounded-md justify-center w-full text-sm`}
       onClick={() => {
         if (!isEditable) {
           onToggle(index); // 수정 모드로 전환

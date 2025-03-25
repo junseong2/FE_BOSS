@@ -10,24 +10,17 @@ import {
 /** 주문상태 컬러 라벨링 */
 const getStatusClassName = (status) => {
   switch (status) {
-    case '배송완료':
+    case 'PAID':
       return 'bg-green-100 text-green-800';
-    case '결제완료':
+    case 'PENDING':
       return 'bg-purple-100 text-purple-800';
-    case '배송중':
-      return 'bg-yellow-100 text-yellow-800';
-    case '주문확인':
-      return 'bg-blue-100 text-blue-800';
-    case '주문취소':
+    case 'CANCELLED':
       return 'bg-red-100 text-red-800';
-    default:
-      return 'bg-gray-100 text-gray-800';
   }
 };
 
 export default function SellerOrderTable({ orders }) {
   const [showDropdown, setShowDropdown] = useState(null);
-
 
   /** 필터 드롭다운 토글 */
   const toggleDropdown = (id) => {
@@ -36,7 +29,7 @@ export default function SellerOrderTable({ orders }) {
 
   return (
     <div className='overflow-x-auto'>
-      <table className='min-w-[768px] w-full'>
+      <table className='min-w-[812px] w-full'>
         <thead>
           <tr className='bg-[#F3F4F6] text-gray-600 text-sm'>
             <th className='py-3 px-4 text-left font-medium'>주문번호</th>
@@ -45,19 +38,19 @@ export default function SellerOrderTable({ orders }) {
             <th className='py-3 px-4 text-center font-medium'>상품수</th>
             <th className='py-3 px-4 text-left font-medium'>결제방법</th>
             <th className='py-3 px-4 text-left font-medium'>금액</th>
-            <th className='py-3 px-4 text-left font-medium'>상태</th>
+            <th className='py-3 px-4 text-left font-medium'>주문상태</th>
             <th className='py-3 px-4 text-center font-medium'>관리</th>
           </tr>
         </thead>
         <tbody className='divide-y divide-gray-200'>
-          {orders.map((order) => (
+          {orders?.map((order) => (
             <tr key={order.id} className='hover:bg-gray-50'>
-              <td className='py-3 px-4 text-sm'>{'ORD-' + order.id}</td>
-              <td className='py-3 px-4 text-sm font-medium text-black'>{order.customer}</td>
-              <td className='py-3 px-4 text-sm text-gray-700'>{order.created_date}</td>
-              <td className='py-3 px-4 text-sm text-center'>{order.quantity}개</td>
+              <td className='py-3 px-4 text-sm'>{'ORD-' + order.orderId}</td>
+              <td className='py-3 px-4 text-sm font-medium text-black'>{order.username}</td>
+              <td className='py-3 px-4 text-sm text-gray-700'>{order.createdDate}</td>
+              <td className='py-3 px-4 text-sm text-center'>{order.orderCount}개</td>
               <td className='py-3 px-4 text-sm'>{order.paymentMethod}</td>
-              <td className='py-3 px-4 text-sm font-medium'>{order.total_price}</td>
+              <td className='py-3 px-4 text-sm font-medium'>{order.totalPrice}</td>
               <td className='py-3 px-4'>
                 <span
                   className={`inline-block px-3 py-1 text-xs rounded-full ${getStatusClassName(order.status)}`}
