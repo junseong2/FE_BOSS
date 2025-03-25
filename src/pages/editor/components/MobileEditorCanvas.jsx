@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { IoTrashOutline } from 'react-icons/io5';
 import MobileEditorPreview from './MobileEditorPreview';
+import { Link } from 'react-router-dom';
 
 export default function MobileEditorCanvas({
   editorTab,
@@ -16,8 +17,21 @@ export default function MobileEditorCanvas({
 
   return (
     <div className='w-full '>
-      <div className='m-1 border border-gray-200 rounded max-w-[240px] '>{editorTab}</div>
-      <div className='border-8 border-black overflow-y-auto overflow-x-hidden max-h-[915px] h-full w-[800px] m-2 rounded-lg'>
+
+<div className="m-1 border border-gray-200 rounded max-w-[240px] flex gap-2 p-2">
+  <Link
+    to="/editor"
+    className="flex-1 text-center py-1 px-3 bg-gray-500 hover:bg-gray-600 text-white rounded transition-colors"
+  >
+    미리보기
+  </Link>
+  <Link
+    to="/mobileeditor"
+    className="flex-1 text-center py-1 px-3 bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors"
+  >
+    모바일 미리보기
+  </Link>
+</div>      <div className='border-8 border-black overflow-y-auto overflow-x-hidden max-h-[915px] h-full w-[800px] m-2 rounded-lg'>
         {/* 편집기 와이어프레임 뷰 */}
         <div className='p-2'>
           {elements.length === 0 ? (
@@ -49,7 +63,7 @@ export default function MobileEditorCanvas({
 function DraggableElement({ element, index, isSelected, onClick, onUpdate, onRemove, onMove }) {
   const divRef = useRef(null);
 
-  console.log("편집 가능한 요소:",element)
+  console.log("편집 가능한 모바일 요소:",element)
 
   // 드래깅 처리 및 드래깅 유무 체크
   const [{ isDragging }, drag] = useDrag({

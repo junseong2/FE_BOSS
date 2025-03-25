@@ -20,7 +20,7 @@ function EditorElementGrid({ onSelectElement, elements }) {
   const items = [
     { icon: <IoGridOutline />, label: '헤더', type: 'header' },
     { icon: <IoImageOutline />, label: '배너', type: 'banner' },
-    { icon: <IoBagHandleOutline />, label: '상품 그리드', type: 'productGrid' },    
+    { icon: <IoBagHandleOutline />, label: '상품 그리드', type: 'grid' },    
     { icon: <IoPhonePortraitOutline/>, label: '바텀네비게이션바', type: 'bottomNavigationbar' },
   ];
 

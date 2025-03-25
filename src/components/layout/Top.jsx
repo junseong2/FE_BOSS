@@ -10,7 +10,7 @@ import SignIn from '../../pages/SignIn';
 import { IoSearch, IoGiftOutline } from 'react-icons/io5';
 
 function Top() {
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+  const BASE_URL =  'http://localhost:5000';
 
   const { userId, setUserId, userName, setUserName } = useUser(); // ✅ 전역 상태 사용
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -93,8 +93,7 @@ function Top() {
 <div className="w-8 h-16 bg-transparent"></div> {/* 오른쪽 박스 */}
 
   <img
-    src={`${BASE_URL}/uploads/boss_logo.png`}
-    className="w-16 h-auto max-w-16 max-h-16 cursor-pointer"
+  src={`${import.meta.env.VITE_BACKEND_URL}/uploads/boss_logo.png`}    className="w-16 h-auto max-w-16 max-h-16 cursor-pointer"
     onClick={() => navigate('/')}
   />
 </div>

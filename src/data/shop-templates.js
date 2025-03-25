@@ -8,6 +8,8 @@ export const elementTemplates = {
       logoUrl: 'https://placehold.co/50x50',
       menuItems: ['홈', '상품', '카테고리', '소개', '연락처'],
       categories: [],
+      backgroundColor: '#4294F2',
+
     },
   },
   banner: {
@@ -21,22 +23,18 @@ export const elementTemplates = {
       backgroundColor: '#3331',
     },
   },
-  productGrid: {
+  grid: {
     id: 'template-product-grid',
-    type: 'productGrid',
+    type: 'grid',
     name: '상품 그리드',
     version: 1,
     properties: {
-      sortList: {
-        new: [],
-        best: [],
-        recommend: [],
-      }[('실시간', '일간', '주간', '월간')],
-      title: {},
+      sortList: ['실시간', '일간', '주간', '월간'], // 배열로 설정
+      title: '추천 상품',
+      columns: 3,
     },
   },
 };
-
 export const initialElements = [
   {
     id: 'el-1',
@@ -47,6 +45,8 @@ export const initialElements = [
       logoUrl: 'https://placehold.co/50x50',
       menuItems: ['홈', '상품', '카테고리', '소개', '연락처'],
       categories: [],
+      backgroundColor: '#4294F2',
+
     },
   },
   {
@@ -62,7 +62,7 @@ export const initialElements = [
   },
   {
     id: 'el-3',
-    type: 'productGrid',
+    type: 'grid',
     name: '상품 그리드',
     properties: {
       sortList: ['실시간', '일간', '주간', '월간'],
@@ -72,20 +72,30 @@ export const initialElements = [
   },
 ];
 
+
+
+
+
+
+
+
+
 export const mobileelementTemplates = {
   header: {
     id: 'template-header',
-    type: 'header',
+    type: 'mobileheader',
     name: '헤더',
     properties: {
       title: '내 쇼핑몰',
       logoUrl: 'https://placehold.co/50x50',
       categories: [],
+      backgroundColor: '#4294F2',
+
     },
   },
   banner: {
     id: 'template-banner',
-    type: 'banner',
+    type: 'mobilebanner',
     name: '배너',
     properties: {
       title: '쇼핑몰에 오신 것을 환영합니다',
@@ -94,9 +104,9 @@ export const mobileelementTemplates = {
       backgroundColor: '#3331',
     },
   },
-  productGrid: {
+  grid: {
     id: 'template-product-grid',
-    type: 'productGrid',
+    type: 'mobilegrid',
     name: '상품 그리드',
     version: 1,
     properties: {
@@ -109,16 +119,25 @@ export const mobileelementTemplates = {
     },
   },
 
-  bottomNavigator: {
-    id: 'template-bottom-navigation',
-    type: 'bottomNavigationbar',
-    name: '바텀네비게이션',
-    version: 1,
+  bottomNavigator: 
+  
+  
+  {
+    id: 'el-4',
+    type: 'mobileBottomNavigationBar',
+    name: '바텀 네비게이션 바',
     properties: {
-      imageUrl: 'http://localhost:5000/uploads/bottomnavigationbar.png',
-    
+      backgroundColor: '#3331',
+      items: [
+        { id: 'nav-home', label: '홈', icon: 'home' },
+        { id: 'nav-search', label: '검색', icon: 'search' },
+        { id: 'nav-category', label: '카테고리', icon: 'category' },
+        { id: 'nav-cart', label: '장바구니', icon: 'shopping_cart' },
+        { id: 'nav-mypage', label: '마이페이지', icon: 'person' },
+      ],
     },
   },
+  
 };
 
 
@@ -127,17 +146,19 @@ export const mobileelementTemplates = {
 export const mobileinitialElements = [
   {
     id: 'el-1',
-    type: 'header',
+    type: 'mobileheader',
     name: '헤더',
     properties: {
       title: '내 쇼핑몰',
       logoUrl: 'https://placehold.co/50x50',
       categories: [],
+      backgroundColor: '#4294F2',
+
     },
   },
   {
     id: 'el-2',
-    type: 'banner',
+    type: 'mobilebanner',
     name: '배너',
     properties: {
       title: '쇼핑몰에 오신 것을 환영합니다',
@@ -148,7 +169,7 @@ export const mobileinitialElements = [
   },
   {
     id: 'el-3',
-    type: 'productGrid',
+    type: 'mobilegrid',
     name: '상품 그리드',
     properties: {
       sortList: ['실시간', '일간', '주간', '월간'],
@@ -156,13 +177,25 @@ export const mobileinitialElements = [
       columns: 3,
     },
   },
+
+
+
   {
     id: 'el-4',
-    type: 'bottomNavigationbar',
-    name: '바텀네비게이션바',
+    type: 'mobileBottomNavigationBar',
+    name: '바텀 네비게이션 바',
     properties: {
-      imageUrl: 'http://localhost:5000/uploads/bottomnavigationbar.png',
       backgroundColor: '#3331',
+      items: [
+        { id: 'nav-home', label: '홈', icon: 'home' },
+        { id: 'nav-search', label: '검색', icon: 'search' },
+        { id: 'nav-category', label: '카테고리', icon: 'category' },
+        { id: 'nav-cart', label: '장바구니', icon: 'shopping_cart' },
+        { id: 'nav-mypage', label: '마이페이지', icon: 'person' },
+      ],
     },
-  },
+  }
+  
+
+
 ];

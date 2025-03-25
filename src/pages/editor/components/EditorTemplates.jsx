@@ -7,9 +7,13 @@ import SortList from '../../../components/SortList';
  */
 export function TemplateHeader({ properties }) {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  console.log("🚀렌더링파트 헤더 Logo URL: ", properties?.logoUrl);
 
   return (
-    <div className='relative w-full flex justify-between items-center gap-2 border-b border-[#E4E4E7] p-2'>
+    <div 
+      className='relative w-full flex justify-between items-center gap-2 border-b border-[#E4E4E7] p-2'
+      style={{ backgroundColor: properties?.backgroundColor || '#fff1ff' }} // ✅ 배경색 적용
+    >
       {/* 카테고리 버튼 */}
       <button
         className='z-20 p-2 bg-gray-100 rounded-md'
@@ -37,16 +41,25 @@ export function TemplateHeader({ properties }) {
       </div>
 
       {/* 로고 */}
-      <div className='w-[60px] h-[55px] text-center relative '>
+      <div className='w-[60px] h-[55px] text-center relative'>
         {properties.logoUrl ? (
           <img
             className='w-full h-full'
-            src={properties.logoUrl}
+            src={`http://localhost:5000${properties.logoUrl}`}  // 절대 경로 사용
             width={50}
             height={50}
             alt='로고 이미지'
           />
-        ) : null}
+
+        ) : (
+          <img
+            className="w-full h-full"
+            src="https://placehold.co/50x50"  // 기본 이미지 사용
+            alt="기본 로고 이미지"
+            width={50}
+            height={50}
+          />
+        )}
       </div>
 
       {/* 네비게이션 */}
@@ -67,6 +80,13 @@ export function TemplateHeader({ properties }) {
       )}
     </div>
   );
+
+
+
+
+
+
+
 }
 
 /**
@@ -74,6 +94,9 @@ export function TemplateHeader({ properties }) {
  * @returns
  */
 export function TemplateBanner({ properties }) {
+
+  console.log("🚀렌더링파트 베너 image URL: ", properties?.imageUrl);
+
   return (
     <div
       className='relative max-h-[450px] h-full w-full p-4 flex items-center justify-center cursor-move'
@@ -84,32 +107,88 @@ export function TemplateBanner({ properties }) {
           <h2 className='text-3xl'>{properties.title}</h2>
           <h3 className='text-xl mt-3'>{properties.subtitle}</h3>
         </div>
+
+
+
+
         {properties.imageUrl ? (
-          <img
-            className='w-full h-full'
-            src={properties.imageUrl}
-            alt='배너 이미지'
-            width={1024}
-            height={300}
-          />
-        ) : null}
+  <img
+    className="w-full h-full"
+    src={`http://localhost:5000${properties.imageUrl}`}  // 절대 경로 사용
+    alt="배너 이미지"
+    width={1024}
+    height={300}
+  />
+) : (
+  <img
+    className="w-full h-full"
+    src="https://placehold.co/736x300"  // 기본 이미지 사용
+    alt="기본 배너 이미지"
+    width={1024}
+    height={300}
+  />
+)}
+
+
+
+
       </figure>
     </div>
   );
 }
 
-/**
- * 커스텀 상품 섹션(상품 그리드)
- * @returns
- */
-export function TemplateProductGrid({ properties }) {
+export function Templategrid({ properties }) {
+  const {
+    columns = 3, 
+    sortList = ["실시간", "일간", "주간", "월간"],  // 기본값 설정
+    title = "추천 상품 제목", // title이 없으면 기본값 사용
+    products = []  // 기본값 설정
+  } = properties;
+
+  // title이 문자열이 아닌 경우 기본값을 사용하도록 설정
+  const renderTitle = typeof title === "string" ? title : "기본 상품 제목"; 
+
+  // 그리드의 컬럼 수에 맞춰 스타일 적용
+  const gridStyle = {
+    gridTemplateColumns: `repeat(${columns}, 1fr)`,  // 컬럼 수에 맞는 grid template 스타일 적용
+  };
+
   return (
-    <div className='relative cursor-move py-[50px]'>
-      <h2 className='text-[1.8rem] text-center'>{properties.title}</h2>
+    <div className="relative cursor-move py-[50px]">
+      <h2 className="text-[1.8rem] text-center">{renderTitle}</h2> {/* title이 없으면 기본값 사용 */}
 
       {/* 정렬 리스트 */}
-      <SortList sortList={properties.sortList} />
-      <ul className='list-none'></ul>
+      <SortList sortList={sortList} />  {/* sortList가 없으면 기본값 사용 */}
+      
+      {/* 상품 그리드 */}
+      <div className="grid gap-4 mt-4" style={gridStyle}>
+        {products && products.length > 0 ? (
+          products.map((product, index) => (
+            <div key={index} className="p-4 border rounded-lg bg-gray-50">
+              <p>{product.name}</p>  {/* 상품 이름 */}
+              <p>{product.price}</p>  {/* 상품 가격 */}
+            </div>
+          ))
+        ) : (
+          <p>상품이 없습니다.</p> 
+        )}
+      </div>
     </div>
   );
 }
+
+// 예시 데이터
+const products = [
+  { name: '상품 1', price: '$10' },
+  { name: '상품 2', price: '$20' },
+  { name: '상품 3', price: '$30' },
+];
+
+const properties = {
+  title: "추천 상품",
+  columns: 3,
+  sortList: ["실시간", "일간", "주간", "월간"],
+  products: products,
+};
+
+<Templategrid properties={properties} />

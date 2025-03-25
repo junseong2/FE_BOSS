@@ -11,8 +11,10 @@ export function MobileTemplateHeader({ properties }) {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
 
   return (
-    <div className='relative w-full flex justify-between items-center gap-2 border-b border-[#E4E4E7] p-2'>
-      {/* 카테고리 버튼 */}
+    <div
+      className='relative w-full flex justify-between items-center gap-2 border-b border-[#E4E4E7] p-2'
+      style={{ backgroundColor: properties.backgroundColor || 'white' }} // ✅ 배경색 추가
+    >      {/* 카테고리 버튼 */}
       <button
         className='z-20 p-2 bg-gray-100 rounded-md'
         onClick={() => setIsCategoryOpen(!isCategoryOpen)}
@@ -101,7 +103,7 @@ export function MobileTemplateBanner({ properties }) {
  * 커스텀 상품 섹션(상품 그리드)
  * @returns
  */
-export function MobileTemplateProductGrid({ properties }) {
+export function MobileTemplategrid({ properties }) {
   return (
     <div className='relative cursor-move py-[50px]'>
       <h2 className='text-[1.8rem] text-center'>{properties.title}</h2>

@@ -37,3 +37,17 @@ export const getRedirectUrl = async ()=>{
 
   return response.data
 }
+
+
+export const getSellerInfo = async () => {
+  try {
+    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/seller/seller-info`, {
+      withCredentials: true, // ✅ 쿠키 인증 사용
+    });
+
+    return response.data; // ✅ 판매자 정보 반환
+  } catch (error) {
+    console.error('❌ 판매자 정보 가져오기 실패:', error);
+    return null;
+  }
+};

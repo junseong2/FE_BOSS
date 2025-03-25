@@ -6,7 +6,7 @@ import { useUser } from '../../context/UserContext'; // ✅ 전역 상태 사용
 
 const Top5 = ({ sellerMenubarColor, storename }) => {
   const { userId, setUserId, userName, setUserName } = useUser(); // ✅ 전역 상태 사용
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+  const BASE_URL =  'http://localhost:5000';
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -79,13 +79,13 @@ const Top5 = ({ sellerMenubarColor, storename }) => {
         <div className='flex gap-2'>
           <button
             className='px-3 py-1 bg-transparent hover:bg-gray-300 rounded-md text-xs'
-            onClick={() => navigate(`/${storename}/intro`)}
+            onClick={() => navigate(`/intro`)}
           >
             Intro
           </button>
           <button
             className='px-3 py-1 bg-transparent hover:bg-gray-300 rounded-md text-xs'
-            onClick={() => navigate(`/${storename}/shop`)}
+            onClick={() => navigate(`/shop`)}
           >
             Shop
           </button>

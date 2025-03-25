@@ -6,7 +6,6 @@ import { UserProvider } from './context/UserContext.jsx';
 import AppLayout from './AppLayout';
 import ShopPage from './pages/ShopPage';
 import IntroPage from './pages/IntroPage';
-
 import './index.css'; // ✅ Tailwind가 적용된 index.css 사용
 import Top from './components/layout/Top';
 import MenuBar from './MenuBar';
@@ -40,6 +39,7 @@ import MobileShopEditorPage from './pages/editor/MobileShopEditorPage.jsx';
 import Footer from './components/layout/Footer'; // ✅ Footer import 추가
 
 function App() {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [storename, setStorename] = useState(null);
   const [headerId, setHeaderId] = useState(null);
   const [sellerId, setSellerId] = useState(null);
@@ -61,8 +61,8 @@ function App() {
     if (!storename) {
       setLoading(false);
       return;
-    }
 
+    }
     const fetchSellerInfo = async () => {
       try {
         const sellerResponse = await fetch(`http://localhost:5000/seller/info/${storename}`, {
@@ -79,23 +79,28 @@ function App() {
 
         console.log('📌 [fetchSellerInfo] 응답 데이터:', sellerData);
 
-        setSellerId(sellerData.sellerData ?? null);
+        setSellerId(sellerData.sellerId ?? null); // sellerId 업데이트
         setHeaderId(sellerData.headerId ?? null);
         setMenuBarId(sellerData.menuBarId ?? null);
-        setSellerId(sellerData.sellerId ?? null);
         setNavigationId(sellerData.navigationId ?? null);
         setSellerMenubarColor(sellerData.seller_menubar_color ?? '#ffffff');
+        console.log("📌 [fetchSellerInfo] 상태 업데이트 후 sellerId:", sellerData.sellerId);
+
       } catch (error) {
-        console.error('API 호출 실패:', error);
+        console.error(' fetchSellerInfo API 호출 실패:', error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchSellerInfo();
-  }, [storename]);
+  }, [storename]); // storename이 변경
 
   useEffect(() => {
+
+    
+    console.log("백엔드 API URL:", import.meta.env.VITE_BACKEND_URL);
+    console.log("app.jsx에서 본 sellerId:", sellerId);
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
@@ -105,6 +110,11 @@ function App() {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+
+
+
+  console.log("📌 APP.js 시작:");
 
   return (
     <CartProvider>
@@ -163,6 +173,7 @@ function App() {
                 {/* ✅ 일반적인 페이지 경로 유지 */}
                 <Route path='/' element={<HomePage />} />
                 <Route path='/about' element={<AboutPage />} />
+                <Route path='/event' element={<EventPage />} />
                 <Route path='/contact/*' element={<ContactPage />} />
                 <Route path='/event' element={<EventPage />} />
                 <Route path='/camera' element={<CameraCapturePage />} />
