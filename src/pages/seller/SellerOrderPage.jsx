@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import SellerOrderTable from './components/pages/SellerOrderTable';
 import Pagination from '../../components/Pagination';
 import TableSkeleton from '../../components/skeleton/TableSkeleton';
-import { getOrders } from '../../services/order.service';
+import { getOrderDetail, getOrders } from '../../services/order.service';
 
 const orderStatuses = [
   // 탭 목 데이터
@@ -29,7 +29,7 @@ function SellerOrderPage() {
   const [totalCount, setTotalCount] = useState(100);
 
   // 주문 내역 조회
-  const getOrdersFetch = async () => {
+  const getOrdersFetch = async (search) => {
     const props = {
       page,
       size: PAGE_SIZE,
@@ -51,8 +51,13 @@ function SellerOrderPage() {
     setLoading(false);
   };
 
+  // 주문 상세 조회
+  const getOrderDetailFetch = async (orderId) => {
+    getOrderDetail(orderId);
+  };
+
   useEffect(() => {
-    getOrdersFetch();
+    getOrdersFetch(search);
   }, [page, search, selectedTab]);
 
   return (
@@ -62,16 +67,6 @@ function SellerOrderPage() {
         <SellerTitle type={'main'}>주문관리</SellerTitle>
         {/* 날짜 선택, 필터, 내보내기 */}
       </SellerContentHeader>
-
-      {/* 신규주문, 배송중, 배송완료, 취소/반품 통계 */}
-      {/* <div>
-        <SellerCardLayout>
-          <SellerCard bgColor={'bg-white'} amount={12} title={'신규 주문'} />
-          <SellerCard bgColor={'bg-white'} amount={8} title={'배송중'} />
-          <SellerCard bgColor={'bg-white'} amount={24} title={'배송완료'} />
-          <SellerCard bgColor={'bg-white'} amount={3} title={'취소/반품'} />
-        </SellerCardLayout>
-      </div> */}
 
       {/* 탭(메뉴) */}
       <SellerTabs
@@ -88,16 +83,15 @@ function SellerOrderPage() {
             placeholder={'주문번호를 입력하세요.'}
             onSearch={(e) => {
               e.preventDefault();
-
-              const formData = new FormData();
-              const search = formData.get('search');
+              const formData = new FormData(e.currentTarget);
+              const search = formData.get('search')?.toString() || '';
               setSearch(search);
             }}
           />
         </div>
 
         {/* 테이블 */}
-        {loading ? <TableSkeleton /> : <SellerOrderTable orders={orders} />}
+        {loading ? <TableSkeleton /> : <SellerOrderTable orders={orders} onOrderDetailFetch={getOrderDetailFetch} />}
       </div>
 
       {/* 페이지네이션 */}

@@ -9,8 +9,6 @@ export const getPayments = async ({ page, size, search, status, sort }) => {
   try {
     const response = await instance.get(url);
 
-    console.log(response)
-
     if (response.status < 300) {
       return response.data;
     } else {

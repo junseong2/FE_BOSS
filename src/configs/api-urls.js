@@ -38,7 +38,11 @@ export const apiRoutes = {
       getAll: (page, size, search, status, sort) =>
         BASE_URL +
         `/seller/orders?page=${page}&size=${size}&search=${search}&status=${status}&sort=${sort}`,
+      getById: (orderId) => {
+        BASE_URL + `/seller/orders/${orderId}`;
+      },
     },
+
     // 결제 관리
     payments: {
       getAll: (page, size, search, status, sort) =>
@@ -66,13 +70,13 @@ export const apiRoutes = {
   },
 
   // 주문
-  orders:{
-    create: ()=> BASE_URL + `/orders/create`
+  orders: {
+    create: () => BASE_URL + `/orders/create`,
   },
 
   // 결제
   payments: {
-    create: ()=> BASE_URL + `/payment/portone`,
-    updateStatus: ()=> BASE_URL +`/payment/update-status` 
-  }
+    create: () => BASE_URL + `/payment/portone`,
+    updateStatus: () => BASE_URL + `/payment/update-status`,
+  },
 };

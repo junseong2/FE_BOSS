@@ -75,12 +75,6 @@ function SellerPaymentPage() {
         </SellerCardLayout>
       </div>
 
-      {/* 탭(메뉴) */}
-      <SellerTabs
-        tabList={paymentMethods}
-        selectedTab={selectedTab}
-        onTabChange={(e) => setSelectedTab(e.currentTarget.dataset.tabId)}
-      />
 
       {/*  컨텐츠 */}
       <div className='bg-white mt-5 border border-gray-200 p-3 py-0'>

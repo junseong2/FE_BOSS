@@ -20,6 +20,22 @@ export const getOrders = async ({ page, size, search, status, sort }) => {
   }
 };
 
+/**판매자 | 주문 내역 상세 조회 */
+export const getOrderDetail = async (orderId) => {
+  const url = apiRoutes.seller.orders.getById(orderId);
+
+  try {
+    const response = await instance.get(url);
+    if (response.status < 300) {
+      return response.data;
+    }
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.instance.data;
+    }
+  }
+};
+
 /** 구매자 | 주문생성 */
 export const createOrders = async (order) => {
   const url = apiRoutes.orders.create();
