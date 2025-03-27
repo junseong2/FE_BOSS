@@ -18,13 +18,9 @@ const fetchUserInfo = async (setUserId, setUserName, setEmails, setPhones, setAd
     // ✅ 상태 업데이트 (NULL 방지)
     setUserId(data.userId || '');
     setUserName(data.userName || '');
-    setEmails(data.emails.length > 0 ? data.emails : ['']); // ✅ 기본값 설정
-    setPhones(data.phones.length > 0 ? data.phones : ['']);
-    setAddresses(
-      data.addresses.length > 0
-        ? data.addresses
-        : [{ address1: '', address2: '', post: '', isDefault: false }],
-    );
+    setEmails(Array.isArray(data.emails) ? data.emails : []); // ✅ undefined 방지
+    setPhones(Array.isArray(data.phones) ? data.phones : []);
+    setAddresses(Array.isArray(data.addresses) ? data.addresses : []);
   } catch (error) {
     console.error('❌ 사용자 정보 조회 오류:', error.message);
   }
