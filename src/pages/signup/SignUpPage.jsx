@@ -11,6 +11,9 @@ export default function SignUpPage() {
   const [isAuthEmail, setIsAuthEmail] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // 전송 로딩 상태
 
+
+  console.log(isSendCode, isAuthEmail)
+
   // 폼 데이터 메시지
   const [formData, setFormData] = useState({
     username: '',
@@ -63,7 +66,7 @@ export default function SignUpPage() {
       oncomplete: function (data) {
         setFormData((prev) => ({
           ...prev,
-          zipcode: data.zonecode,
+          post: data.zonecode,
           address1: data.address,
         }));
 
@@ -147,6 +150,7 @@ export default function SignUpPage() {
     }
     try {
       const isSuccess = await sendEmailAuthCode(formData.email); // 비동기 처리
+      console.log("상태:",isSuccess)
       setIsSendCode(isSuccess);
     } catch (error) {
       alert('이메일 인증 코드 전송 실패');

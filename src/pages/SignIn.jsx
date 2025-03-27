@@ -12,7 +12,7 @@ function SignIn({ onClose }) {
   const [redirectUrl, setRedirectUrl] = useState('/');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000' ;
 
   // 로그인 상태 추적
   const checkLoginStatus = async () => {
@@ -21,7 +21,7 @@ function SignIn({ onClose }) {
       if (!token) return;
       const data = getUserInfo();
       setUserName(data.userName);
-      navigate('-1');
+      navigate('/home');
     } catch (error) {
       console.error('로그인 상태 확인 중 오류 발생:', error);
     }
@@ -45,19 +45,22 @@ function SignIn({ onClose }) {
 
   // 로그인 폼 요청
   const handleLogin = async () => {
-    const formData = {
-      email,
-      password,
-    };
-
     try {
-      const status = await loginRequest(formData);
-      if (status < 400) {
-        onClose?.();
-        setUserName(result.userName);
-        navigate(location.state?.from || '/');
+      const response = await fetch('http://localhost:5000/auth/locallogin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include',
+      });
 
-        await fetchUserInfo(setUserId, setUserName);
+      const result = await response.json();
+
+      if (response.ok) {
+        alert('로그인 성공!');
+        setUserName(result.userName);
+       fetchUserInfo(setUserId, setUserName);
+
+        onClose(); // ✅ 로그인 성공 시 모달 닫기
       } else {
         alert('로그인 실패: ' + result.error);
       }
@@ -108,6 +111,12 @@ function SignIn({ onClose }) {
           로그인
         </button>
 
+
+
+
+
+
+
         <div className='flex justify-between mt-3'>
           <button
             onClick={() => {
@@ -146,7 +155,7 @@ function SignIn({ onClose }) {
             src={`${BASE_URL}/uploads/naver_login_logo.png`}
             alt='Naver 로그인'
             className='cursor-pointer  w-12 h-12 rounded-full bg-gray-200'
-            onClick={() => (window.location.href = `${BASE_URL}/auth/naver`)}
+            onClick={() => (window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/naver`)}
           />
         </div>
       </div>

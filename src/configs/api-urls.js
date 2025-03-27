@@ -35,12 +35,11 @@ export const apiRoutes = {
     },
     // 주문 관리
     orders: {
-      getAll: (page, size, search, status, sort) =>
+      getAll: (page, size, search, status, sort) => 
         BASE_URL +
         `/seller/orders?page=${page}&size=${size}&search=${search}&status=${status}&sort=${sort}`,
-      getById: (orderId) => {
-        BASE_URL + `/seller/orders/${orderId}`;
-      },
+      getById: (orderId) => 
+        BASE_URL + `/seller/orders/${orderId}`
     },
 
     // 결제 관리
@@ -59,7 +58,7 @@ export const apiRoutes = {
 
   // 인증
   auth: {
-    singup: () => BASE_URL + `/auth/signup`,
+    signup: () => BASE_URL + `/auth/signup`,
     signin: () => BASE_URL + `/auth/locallogin`,
     userInfo: () => BASE_URL + `/auth/user-info`,
     redirect: () => BASE_URL + `/auth/get-redirect-url`,

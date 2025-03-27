@@ -1,25 +1,25 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import EditorHeader from './components/layout/EditorHeader';
 import EditorSidebar from './components/layout/EditorSidebar';
 import EditorTab from './components/tab/EditorTab';
 import EditorTabContent from './components/tab/EditorTabContent';
-import EditorCanvas from './components/EditorCanvas';
-import MobileEditorCanvas from './components/EditorCanvas';
+import MobileEditorCanvas from './components/MobileEditorCanvas';
 
 import ElementEditor from './components/input/ElementEditor';
 import fetchUserInfo from '../../utils/api';
 import axios from 'axios';
-import { elementTemplates, initialElements } from '../../data/shop-templates';
+import { mobileelementTemplates, mobileinitialElements } from '../../data/shop-templates';
 import { IoCloseOutline } from 'react-icons/io5';
 import { getCategories } from '../../services/category.service';
-
 
 const sidebarTabList = ['요소', '설정'];
 const canvasTabList = ['미리보기'];
 
-export default function ShopEditorPage() {
+export default function MobileShopEditorPage() {
 
-  const [elements, setElements] = useState(initialElements); // ✅ 기본 요소 상태
+
+  
+  const [elements, setElements] = useState(mobileinitialElements); // ✅ 기본 요소 상태
   const [selectedElement, setSelectedElement] = useState(null);
   const [sidebarSelectedTabName, setSidebarSelectedTabName] = useState('요소');
   const [canvasSelectedTabName, setCanvasSelectedTabName] = useState('에디터');
@@ -27,13 +27,11 @@ export default function ShopEditorPage() {
   const [sellerInfo, setSellerInfo] = useState(null);
   const [userId, setUserId] = useState('');
   const [sellerId, setSellerId] = useState(null);
-  const [settings, setSettings] = useState(initialElements);
-  
   const handleElementMove = (updatedElements) => {
     setElements(updatedElements);  // 요소 순서 업데이트
   };
 
-  console.log("EditorCanvas로 전달될 elements 배열:", elements); // 전달된 elements 배열 출력
+  console.log("MobileEditorCanvas로 전달될 elements 배열:", elements); // 전달된 elements 배열 출력
 
   // ✅ 1. userId 가져오기
   useEffect(() => {
@@ -43,7 +41,7 @@ export default function ShopEditorPage() {
   async function fetchSellerInfo(userId) {
     try {
       const response = await axios.get(`http://localhost:5000/seller/seller-info-byuserid/${userId}`);
-      console.log('✅ 서버에서 받아온 sellerInfo:', response.data);
+      console.log('✅ 서버에서 받아온 모바일 sellerInfo:', response.data);
       setSellerInfo(response.data);
       setSellerId(response.data.sellerId);
     } catch (error) {
@@ -68,19 +66,19 @@ export default function ShopEditorPage() {
     if (!sellerInfo) return; // sellerInfo가 없으면 리턴 (초기 상태에서 방어)
   
     let updatedSettings;
-    if (!sellerInfo.settings || sellerInfo.settings === 'N/A') {
-      updatedSettings = initialElements; // 설정이 없으면 기본값 사용
+    if (!sellerInfo.mobilesettings || sellerInfo.mobilesettings === 'N/A') {
+      updatedSettings = mobileinitialElements; // 설정이 없으면 기본값 사용
       console.log('❌ setting 불러오기 실패: 기본값 사용');
     } else {
       console.log('✅ setting 불러오기 성공');
       try {
         updatedSettings =
-          typeof sellerInfo.settings === 'string'
-            ? JSON.parse(sellerInfo.settings) // settings가 문자열인 경우 파싱
-            : sellerInfo.settings; // 이미 객체라면 그대로 사용
+          typeof sellerInfo.mobilesettings === 'string'
+            ? JSON.parse(sellerInfo.mobilesettings) // settings가 문자열인 경우 파싱
+            : sellerInfo.mobilesettings; // 이미 객체라면 그대로 사용
       } catch (error) {
         console.error('❌ settings 파싱 오류:', error);
-        updatedSettings = initialElements; // 파싱 오류 시 기본값 사용
+        updatedSettings = mobileinitialElements; // 파싱 오류 시 기본값 사용
       }
     }
   
@@ -247,7 +245,7 @@ console.log("🔍 elements는 배열인가?", Array.isArray(elements));
             <EditorTabContent
               targetTabName={sidebarSelectedTabName}
               onSelectElement={handleAddElement}
-              elements={elementTemplates}
+              elements={mobileelementTemplates}
             />
 
 
@@ -257,7 +255,7 @@ console.log("🔍 elements는 배열인가?", Array.isArray(elements));
           </EditorSidebar>
 
           {/* 캔버스 */}
-          <EditorCanvas
+          <MobileEditorCanvas
             tab='editor'
             editorTab={
               <EditorTab

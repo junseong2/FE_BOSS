@@ -6,7 +6,6 @@ import { UserProvider } from './context/UserContext.jsx';
 import AppLayout from './AppLayout';
 import ShopPage from './pages/ShopPage';
 import IntroPage from './pages/IntroPage';
-
 import './index.css'; // ✅ Tailwind가 적용된 index.css 사용
 import Top from './components/layout/Top';
 import MenuBar from './MenuBar';
@@ -33,6 +32,9 @@ import SellerInventoryPage from './pages/seller/SellerInventoryPage.jsx';
 import SellerPaymentPage from './pages/seller/SellerPaymentPage.jsx';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ShopEditorPage from './pages/editor/ShopEditorPage.jsx';
+
+import MobileShopEditorPage from './pages/editor/MobileShopEditorPage.jsx';
+
 import AccountRecoveryPage from './pages/accountRecovery/AccountRecoveryPage.jsx';
 import PaymentPage from './pages/PaymentPage';
 
@@ -41,6 +43,7 @@ import SignUpPage from './pages/signup/SignUpPage.jsx';
 import SellerSettlementPage from './pages/seller/SellerSettlementPage.jsx';
 
 function App() {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [storename, setStorename] = useState(null);
   const [headerId, setHeaderId] = useState(null);
   const [sellerId, setSellerId] = useState(null);
@@ -52,7 +55,9 @@ function App() {
   const location = useLocation();
   const isAdminPage =
     location.pathname.toLowerCase().startsWith('/seller') ||
-    location.pathname.toLowerCase().startsWith('/admin');
+    location.pathname.toLowerCase().startsWith('/admin')||
+    location.pathname.toLowerCase().startsWith('/editor')||
+    location.pathname.toLowerCase().startsWith('/mobileeditor');
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -60,8 +65,8 @@ function App() {
     if (!storename) {
       setLoading(false);
       return;
-    }
 
+    }
     const fetchSellerInfo = async () => {
       try {
         const sellerResponse = await fetch(`http://localhost:5000/seller/info/${storename}`, {
@@ -78,23 +83,28 @@ function App() {
 
         console.log('📌 [fetchSellerInfo] 응답 데이터:', sellerData);
 
-        setSellerId(sellerData.sellerData ?? null);
+        setSellerId(sellerData.sellerId ?? null); // sellerId 업데이트
         setHeaderId(sellerData.headerId ?? null);
         setMenuBarId(sellerData.menuBarId ?? null);
-        setSellerId(sellerData.sellerId ?? null);
         setNavigationId(sellerData.navigationId ?? null);
         setSellerMenubarColor(sellerData.seller_menubar_color ?? '#ffffff');
+        console.log("📌 [fetchSellerInfo] 상태 업데이트 후 sellerId:", sellerData.sellerId);
+
       } catch (error) {
-        console.error('API 호출 실패:', error);
+        console.error(' fetchSellerInfo API 호출 실패:', error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchSellerInfo();
-  }, [storename]);
+  }, [storename]); // storename이 변경
 
   useEffect(() => {
+
+    
+    console.log("백엔드 API URL:", import.meta.env.VITE_BACKEND_URL);
+    console.log("app.jsx에서 본 sellerId:", sellerId);
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
@@ -104,6 +114,11 @@ function App() {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+
+
+
+  console.log("📌 APP.js 시작:");
 
   return (
     <CartProvider>
@@ -116,7 +131,7 @@ function App() {
           <ChatBot />
 
           <div className='flex flex-col min-h-screen'>
-            <main className='relative flex-1 min-h-[calc(100vh-150px)]'>
+            <main className='flex-grow flex-1 min-h-[calc(100vh-150px) ]'>
               {/*150px는 header와 footer높이 합 */}
               <Routes>
                 <Route
@@ -161,6 +176,7 @@ function App() {
                 {/* ✅ 일반적인 페이지 경로 유지 */}
                 <Route path='/' element={<HomePage />} />
                 <Route path='/about' element={<AboutPage />} />
+                <Route path='/event' element={<EventPage />} />
                 <Route path='/contact/*' element={<ContactPage />} />
                 <Route path='/event' element={<EventPage />} />
                 <Route path='/camera' element={<CameraCapturePage />} />
@@ -186,17 +202,26 @@ function App() {
 
                 <Route path='/editor' element={<ShopEditorPage />}></Route>
 
+                
+                <Route path='/mobileeditor' element={<MobileShopEditorPage />}></Route>
+
+
                 {/* 비밀번호/아이디 찾기 */}
                 <Route path='/auth/account-recovery' element={<AccountRecoveryPage/>}></Route> 
+
               </Routes>
+
+              <div className='h-300'></div>
             </main>
 
+
             {/* <Footer /> */}
+
           </div>
 
           {!isAdminPage && isMobile && <BottomNavigation />}
         </div>
-
+        {!isAdminPage && <Footer />}
         {/* ✅ 로딩 스피너 */}
         {loading && (
           <div className='fixed inset-0 w-full h-screen bg-white/90 flex justify-center items-center text-lg font-bold z-[9999]'>

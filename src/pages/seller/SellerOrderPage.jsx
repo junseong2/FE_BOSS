@@ -25,7 +25,9 @@ function SellerOrderPage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [detailLoading, setDetailLoading] = useState(false);
   const [orders, setOrders] = useState([]);
+  const [orderDetail, setOrderDetail] = useState('');
   const [totalCount, setTotalCount] = useState(100);
 
   // 주문 내역 조회
@@ -38,22 +40,33 @@ function SellerOrderPage() {
     };
 
     setLoading(true);
-    const { orders, totalCount } = await getOrders(props);
 
-    if (orders) {
-      setOrders(orders);
-      setTotalCount(totalCount || 1);
-    } else {
-      setOrders([]);
-      setTotalCount(1);
+    try {
+      const { orders, totalCount } = await getOrders(props);
+
+      if (orders) {
+        setOrders(orders);
+        setTotalCount(totalCount || 1);
+      } else {
+        setOrders([]);
+        setTotalCount(1);
+      }
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   // 주문 상세 조회
   const getOrderDetailFetch = async (orderId) => {
-    getOrderDetail(orderId);
+    setDetailLoading(true);
+    try {
+      const data = await getOrderDetail(orderId);
+      if (data) {
+        setOrderDetail(data);
+      }
+    } finally {
+      setDetailLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -91,7 +104,11 @@ function SellerOrderPage() {
         </div>
 
         {/* 테이블 */}
-        {loading ? <TableSkeleton /> : <SellerOrderTable orders={orders} onOrderDetailFetch={getOrderDetailFetch} />}
+        {loading ? (
+          <TableSkeleton />
+        ) : (
+          <SellerOrderTable orders={orders} onOrderDetailFetch={getOrderDetailFetch} orderDetail={orderDetail} />
+        )}
       </div>
 
       {/* 페이지네이션 */}

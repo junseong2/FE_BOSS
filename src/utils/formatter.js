@@ -1,3 +1,12 @@
+
+/**
+ * ISO 형식을 2025-03-02 02:15:00 형식으로 변환한다.
+ * @param {*} isoString 
+ * @example 
+    const isoString = '2025-03-02T02:15:00.000+00:00';
+    console.log(formatDate(isoString)); // "2025-03-02 02:15:00"
+    
+ */
 export function formatDate(isoString) {
   const date = new Date(isoString);
 
@@ -12,6 +21,3 @@ export function formatDate(isoString) {
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
-
-const isoString = '2025-03-02T02:15:00.000+00:00';
-console.log(formatDate(isoString)); // "2025-03-02 02:15:00"

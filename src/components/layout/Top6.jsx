@@ -6,7 +6,7 @@ import { useUser } from '../../context/UserContext'; // ✅ 전역 상태 사용
 
 const Top5 = ({ sellerMenubarColor, storename }) => {
   const { userId, setUserId, userName, setUserName } = useUser(); // ✅ 전역 상태 사용
-  const BASE_URL =  'http://localhost:5000';
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -58,6 +58,11 @@ const Top5 = ({ sellerMenubarColor, storename }) => {
     navigate('/');
   };
 
+
+
+
+
+
   return (
     <div className='relative'>
       {/* ✅ 네비게이션 바 */}
@@ -78,14 +83,14 @@ const Top5 = ({ sellerMenubarColor, storename }) => {
         {/* ✅ 버튼 그룹 (우측 정렬) */}
         <div className='flex gap-2'>
           <button
-            className='px-3 py-1 bg-transparent hover:bg-gray-300 rounded-md text-xs'
-            onClick={() => navigate(`/intro`)}
+        className="px-4 py-2 bg-transparent text-gray-800 font-serif text-base tracking-wide hover:bg-gray-200 rounded-lg transition-all shadow-sm"
+            onClick={() => navigate(`/${storename}/intro`)}
           >
             Intro
           </button>
           <button
-            className='px-3 py-1 bg-transparent hover:bg-gray-300 rounded-md text-xs'
-            onClick={() => navigate(`/shop`)}
+        className="px-4 py-2 bg-transparent text-gray-800 font-serif text-base tracking-wide hover:bg-gray-200 rounded-lg transition-all shadow-sm"
+        onClick={() => navigate(`/${storename}/shop`)}
           >
             Shop
           </button>
