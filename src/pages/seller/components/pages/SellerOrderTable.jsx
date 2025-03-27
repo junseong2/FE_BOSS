@@ -37,7 +37,7 @@ export default function SellerOrderTable({ orders, onOrderDetailFetch, orderDeta
 
   return (
     <>
-      <div className='overflow-x-auto'>
+      <div className='overflow-x-auto min-h-[512px]'>
         <table className='min-w-[812px] w-full'>
           <thead>
             <tr className='bg-[#F3F4F6] text-gray-600 text-sm'>
