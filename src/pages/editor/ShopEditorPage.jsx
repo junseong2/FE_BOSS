@@ -18,10 +18,11 @@ const canvasTabList = ['미리보기'];
 
 export default function ShopEditorPage() {
 
-  const [elements, setElements] = useState(initialElements); // 보여질 요소
-  const [selectedElement, setSelectedElement] = useState(null); // 선택된 요소
-  const [sidebarSelectedTabName, setSidebarSelectedTapName] = useState('설정');
 
+  
+  const [elements, setElements] = useState(initialElements); // ✅ 기본 요소 상태
+  const [selectedElement, setSelectedElement] = useState(null);
+  const [sidebarSelectedTabName, setSidebarSelectedTabName] = useState('요소');
   const [canvasSelectedTabName, setCanvasSelectedTabName] = useState('에디터');
   const [categories, setCategories] = useState([]);
   const [sellerInfo, setSellerInfo] = useState(null);

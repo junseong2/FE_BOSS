@@ -9,6 +9,7 @@ export const registerUser = async (formData) => {
     const response = await instance.post(url, formData);
     return response.status < 400;
   } catch (error) {
+    console.error("회원가입 실패:", error.response?.data || error.message);
     return false;
   }
 };
@@ -52,7 +53,7 @@ export const sendEmailAuthCode = async (email) => {
   try {
     const response = await instance.post(url, { email });
     alert('인증코드가 발송되었습니다. 이메일을 확인해주세요.');
-    return response.data;
+    return true;
   } catch (error) {
     return null;
   }
