@@ -52,6 +52,7 @@ export default function SellerOrderTable({ orders, onOrderDetailFetch, orderDeta
             </tr>
           </thead>
           <tbody className='divide-y divide-gray-200'>
+          
             {orders?.map((order) => (
               <tr key={order.orderId} className='hover:bg-gray-50 '>
                 <td className='py-3 px-4 text-sm'>{'ORD-' + order.orderId}</td>
@@ -95,7 +96,7 @@ export default function SellerOrderTable({ orders, onOrderDetailFetch, orderDeta
 
       {/* 주문 상세 내역 모달 */}
       {showModal ? (
-        <SellerOrderDetails order={orderDetail} onClose={() => setShowModal(false)} />
+        <SellerOrderDetails orderDetail={orderDetail} onClose={() => setShowModal(false)} />
       ) : null}
     </>
   );
