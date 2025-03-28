@@ -9,13 +9,20 @@ import Pagination from '../../components/Pagination';
 import TableSkeleton from '../../components/skeleton/TableSkeleton';
 import { getOrderDetail, getOrders } from '../../services/order.service';
 
-const orderStatuses = [
+const orderStatus = [
   // 탭 목 데이터
   { key: '', label: '전체내역' },
   { key: 'PENDING', label: '결제대기' },
   { key: 'PAID', label: '결제완료' },
-  { key: 'CANCELLED', label: '주문취소' },
+  { key: 'CANCELLED', label: '결제취소' },
 ];
+
+const paymentStatus = [
+  { key: 'PENDING', label: '결제대기' },
+  { key: 'PAID', label: '결제완료' },
+  { key: 'CANCELLED', label: '결제취소' },
+];
+
 
 const PAGE_SIZE = 6;
 function SellerOrderPage() {
@@ -35,7 +42,8 @@ function SellerOrderPage() {
     const props = {
       page,
       size: PAGE_SIZE,
-      status: selectedTab,
+      paymentStatus: selectedTab,
+      orderStatus:'',
       search,
     };
 
@@ -43,7 +51,6 @@ function SellerOrderPage() {
 
     try {
       const { orders, totalCount } = await getOrders(props);
-
       if (orders) {
         setOrders(orders);
         setTotalCount(totalCount || 1);
@@ -83,7 +90,7 @@ function SellerOrderPage() {
 
       {/* 탭(메뉴) */}
       <SellerTabs
-        tabList={orderStatuses}
+        tabList={orderStatus}
         selectedTab={selectedTab}
         onTabChange={(e) => setSelectedTab(e.currentTarget.dataset.tabId)}
       />
@@ -93,7 +100,7 @@ function SellerOrderPage() {
         {/* 검색창 */}
         <div className='py-3'>
           <SellerSearch
-            placeholder={'주문번호를 입력하세요.'}
+            placeholder={'ORD-를 생략한 주문번호'}
             onSearch={(e) => {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
@@ -107,7 +114,7 @@ function SellerOrderPage() {
         {loading ? (
           <TableSkeleton />
         ) : (
-          <SellerOrderTable orders={orders} onOrderDetailFetch={getOrderDetailFetch} orderDetail={orderDetail} />
+          <SellerOrderTable orders={orders} paymentStatus={paymentStatus}  onOrderDetailFetch={getOrderDetailFetch} orderDetail={orderDetail} />
         )}
       </div>
 

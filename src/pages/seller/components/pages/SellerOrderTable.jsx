@@ -15,7 +15,12 @@ const getStatusClassName = (status) => {
   }
 };
 
-export default function SellerOrderTable({ orders, onOrderDetailFetch, orderDetail }) {
+export default function SellerOrderTable({
+  orders,
+  paymentStatus,
+  onOrderDetailFetch,
+  orderDetail,
+}) {
   const [showDropdown, setShowDropdown] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
@@ -29,11 +34,12 @@ export default function SellerOrderTable({ orders, onOrderDetailFetch, orderDeta
     setShowModal((prev) => !prev);
   };
 
-  // 주문 id 선택
-  const onPickOrderId = (orderId) => {
-    console.log('선택한 orderId', orderId);
-    setOrderId(orderId);
-  };
+  /** 영어로 작성된 상태를 한글로 */
+  function getPaymentLabel(status) {
+    console.log(status)
+    const method = paymentStatus.find((item) => item.key === status);
+    return method ? method.label : '보류'; // 일치하는 키가 없으면 기본값 반환
+  }
 
   return (
     <>
@@ -47,12 +53,12 @@ export default function SellerOrderTable({ orders, onOrderDetailFetch, orderDeta
               <th className='py-3 px-4 text-center font-medium'>상품수</th>
               <th className='py-3 px-4 text-left font-medium'>결제방법</th>
               <th className='py-3 px-4 text-left font-medium'>금액</th>
+              <th className='py-3 px-4 text-left font-medium'>결제상태</th>
               <th className='py-3 px-4 text-left font-medium'>주문상태</th>
               <th className='py-3 px-4 text-center font-medium'>관리</th>
             </tr>
           </thead>
           <tbody className='divide-y divide-gray-200'>
-          
             {orders?.map((order) => (
               <tr key={order.orderId} className='hover:bg-gray-50 '>
                 <td className='py-3 px-4 text-sm'>{'ORD-' + order.orderId}</td>
@@ -62,6 +68,13 @@ export default function SellerOrderTable({ orders, onOrderDetailFetch, orderDeta
                 <td className='py-3 px-4 text-sm'>{order.paymentMethod}</td>
                 <td className='py-3 px-4 text-sm font-medium'>
                   ₩{order.totalPrice?.toLocaleString()}
+                </td>
+                <td className='py-3 px-4'>
+                  <span
+                    className={`inline-block px-3 py-1 text-xs rounded-full ${getStatusClassName(order.status)}`}
+                  >
+                    {getPaymentLabel(order.paymentStatus)}
+                  </span>
                 </td>
                 <td className='py-3 px-4'>
                   <span
@@ -80,7 +93,6 @@ export default function SellerOrderTable({ orders, onOrderDetailFetch, orderDeta
                     </button>
                     {showDropdown === order.orderId && !showModal && (
                       <SellerOrderDropdown
-                        onClick={onPickOrderId}
                         onToggle={toggleModal}
                         onFetch={onOrderDetailFetch}
                         orderId={order.orderId}
