@@ -114,7 +114,13 @@ function SellerOrderPage() {
         {loading ? (
           <TableSkeleton />
         ) : (
-          <SellerOrderTable orders={orders} paymentStatus={paymentStatus}  onOrderDetailFetch={getOrderDetailFetch} orderDetail={orderDetail} />
+          <SellerOrderTable 
+          orders={orders} 
+          paymentStatus={paymentStatus}  
+          onOrderDetailFetch={getOrderDetailFetch} 
+          orderDetail={orderDetail}
+          detailLoading={detailLoading}
+          />
         )}
       </div>
 

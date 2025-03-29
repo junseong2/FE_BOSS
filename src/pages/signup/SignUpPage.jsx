@@ -170,7 +170,7 @@ export default function SignUpPage() {
     const isLogin = await registerUser(formData);
     if (isLogin) {
       alert('회원가입이 완료되었습니다!');
-      // window.location.href = '/signin';
+      window.location.href = '/signin';
     } else {
       alert('회원가입에 실패했습니다. 다시 시도해주세요.');
     }
@@ -503,7 +503,7 @@ export default function SignUpPage() {
             {/* 이메일 인증번호 */}
             <div className='mb-1'>
               <input
-                type='text'
+                type='password'
                 id='code'
                 name='code'
                 placeholder='인증번호를 입력하세요(5자리)'

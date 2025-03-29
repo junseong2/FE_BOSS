@@ -35,18 +35,27 @@ export const apiRoutes = {
     },
     // 주문 관리
     orders: {
-      getAll: (page, size, search, {orderStatus, paymentStatus}, sort) => 
+      getAll: (page, size, search, { orderStatus, paymentStatus }, sort) =>
         BASE_URL +
         `/seller/orders?page=${page}&size=${size}&search=${search}&orderStatus=${orderStatus}&paymentStatus=${paymentStatus}&sort=${sort}`,
-      getById: (orderId) => 
-        BASE_URL + `/seller/orders/${orderId}`
+      getById: (orderId) => BASE_URL + `/seller/orders/${orderId}`,
     },
 
     // 결제 관리
     payments: {
-      getAll: (page, size, search, status, sort) =>
-        BASE_URL +
-        `/seller/payments?page=${page}&size=${size}&search=${search}&status=${status}&sort=${sort}`,
+      getAll: (page, size, search, status, sort) => {
+        return (
+          BASE_URL +
+          `/seller/payments?page=${page}&size=${size}&search=${search}&status=${status}&sort=${sort}`
+        );
+      },
+      // 일정별 통계
+      getStatistics: (startDate, endDate) => {
+        return (
+          BASE_URL + `/seller/payments/statistics?startDate=${startDate}&endDate=${endDate}`
+        )
+
+      },
     },
     // 정산 관리
     settlements: {

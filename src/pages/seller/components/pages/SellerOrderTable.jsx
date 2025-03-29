@@ -20,6 +20,7 @@ export default function SellerOrderTable({
   paymentStatus,
   onOrderDetailFetch,
   orderDetail,
+  detailLoading
 }) {
   const [showDropdown, setShowDropdown] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -108,7 +109,7 @@ export default function SellerOrderTable({
 
       {/* 주문 상세 내역 모달 */}
       {showModal ? (
-        <SellerOrderDetails orderDetail={orderDetail} onClose={() => setShowModal(false)} />
+        <SellerOrderDetails orderDetail={orderDetail} onClose={() => setShowModal(false)} isLoading={detailLoading} />
       ) : null}
     </>
   );

@@ -2,25 +2,6 @@ import { AxiosError } from 'axios';
 import { apiRoutes } from '../configs/api-urls';
 import instance from '../configs/axios.config';
 
-/** 결제 내역 조회 */
-export const getPayments = async ({ page, size, search, status, sort }) => {
-  const url = apiRoutes.seller.payments.getAll(page, size, search, status, sort);
-
-  try {
-    const response = await instance.get(url);
-
-    if (response.status < 300) {
-      return response.data;
-    } else {
-      return { payments: [], totalCount: 1 };
-    }
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      return error.response.data;
-    }
-  }
-};
-
 /** 포트원 결제 */
 export const portoneRequest = async (paymentData) => {
   const url = apiRoutes.payments.create();
@@ -52,5 +33,41 @@ export const updatePaymentStatus = async (statusData) => {
     }
   } catch (error) {
     throw new Error('결제 상태 변경 실패');
+  }
+};
+
+/*** 판매자  */
+/** 결제 내역 조회 */
+export const getPayments = async ({ page, size, search, status, sort }) => {
+  const url = apiRoutes.seller.payments.getAll(page, size, search, status, sort);
+
+  try {
+    const response = await instance.get(url);
+
+    if (response.status < 300) {
+      return response.data;
+    } else {
+      return { payments: [], totalCount: 1 };
+    }
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response.data;
+    }
+  }
+};
+
+/** 매출 통계 */
+export const getPaymentStatistics = async ({ startDate, endDate }) => {
+  const url = apiRoutes.seller.payments.getStatistics(startDate, endDate);
+
+  try {
+    const response = await instance.get(url);
+
+    if (response.status > 399) {
+      return false;
+    }
+    return response.data;
+  } catch (error) {
+    return false;
   }
 };

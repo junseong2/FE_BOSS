@@ -10,6 +10,7 @@ export const registerUser = async (formData) => {
 
     return response.status < 400;
   } catch (error) {
+    console.error("회원가입 실패:", error.response?.data || error.message);
     return false;
   }
 };
