@@ -36,7 +36,8 @@ export const updatePaymentStatus = async (statusData) => {
   }
 };
 
-/*** 판매자  */
+
+/** 판매자  */
 /** 결제 내역 조회 */
 export const getPayments = async ({ page, size, search, status, sort }) => {
   const url = apiRoutes.seller.payments.getAll(page, size, search, status, sort);
@@ -56,9 +57,41 @@ export const getPayments = async ({ page, size, search, status, sort }) => {
   }
 };
 
-/** 매출 통계 */
-export const getPaymentStatistics = async ({ startDate, endDate }) => {
-  const url = apiRoutes.seller.payments.getStatistics(startDate, endDate);
+/** 매출 요약  */
+export const getPaymentSummary = async ({ startDate, endDate }) => {
+  const url = apiRoutes.seller.payments.getSummary(startDate, endDate);
+
+  try {
+    const response = await instance.get(url);
+
+    if (response.status > 399) {
+      return false;
+    }
+    return response.data;
+  } catch (error) {
+    return false;
+  }
+};
+
+/**매출 분석 통계(월단위) */
+export const getSalesByMonth = async ({ startDate, endDate }) => {
+  const url = apiRoutes.seller.payments.getAllByMonth(startDate, endDate);
+
+  try {
+    const response = await instance.get(url);
+
+    if (response.status > 399) {
+      return false;
+    }
+    return response.data;
+  } catch (error) {
+    return false;
+  }
+};
+
+/**매출 분석 통계(카테고리별) */
+export const getSalesByCategory = async ({ startDate, endDate }) => {
+  const url = apiRoutes.seller.payments.getAllByCategory(startDate, endDate);
 
   try {
     const response = await instance.get(url);

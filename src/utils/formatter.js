@@ -36,8 +36,10 @@ export function formatLocalDate(selectedDate) {
  */
 export function getWeekRange() {
   const today = dayjs();
-  const thisWeekMon = today.date() - today.day() + 1;
-  const thisWeekSun = thisWeekMon + today.day();
+  const thisWeekMon = today.date() - (today.day() === 0 ? 7: today.day()) + 1;
+  const thisWeekSun = thisWeekMon + (today.day() === 0 ? 6: today.day())
+
+  console.log(thisWeekMon, thisWeekSun)
 
   const startDate = dayjs(today.set('date', thisWeekMon)).format('YYYY-MM-DD');
   const endDate = dayjs(today.set('date', thisWeekSun)).format('YYYY-MM-DD');

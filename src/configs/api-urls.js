@@ -43,19 +43,12 @@ export const apiRoutes = {
 
     // 결제 관리
     payments: {
-      getAll: (page, size, search, status, sort) => {
-        return (
-          BASE_URL +
-          `/seller/payments?page=${page}&size=${size}&search=${search}&status=${status}&sort=${sort}`
-        );
-      },
-      // 일정별 통계
-      getStatistics: (startDate, endDate) => {
-        return (
-          BASE_URL + `/seller/payments/statistics?startDate=${startDate}&endDate=${endDate}`
-        )
-
-      },
+      getSummary: (startDate, endDate) =>
+        BASE_URL + `/seller/payments/summary-statistics?startDate=${startDate}&endDate=${endDate}`,
+      getAllByCategory: (startDate, endDate) =>
+        BASE_URL + `/seller/payments/category-statistics?startDate=${startDate}&endDate=${endDate}`,
+      getAllByMonth: (startDate, endDate) =>
+        BASE_URL + `/seller/payments/monthly-statistics?startDate=${startDate}&endDate=${endDate}`,
     },
     // 정산 관리
     settlements: {
