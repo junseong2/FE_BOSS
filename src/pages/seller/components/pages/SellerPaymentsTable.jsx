@@ -27,15 +27,14 @@ export default function SellerPaymentsTable({ payments, paymentMethods }) {
 
   return (
     <div className='overflow-x-auto'>
-      <table className='min-w-full'>
+      <table className='min-w-full min-h-[368px]'>
         <thead>
           <tr className='bg-[#F3F4F6] text-gray-600 text-sm'>
-            <th className='py-3 px-4 text-left font-medium'>결제번호</th>
-            <th className='py-3 px-4 text-left font-medium'>고객명</th>
-            <th className='py-3 px-4 text-left font-medium'>결제일자</th>
-            <th className='py-3 px-4 text-left font-medium'>결제방법</th>
-            <th className='py-3 px-4 text-left font-medium'>금액</th>
-            <th className='py-3 px-4 text-left font-medium'>상태</th>
+            <th className='py-3 px-4 text-left font-medium'>순위</th>
+            <th className='py-3 px-4 text-left font-medium'>상품명</th>
+            <th className='py-3 px-4 text-left font-medium'>판매수량</th>
+            <th className='py-3 px-4 text-left font-medium'>매출액</th>
+            <th className='py-3 px-4 text-left font-medium'>비율</th>
           </tr>
         </thead>
         <tbody className='divide-y divide-gray-200'>

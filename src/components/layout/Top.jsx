@@ -10,7 +10,7 @@ import SignIn from '../../pages/SignIn';
 import { IoSearch, IoGiftOutline } from 'react-icons/io5';
 
 function Top() {
-  const BASE_URL =  'http://localhost:5000';
+  const BASE_URL = 'http://localhost:5000';
 
   const { userId, setUserId, userName, setUserName } = useUser(); // ✅ 전역 상태 사용
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -86,29 +86,29 @@ function Top() {
 
   return (
     <>
-    <div className='h-20'></div>
-    <div className="fixed top-0 left-0 w-full h-20 bg-blue-200 flex items-center justify-between px-4 z-950">
-        
-<div className="flex items-center justify-start w-full px-4">
-<div className="w-8 h-16 bg-transparent"></div> {/* 오른쪽 박스 */}
+      <div className='h-20'></div>
+      <div className="fixed top-0 left-0 w-full h-20 bg-blue-200 flex items-center justify-between px-4 z-950">
 
-  <img
-  src={`${import.meta.env.VITE_BACKEND_URL}/uploads/boss_logo.png`}    className="w-16 h-auto max-w-16 max-h-16 cursor-pointer"
-    onClick={() => navigate('/')}
-  />
-</div>
-<form className="hidden md:flex items-center gap-2 ml-8" onSubmit={handleSearch}>
-  <input
-    type="text"
-    className="w-80 p-2 border border-gray-400 bg-white rounded-md text-lg"
-    placeholder="검색어 입력"
-    value={searchQuery}
-    onChange={(e) => setSearchQuery(e.target.value)}
-  />
-  <button type="submit" className="p-2 text-gray-600 text-3xl">
-    <IoSearch />
-  </button>
-</form>
+        <div className="flex items-center justify-start w-full px-4">
+          <div className="w-8 h-16 bg-transparent"></div> {/* 오른쪽 박스 */}
+
+          <img
+            src={`${import.meta.env.VITE_BACKEND_URL}/uploads/boss_logo.png`} className="w-16 h-auto max-w-16 max-h-16 cursor-pointer"
+            onClick={() => navigate('/')}
+          />
+        </div>
+        <form className="hidden md:flex items-center gap-2 ml-8" onSubmit={handleSearch}>
+          <input
+            type="text"
+            className="w-80 p-2 border border-gray-400 bg-white rounded-md text-lg"
+            placeholder="검색어 입력"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button type="submit" className="p-2 text-gray-600 text-3xl">
+            <IoSearch />
+          </button>
+        </form>
 
 
         {/* 유저 정보 */}
@@ -123,7 +123,7 @@ function Top() {
           {userId ? (
             <>
               <div className='flex justify-center space-x-2 mt-0'>
-              <button
+                <button
                   className='bg-transparent text-black rounded-full px-6 py-0 text-sm font-bold w-38 h-14 hover:scale-105 transition-transform duration-300'
                   onClick={() => navigate('/editor')}
                 >
@@ -134,6 +134,18 @@ function Top() {
                   onClick={() => navigate('/seller')}
                 >
                   Seller
+                </button>
+                <button
+                  className='bg-transparent text-black rounded-full px-6 py-0 text-sm font-bold w-38 h-14 hover:scale-105 transition-transform duration-300'
+                  onClick={() => navigate('/seller/signup')}
+                >
+                  SellerSignup
+                </button>
+                <button
+                  className='bg-transparent text-black rounded-full px-6 py-0 text-sm font-bold w-38 h-14 hover:scale-105 transition-transform duration-300'
+                  onClick={() => navigate('/admin')}
+                >
+                  Admin
                 </button>
                 <button
                   className='bg-transparent text-black rounded-full px-6 py-0 text-sm font-bold w-38 h-14 hover:scale-105 transition-transform duration-300'

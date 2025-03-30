@@ -34,9 +34,15 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import ShopEditorPage from './pages/editor/ShopEditorPage.jsx';
 
 import MobileShopEditorPage from './pages/editor/MobileShopEditorPage.jsx';
+import SellerSignUpPage from './pages/sellerSignup/SellerRegistrationPage.jsx';
 
 import AccountRecoveryPage from './pages/accountRecovery/AccountRecoveryPage.jsx';
 import PaymentPage from './pages/PaymentPage';
+// import AdminPage from './pages/adminPage';
+import AdminPage from './pages/admin/AdminPage.jsx';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage.jsx';
+import AdminVerificationPage from './pages/admin/AdminVerificationPage.jsx';
+import AdminSettlementPage from "./pages/admin/AdminSettlementPage";
 
 import Footer from './components/layout/Footer'; // ✅ Footer import 추가
 import SignUpPage from './pages/signup/SignUpPage.jsx';
@@ -55,8 +61,8 @@ function App() {
   const location = useLocation();
   const isAdminPage =
     location.pathname.toLowerCase().startsWith('/seller') ||
-    location.pathname.toLowerCase().startsWith('/admin')||
-    location.pathname.toLowerCase().startsWith('/editor')||
+    location.pathname.toLowerCase().startsWith('/admin') ||
+    location.pathname.toLowerCase().startsWith('/editor') ||
     location.pathname.toLowerCase().startsWith('/mobileeditor');
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -102,7 +108,7 @@ function App() {
 
   useEffect(() => {
 
-    
+
     console.log("백엔드 API URL:", import.meta.env.VITE_BACKEND_URL);
     console.log("app.jsx에서 본 sellerId:", sellerId);
     const handleResize = () => {
@@ -187,8 +193,9 @@ function App() {
                 <Route path='/category/:categoryId' element={<CategoryPage />} />
                 <Route path='/search' element={<SearchPage />} />
                 <Route path='/paymentpage' element={<PaymentPage />} />
-                <Route path='/product/:productId' element={<ProductDetailPage />} />
                 {/* <Route path="/product/recommend-text" element={<ChatBot />} /> */}
+                <Route path='/product/:productId' element={<ProductDetailPage />} />
+                <Route path='/seller/signup' element={<SellerSignUpPage />} />
 
                 {/* ✅ 판매자 대시보드 경로 유지 */}
                 <Route path='/seller' element={<SellerPage />}>
@@ -196,18 +203,25 @@ function App() {
                   <Route path='product' element={<SellerProductPage />} />
                   <Route path='order' element={<SellerOrderPage />} />
                   <Route path='inventory' element={<SellerInventoryPage />} />
-                  <Route path='payment' element={<SellerPaymentPage/>} />
+                  <Route path='payment' element={<SellerPaymentPage />} />
                   <Route path='settlement' element={<SellerSettlementPage />} />
                 </Route>
 
                 <Route path='/editor' element={<ShopEditorPage />}></Route>
 
-                
+
+                <Route path="/admin" element={<AdminPage />}>
+                  <Route index element={<AdminDashboardPage />} />
+                  <Route path="verification" element={<AdminVerificationPage />} />
+                  <Route path="settlement" element={<AdminSettlementPage />} />
+                </Route>
+
+
                 <Route path='/mobileeditor' element={<MobileShopEditorPage />}></Route>
 
 
                 {/* 비밀번호/아이디 찾기 */}
-                <Route path='/auth/account-recovery' element={<AccountRecoveryPage/>}></Route> 
+                <Route path='/auth/account-recovery' element={<AccountRecoveryPage />}></Route>
 
               </Routes>
 

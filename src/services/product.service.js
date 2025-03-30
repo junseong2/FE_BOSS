@@ -10,8 +10,7 @@ export const getAllSellerProducts = async (page, size, productName = '') => {
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
-      alert(error.response?.data.message);
-      return;
+      return error.response.data;
     }
   }
 };

@@ -35,24 +35,27 @@ export const apiRoutes = {
     },
     // 주문 관리
     orders: {
-      getAll: (page, size, search, status, sort) => 
+      getAll: (page, size, search, { orderStatus, paymentStatus }, sort) =>
         BASE_URL +
-        `/seller/orders?page=${page}&size=${size}&search=${search}&status=${status}&sort=${sort}`,
-      getById: (orderId) => 
-        BASE_URL + `/seller/orders/${orderId}`
+        `/seller/orders?page=${page}&size=${size}&search=${search}&orderStatus=${orderStatus}&paymentStatus=${paymentStatus}&sort=${sort}`,
+      getById: (orderId) => BASE_URL + `/seller/orders/${orderId}`,
     },
 
     // 결제 관리
     payments: {
-      getAll: (page, size, search, status, sort) =>
-        BASE_URL +
-        `/seller/payments?page=${page}&size=${size}&search=${search}&status=${status}&sort=${sort}`,
+      getSummary: (startDate, endDate) =>
+        BASE_URL + `/seller/payments/summary-statistics?startDate=${startDate}&endDate=${endDate}`,
+      getAllByCategory: (startDate, endDate) =>
+        BASE_URL + `/seller/payments/category-statistics?startDate=${startDate}&endDate=${endDate}`,
+      getAllByMonth: (startDate, endDate) =>
+        BASE_URL + `/seller/payments/monthly-statistics?startDate=${startDate}&endDate=${endDate}`,
     },
     // 정산 관리
     settlements: {
-      getAll: (page, size, search, status, sort) =>
+      getAll: (page, size, condition) =>
         BASE_URL +
-        `/seller/settlements?page=${page}&size=${size}&search=${search}&status=${status}&sort=${sort}`,
+        `/seller/settlements?page=${page}&size=${size}&startDate=${condition.startDate}&endDate=${condition.endDate}&username=${condition.username}&settlementId=${condition.settlementId}`,
+      insert:() => `/seller/settlements`,
     },
   },
 

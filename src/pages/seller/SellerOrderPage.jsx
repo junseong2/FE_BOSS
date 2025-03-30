@@ -9,12 +9,18 @@ import Pagination from '../../components/Pagination';
 import TableSkeleton from '../../components/skeleton/TableSkeleton';
 import { getOrderDetail, getOrders } from '../../services/order.service';
 
-const orderStatuses = [
+const orderStatus = [
   // 탭 목 데이터
   { key: '', label: '전체내역' },
   { key: 'PENDING', label: '결제대기' },
   { key: 'PAID', label: '결제완료' },
-  { key: 'CANCELLED', label: '주문취소' },
+  { key: 'CANCELLED', label: '결제취소' },
+];
+
+const paymentStatus = [
+  { key: 'PENDING', label: '결제대기' },
+  { key: 'PAID', label: '결제완료' },
+  { key: 'CANCELLED', label: '결제취소' },
 ];
 
 const PAGE_SIZE = 6;
@@ -28,14 +34,15 @@ function SellerOrderPage() {
   const [detailLoading, setDetailLoading] = useState(false);
   const [orders, setOrders] = useState([]);
   const [orderDetail, setOrderDetail] = useState('');
-  const [totalCount, setTotalCount] = useState(100);
+  const [totalCount, setTotalCount] = useState(1);
 
   // 주문 내역 조회
   const getOrdersFetch = async (search) => {
     const props = {
       page,
       size: PAGE_SIZE,
-      status: selectedTab,
+      paymentStatus: selectedTab,
+      orderStatus: '',
       search,
     };
 
@@ -43,13 +50,9 @@ function SellerOrderPage() {
 
     try {
       const { orders, totalCount } = await getOrders(props);
-
       if (orders) {
         setOrders(orders);
         setTotalCount(totalCount || 1);
-      } else {
-        setOrders([]);
-        setTotalCount(1);
       }
     } finally {
       setLoading(false);
@@ -83,17 +86,17 @@ function SellerOrderPage() {
 
       {/* 탭(메뉴) */}
       <SellerTabs
-        tabList={orderStatuses}
+        tabList={orderStatus}
         selectedTab={selectedTab}
         onTabChange={(e) => setSelectedTab(e.currentTarget.dataset.tabId)}
       />
 
       {/*  컨텐츠 */}
-      <div className='bg-white mt-5 border border-gray-200 p-3 py-0'>
+      <div className='bg-white mt-5 border border-gray-200 p-3 py-0 min-h-[512px]'>
         {/* 검색창 */}
         <div className='py-3'>
           <SellerSearch
-            placeholder={'주문번호를 입력하세요.'}
+            placeholder={'ORD-를 생략한 주문번호'}
             onSearch={(e) => {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
@@ -107,7 +110,13 @@ function SellerOrderPage() {
         {loading ? (
           <TableSkeleton />
         ) : (
-          <SellerOrderTable orders={orders} onOrderDetailFetch={getOrderDetailFetch} orderDetail={orderDetail} />
+          <SellerOrderTable
+            orders={orders}
+            paymentStatus={paymentStatus}
+            onOrderDetailFetch={getOrderDetailFetch}
+            orderDetail={orderDetail}
+            detailLoading={detailLoading}
+          />
         )}
       </div>
 
