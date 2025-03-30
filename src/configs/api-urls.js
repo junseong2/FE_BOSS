@@ -52,9 +52,10 @@ export const apiRoutes = {
     },
     // 정산 관리
     settlements: {
-      getAll: (page, size, search, status, sort) =>
+      getAll: (page, size, condition) =>
         BASE_URL +
-        `/seller/settlements?page=${page}&size=${size}&search=${search}&status=${status}&sort=${sort}`,
+        `/seller/settlements?page=${page}&size=${size}&startDate=${condition.startDate}&endDate=${condition.endDate}&username=${condition.username}&settlementId=${condition.settlementId}`,
+      insert:() => `/seller/settlements`,
     },
   },
 

@@ -44,13 +44,13 @@ export default function SellerSalesCategoryGraph({ data }) {
           <ul className='lg:mt-0 mt-5'>
             {data.map((info, i) => {
               return (
-                <li key={info.categoryName} className='flex items-center justify-start '>
+                <li key={info.categoryName} className='flex items-center justify-start  text-sm'>
                   <div className='w-3 h-3 bg-gray-500 rounded-sm'></div>
-                  <div className='ml-3'>
+                  <div className='ml-3 flex'>
                     <span className='flex items-center gap-2'>
                       {i + 1}. {info.categoryName}
                     </span>
-                    <p>{info.totalSales.toLocaleString()}원</p>
+                    <p>(￦ {info.totalSales.toLocaleString()})</p>
                   </div>
                 </li>
               );

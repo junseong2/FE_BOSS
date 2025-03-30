@@ -37,11 +37,8 @@ export default function SellerProductTable({
 
   return (
     <div className='mt-2 w-full overflow-x-auto'>
-      {!Array.isArray(products) ? (
-        <p>조회할 상품목록이 존재하지 않습니다.</p>
-      ) : (
-        <table className='w-full table-auto min-w-[768px] '>
-                 <thead>
+      <table className='w-full table-auto min-w-[768px] '>
+        <thead>
           <tr className='bg-[#F3F4F6] text-gray-600 text-sm'>
             <th className='py-3 px-4 text-left font-medium'>선택</th>
             <th className='py-3 px-4 text-left font-medium'>상품ID</th>
@@ -54,8 +51,9 @@ export default function SellerProductTable({
           </tr>
         </thead>
 
-          <tbody>
-            {products.map((product, index) => {
+        <tbody>
+          {products.length > 0 ? (
+            products.map((product, index) => {
               const isEditableRow = index === toggleId;
 
               return (
@@ -155,10 +153,12 @@ export default function SellerProductTable({
                   </td>
                 </tr>
               );
-            })}
-          </tbody>
-        </table>
-      )}
+            })
+          ) : (
+            <p className='text-gray-500 p-3 mt-3'>조회할 상품목록이 없습니다.</p>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

@@ -29,7 +29,7 @@ export default function SellerOrderDetails({ onClose, orderDetail, isLoading }) 
             <div className="flex justify-between flex-col gap-1">
               <span className="text-sm text-gray-600">기본 금액</span>
               <span className="text-sm font-medium ml-0.5">
-                {isLoading ? <Skeleton width={80} /> : `₩${((orderDetail?.totalPayment ?? 0) - (orderDetail?.totalPayment ?? 0) * taxRate).toLocaleString()}`}
+                {isLoading ? <Skeleton width={80} /> : `₩${((orderDetail?.totalPayment ?? 0)).toLocaleString()}`}
               </span>
             </div>
             <div className="flex justify-between flex-col gap-1">
@@ -54,7 +54,7 @@ export default function SellerOrderDetails({ onClose, orderDetail, isLoading }) 
             <div className="flex justify-between flex-col gap-1 font-bold">
               <span className="text-sm text-gray-600">총 결제 금액</span>
               <span className="text-lg text-[#3a618c]">
-                {isLoading ? <Skeleton width={100} /> : `₩${(orderDetail?.totalPayment ?? 0).toLocaleString()}`}
+                {isLoading ? <Skeleton width={100} /> : `₩${((orderDetail?.totalPayment ?? 0) + ((orderDetail?.totalPayment ?? 0) * taxRate)).toLocaleString()}`}
               </span>
             </div>
           </div>

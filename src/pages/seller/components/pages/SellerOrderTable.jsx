@@ -20,7 +20,7 @@ export default function SellerOrderTable({
   paymentStatus,
   onOrderDetailFetch,
   orderDetail,
-  detailLoading
+  detailLoading,
 }) {
   const [showDropdown, setShowDropdown] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -37,7 +37,6 @@ export default function SellerOrderTable({
 
   /** 영어로 작성된 상태를 한글로 */
   function getPaymentLabel(status) {
-    console.log(status)
     const method = paymentStatus.find((item) => item.key === status);
     return method ? method.label : '보류'; // 일치하는 키가 없으면 기본값 반환
   }
@@ -45,7 +44,7 @@ export default function SellerOrderTable({
   return (
     <>
       <div className='overflow-x-auto min-h-[512px]'>
-        <table className='min-w-[812px] w-full'>
+        <table className='min-w-[1024px] w-full'>
           <thead>
             <tr className='bg-[#F3F4F6] text-gray-600 text-sm'>
               <th className='py-3 px-4 text-left font-medium'>주문번호</th>
@@ -60,56 +59,64 @@ export default function SellerOrderTable({
             </tr>
           </thead>
           <tbody className='divide-y divide-gray-200'>
-            {orders?.map((order) => (
-              <tr key={order.orderId} className='hover:bg-gray-50 '>
-                <td className='py-3 px-4 text-sm'>{'ORD-' + order.orderId}</td>
-                <td className='py-3 px-4 text-sm font-medium text-black'>{order.username}</td>
-                <td className='py-3 px-4 text-sm text-gray-700'>{order.createdDate}</td>
-                <td className='py-3 px-4 text-sm text-center'>{order.orderCount}개</td>
-                <td className='py-3 px-4 text-sm'>{order.paymentMethod}</td>
-                <td className='py-3 px-4 text-sm font-medium'>
-                  ₩{order.totalPrice?.toLocaleString()}
-                </td>
-                <td className='py-3 px-4'>
-                  <span
-                    className={`inline-block px-3 py-1 text-xs rounded-full ${getStatusClassName(order.status)}`}
-                  >
-                    {getPaymentLabel(order.paymentStatus)}
-                  </span>
-                </td>
-                <td className='py-3 px-4'>
-                  <span
-                    className={`inline-block px-3 py-1 text-xs rounded-full ${getStatusClassName(order.status)}`}
-                  >
-                    {order.status}
-                  </span>
-                </td>
-                <td className='py-3 px-4 text-center relative'>
-                  <>
-                    <button
-                      onClick={() => toggleDropdown(order.orderId)}
-                      className='text-gray-400 hover:text-gray-600'
+            {orders.length > 0 ? (
+              orders?.map((order) => (
+                <tr key={order.orderId} className='hover:bg-gray-50 '>
+                  <td className='py-3 px-4 text-sm'>{'ORD-' + order.orderId}</td>
+                  <td className='py-3 px-4 text-sm font-medium text-black'>{order.username}</td>
+                  <td className='py-3 px-4 text-sm text-gray-700'>{order.createdDate}</td>
+                  <td className='py-3 px-4 text-sm text-center'>{order.orderCount}개</td>
+                  <td className='py-3 px-4 text-sm'>{order.paymentMethod}</td>
+                  <td className='py-3 px-4 text-sm font-medium'>
+                    ₩{order.totalPrice?.toLocaleString()}
+                  </td>
+                  <td className='py-3 px-4'>
+                    <span
+                      className={`inline-block px-3 py-1 text-xs rounded-full ${getStatusClassName(order.status)}`}
                     >
-                      <IoEllipsisHorizontal className='h-5 w-5' />
-                    </button>
-                    {showDropdown === order.orderId && !showModal && (
-                      <SellerOrderDropdown
-                        onToggle={toggleModal}
-                        onFetch={onOrderDetailFetch}
-                        orderId={order.orderId}
-                      />
-                    )}
-                  </>
-                </td>
-              </tr>
-            ))}
+                      {getPaymentLabel(order.paymentStatus)}
+                    </span>
+                  </td>
+                  <td className='py-3 px-4'>
+                    <span
+                      className={`inline-block px-3 py-1 text-xs rounded-full ${getStatusClassName(order.status)}`}
+                    >
+                      {order.status}
+                    </span>
+                  </td>
+                  <td className='py-3 px-4 text-center relative'>
+                    <>
+                      <button
+                        onClick={() => toggleDropdown(order.orderId)}
+                        className='text-gray-400 hover:text-gray-600'
+                      >
+                        <IoEllipsisHorizontal className='h-5 w-5' />
+                      </button>
+                      {showDropdown === order.orderId && !showModal && (
+                        <SellerOrderDropdown
+                          onToggle={toggleModal}
+                          onFetch={onOrderDetailFetch}
+                          orderId={order.orderId}
+                        />
+                      )}
+                    </>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <p className='text-gray-500 p-3 mt-3'>조회할 주문목록이 없습니다.</p>
+            )}
           </tbody>
         </table>
       </div>
 
       {/* 주문 상세 내역 모달 */}
       {showModal ? (
-        <SellerOrderDetails orderDetail={orderDetail} onClose={() => setShowModal(false)} isLoading={detailLoading} />
+        <SellerOrderDetails
+          orderDetail={orderDetail}
+          onClose={() => setShowModal(false)}
+          isLoading={detailLoading}
+        />
       ) : null}
     </>
   );

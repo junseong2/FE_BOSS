@@ -10,8 +10,6 @@ import SellerCardSkeleton from './components/common/SellerCardSkeleton';
 import SellerDateFilter from './components/common/SellerDateFilter';
 import SellerMonthlyGraph from './components/pages/SellerMonthlyGraph';
 import SellerSalesCategoryGraph from './components/pages/SellerSalesCategoryGraph';
-import Skeleton from 'react-loading-skeleton';
-import CircleGraphSkeleton from '../../components/skeleton/CircleGraphSkeleton';
 
 function SellerPaymentPage() {
   // 검색할 날짜 범위 상태 저장
@@ -161,18 +159,25 @@ function SellerPaymentPage() {
       <div>
         <h2 className='text-2xl font-bold pt-10 '>매출분석</h2>
         <div className='flex gap-5 lg:flex-row flex-col '>
-
           {/* 월별 매출 */}
-          <div className='bg-white mt-5 border border-gray-200 p-3 pb-5 w-full h-full  lg:max-h-1/3'>
+          <div className='bg-white mt-5 border border-gray-200 p-3 pb-5 w-full h-full min-h-[450px]  lg:max-h-1/2'>
             <h3 className='font-bold py-5'>월별 매출</h3>
-            <SellerMonthlyGraph data={monthStatistics} />
+            {loadingState.month ? (
+              <p className='text-gray-500 w-full h-[150px] flex items-center justify-center animate-pulse'>
+                데이터를 조회중입니다.
+              </p>
+            ) : (
+              <SellerMonthlyGraph data={monthStatistics} />
+            )}
           </div>
 
           {/* 카테고리별 매출 */}
-          <div className='bg-white lg:mt-5 mt-0 border border-gray-200 p-3 pb-5 w-full h-full lg:max-h-1/3'>
+          <div className='bg-white lg:mt-5 mt-0 border border-gray-200 p-3 pb-5 w-full h-full min-h-[450px]  lg:max-h-1/2'>
             <h3 className='font-bold py-5'>카테고리별 매출</h3>
             {loadingState.category ? (
-              <CircleGraphSkeleton />
+              <p className='text-gray-500 w-full h-[150px] flex items-center justify-center  animate-pulse'>
+                데이터를 조회중입니다.
+              </p>
             ) : (
               <SellerSalesCategoryGraph data={categoryStatistics} />
             )}

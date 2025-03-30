@@ -23,7 +23,6 @@ const paymentStatus = [
   { key: 'CANCELLED', label: '결제취소' },
 ];
 
-
 const PAGE_SIZE = 6;
 function SellerOrderPage() {
   const { onToggle } = useToggle();
@@ -35,7 +34,7 @@ function SellerOrderPage() {
   const [detailLoading, setDetailLoading] = useState(false);
   const [orders, setOrders] = useState([]);
   const [orderDetail, setOrderDetail] = useState('');
-  const [totalCount, setTotalCount] = useState(100);
+  const [totalCount, setTotalCount] = useState(1);
 
   // 주문 내역 조회
   const getOrdersFetch = async (search) => {
@@ -43,7 +42,7 @@ function SellerOrderPage() {
       page,
       size: PAGE_SIZE,
       paymentStatus: selectedTab,
-      orderStatus:'',
+      orderStatus: '',
       search,
     };
 
@@ -54,9 +53,6 @@ function SellerOrderPage() {
       if (orders) {
         setOrders(orders);
         setTotalCount(totalCount || 1);
-      } else {
-        setOrders([]);
-        setTotalCount(1);
       }
     } finally {
       setLoading(false);
@@ -96,7 +92,7 @@ function SellerOrderPage() {
       />
 
       {/*  컨텐츠 */}
-      <div className='bg-white mt-5 border border-gray-200 p-3 py-0'>
+      <div className='bg-white mt-5 border border-gray-200 p-3 py-0 min-h-[512px]'>
         {/* 검색창 */}
         <div className='py-3'>
           <SellerSearch
@@ -114,12 +110,12 @@ function SellerOrderPage() {
         {loading ? (
           <TableSkeleton />
         ) : (
-          <SellerOrderTable 
-          orders={orders} 
-          paymentStatus={paymentStatus}  
-          onOrderDetailFetch={getOrderDetailFetch} 
-          orderDetail={orderDetail}
-          detailLoading={detailLoading}
+          <SellerOrderTable
+            orders={orders}
+            paymentStatus={paymentStatus}
+            onOrderDetailFetch={getOrderDetailFetch}
+            orderDetail={orderDetail}
+            detailLoading={detailLoading}
           />
         )}
       </div>
