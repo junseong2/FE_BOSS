@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef ,useEffect} from 'react';
 import axios from 'axios';
 import { useUser } from '../../../context/UserContext'; // ✅ Context에서 로그인 정보 가져오기
 import BusinessRegistrationForm from './BusinessRegistrationForm';
@@ -8,6 +8,7 @@ const SellerRegistrationForm = () => {
   const { userId } = useUser(); // ✅ 로그인한 유저 ID
   const [isBusinessVerified, setIsBusinessVerified] = useState(false);
   const [isSalesVerified, setIsSalesVerified] = useState(false);
+  const [isUserSeller, setIsUserSeller] = useState(false);
 
   const [representativeName, setRepresentativeName] = useState('');
   const [businessRegistrationNumber, setBusinessRegistrationNumber] = useState('');
@@ -17,9 +18,28 @@ const SellerRegistrationForm = () => {
   const [storename, setStorename] = useState('');
   const [description, setDescription] = useState('');
 
+  useEffect(() => {
+    const checkIfUserIsSeller = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/seller/check/${userId}`);
+        setIsUserSeller(response.data.isSeller);
+      } catch (error) {
+        console.error("판매자 등록 여부 확인 실패", error);
+      }
+    };
+    if (userId) {
+      checkIfUserIsSeller();
+    }
+  }, [userId]);
+
   const handleRegisterSeller = async () => {
     if (!userId) {
       alert('로그인 후 등록이 가능합니다.');
+      return;
+    }
+
+    if (isUserSeller) {
+      alert('이미 판매자 등록이 되어 있습니다.');
       return;
     }
 
@@ -41,6 +61,7 @@ const SellerRegistrationForm = () => {
 
       console.log('📦 등록 성공:', response.data);
       alert('판매자 등록 신청이 완료되었습니다.');
+      window.location.href = '/';
     } catch (error) {
       console.error('🚨 등록 실패:', error);
       alert('등록 중 오류가 발생했습니다.');
