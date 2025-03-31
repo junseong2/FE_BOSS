@@ -1,4 +1,4 @@
-import { IoGridOutline, IoImageOutline, IoBagHandleOutline,IoPhonePortraitOutline  } from 'react-icons/io5';
+import { IoGridOutline, IoImageOutline, IoBagHandleOutline,IoPhonePortraitOutline ,IoSquareOutline} from 'react-icons/io5';
 
 
 import { MultipleImageUploader } from '../../../../components/ImageUploader';
@@ -22,6 +22,8 @@ function EditorElementGrid({ onSelectElement, elements }) {
     { icon: <IoImageOutline />, label: '배너', type: 'banner' },
     { icon: <IoBagHandleOutline />, label: '상품 그리드', type: 'grid' },    
     { icon: <IoPhonePortraitOutline/>, label: '바텀네비게이션바', type: 'bottomNavigationbar' },
+    { icon: <IoSquareOutline/>, label: '여백', type: 'blank' },
+
   ];
 
   return (
@@ -62,7 +64,21 @@ function EditorElementGrid({ onSelectElement, elements }) {
             <div className='absolute top-4 right-[-25.2rem] hidden group-hover:block border border-gray-500 px-4 py-1 rounded-md bg-white shadow-md'>
               모바일 환경에서 사용할 UI를 추가할 수 있어요!
             </div>
-          )}
+          )
+          
+          
+          
+          }
+
+{index ===5  && (
+            <div className='absolute top-4 right-[-25.2rem] hidden group-hover:block border border-gray-500 px-4 py-1 rounded-md bg-white shadow-md'>
+              여백을 추가해서 디자인을 꾸며보세요.
+            </div>
+          )
+          
+          
+          
+          }
         </div>
       ))}
     </div>

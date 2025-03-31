@@ -63,7 +63,7 @@ export default function SignUpPage() {
       oncomplete: function (data) {
         setFormData((prev) => ({
           ...prev,
-          zipcode: data.zonecode,
+          post: data.zonecode,
           address1: data.address,
         }));
 

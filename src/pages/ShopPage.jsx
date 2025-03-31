@@ -2,6 +2,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Header from '../components/Header';
+import Blank from '../components/Blank';
+
 import Banner from '../components/Banner';
 import ProductGrid from '../components/ProductGrid';
 import MobileHeader from '../components/MobileHeader';
@@ -14,6 +16,8 @@ const componentsMap = {
   header: Header,
   banner: Banner,
   grid: ProductGrid,
+  blank: Blank, // ✅ 누락되었을 경우
+
   mobileheader: MobileHeader,
   mobilebanner: MobileBanner,
   mobilegrid: MobileGrid,
@@ -74,7 +78,7 @@ function ShopPage() {
     if (!hasMore || loading || !sellerId) return;
     setLoading(true);
     try {
-      const url = `http://localhost:5000/product?sellerId=${sellerId}&page=${currentPage}&size=8&sort=${sortOrder}`;
+      const url = `http://localhost:5000/seller/product?sellerId=${sellerId}&page=${currentPage}&size=8&sort=${sortOrder}`;
       const response = await axios.get(url);
       const data = response.data;
   
@@ -114,8 +118,11 @@ function ShopPage() {
   }, [isMobile, settings, mobilesettings]); // isMobile이 변경될 때마다 selectedSettings 업데이트
   
   const mobileBottomNav = selectedSettings.find((s) => s.type === "mobilebottomnavigationbar");
+  
   return (
-    <div className="container mx-auto p-4">
+    <div className="w-full">
+
+     {/** <div className="container mx-auto p-4"> */} 
       {selectedSettings.map((component) => {
         let Component = componentsMap[component.type];
         
@@ -128,10 +135,29 @@ function ShopPage() {
           */
 
         return Component ? (
-          <div key={component.properties.id} className="mb-8">
-          <Component {...component.properties} products={component.type.includes("grid") || component.type.includes("mobilegrid") ? products : undefined} />
+          <div
+            key={component.properties.id}
+            className="mb-8"
+            style={{
+              width: component.properties.size?.width || '100%',
+              height: component.properties.size?.height || 'auto',
+            }}
+          >
+            <Component
+              {...component.properties}
+              products={
+                component.type.includes("grid") || component.type.includes("mobilegrid")
+                  ? products
+                  : undefined
+              }
+            />
           </div>
         ) : null;
+        
+
+
+
+
       })}
 
       {isMobile && mobileBottomNav && (
