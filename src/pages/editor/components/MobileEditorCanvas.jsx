@@ -23,13 +23,13 @@ export default function MobileEditorCanvas({
     to="/editor"
     className="flex-1 text-center py-1 px-3 bg-gray-500 hover:bg-gray-600 text-white rounded transition-colors"
   >
-    미리보기
+    웹 편집
   </Link>
   <Link
     to="/mobileeditor"
     className="flex-1 text-center py-1 px-3 bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors"
   >
-    모바일 미리보기
+    모바일 편집
   </Link>
 </div>      <div className='border-8 border-black overflow-y-auto overflow-x-hidden max-h-[915px] h-full w-[800px] m-2 rounded-lg'>
         {/* 편집기 와이어프레임 뷰 */}

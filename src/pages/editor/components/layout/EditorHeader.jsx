@@ -25,6 +25,8 @@ const handleSaveChanges = async () => {
 
 
 // 수정 코드
+
+/*
 const settingsToSave = elements.map(element => {
   const baseProperties = {
     // 공통 필드
@@ -75,10 +77,46 @@ const settingsToSave = elements.map(element => {
 });
 
 
+*/
 
 
 
-
+const settingsToSave = elements.map(element => {
+  switch(element.type) {
+    case 'header':
+      return {
+        type: 'header',
+        id: element.id,
+        properties: {
+          ...element.properties, // ✅ 모든 속성 포함 (폰트, 색상, 카테고리 등)
+        },
+      };
+    case 'banner':
+      return {
+        type: 'banner',
+        id: element.id,
+        properties: {
+          ...element.properties,
+        },
+      };
+    case 'grid':
+      return {
+        type: 'grid',
+        id: element.id,
+        properties: {
+          ...element.properties,
+        },
+      };
+    default:
+      return {
+        type: element.type,
+        id: element.id,
+        properties: {
+          ...element.properties,
+        },
+      };
+  }
+});
 
 
 
