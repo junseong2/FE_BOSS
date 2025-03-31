@@ -23,14 +23,8 @@ export function TemplateHeader({ properties }) {
       </button>
 
       {/* 카테고리 바 */}
-      <div
-        className={`fixed z-50 top-0 left-0 h-full w-[250px] bg-white shadow-lg transition-transform duration-300 ${
-          isCategoryOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <button className='p-2 text-right w-full' onClick={() => setIsCategoryOpen(false)}>
-          ✕
-        </button>
+     
+  
         <ul className='p-4'>
           {properties?.categories?.map((category) => (
             <li key={category} className='p-2 border-b cursor-pointer hover:bg-gray-100'>
@@ -38,7 +32,7 @@ export function TemplateHeader({ properties }) {
             </li>
           ))}
         </ul>
-      </div>
+    
 
       {/* 로고 */}
       <div className='w-[60px] h-[55px] text-center relative'>
@@ -174,6 +168,24 @@ export function Templategrid({ properties }) {
         )}
       </div>
     </div>
+  );
+}
+
+
+export function TemplateBlank({ properties }) {
+  const {
+    height = 100, // 기본 높이값 설정 (px 단위)
+    backgroundColor = '#ffffff' // 기본 배경색
+  } = properties || {};
+
+  return (
+    <div
+      className="w-full"
+      style={{
+        height: `${height}px`,
+        backgroundColor,
+      }}
+    />
   );
 }
 
