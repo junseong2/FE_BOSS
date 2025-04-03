@@ -101,7 +101,7 @@ export default function Top() {
         <div className="flex items-center">
           <img
             src={`${import.meta.env.VITE_BACKEND_URL}/uploads/boss_logo.png`}
-            className="w-16 h-auto cursor-pointer transition-transform hover:scale-105"
+            className="w-16 h-auto ml-8 cursor-pointer transition-transform hover:scale-105"
             onClick={() => navigate("/")}
             alt="Boss Logo"
           />
