@@ -17,7 +17,7 @@ import AboutPage from './pages/AboutPage';
 import CartPage from './pages/CartPage';
 import CameraCapturePage from './pages/CameraCapturePage';
 import ContactPage from './pages/ContactPage';
-import MyPage from './pages/MyPage';
+import MyPage from './pages/MyPage/MyPage';
 import EventPage from './pages/EventPage';
 import ChatBot from './components/layout/ChatBot';
 
@@ -209,7 +209,7 @@ function App() {
 
                 <Route path='/editor' element={<ShopEditorPage />}></Route>
 
-
+                 {/* ✅ 관리자 대시보드 경로 유지 */}
                 <Route path="/admin" element={<AdminPage />}>
                   <Route index element={<AdminDashboardPage />} />
                   <Route path="verification" element={<AdminVerificationPage />} />
