@@ -56,15 +56,32 @@ function ProductDetailPage() {
   const addToCart = async (event) => {
     event.stopPropagation();
     if (!product) return;
+  
     try {
-
       const response = await fetch('http://localhost:5000/cart/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ productId: product.productId, quantity }),
       });
+  
       if (!response.ok) throw new Error('장바구니 추가 실패');
+  
+      // ✅ 사용자 벡터 업데이트 요청 추가
+      if (!userId) {
+        console.warn('⚠️ userId가 없어 벡터 업데이트 생략');
+      } else {
+        const updateRes = await fetch(
+          `http://localhost:5000/vector/update?userId=${userId}&productId=${product.productId}`,
+          {
+            method: 'POST',
+            credentials: 'include',
+          }
+        );
+        const updateText = await updateRes.text();
+        console.log('✅ 사용자 벡터 업데이트 응답:', updateText);
+      }
+  
       alert('✅ 장바구니에 상품이 추가되었습니다!');
     } catch (error) {
       console.error('❌ 장바구니 추가 오류:', error);
