@@ -1,6 +1,14 @@
 import { useNavigate } from "react-router-dom";
 
-function Header({ title, backgroundColor, logoUrl, menuItems = [] }) {
+function Header({
+  title,
+  backgroundColor,
+  logoUrl,
+  menuItems = [],
+  fontFamily = "inherit",
+  fontSize = "16px",
+  fontWeight = "normal",
+}){
   const navigate = useNavigate();
   console.log("📌 Header - menuItems 값:", menuItems);
 
@@ -13,10 +21,10 @@ function Header({ title, backgroundColor, logoUrl, menuItems = [] }) {
 
   return (
     <div className="w-full shadow-md" style={{ backgroundColor }}>
-      {/* ✅ 헤더 컨테이너 (로고 왼쪽 + 네비 우측 정렬) */}
+      {/**   헤더 컨테이너 (로고 왼쪽 + 네비 우측 정렬) */}
       <div className="w-full flex items-center justify-between px-6 py-3">
         
-        {/* ✅ 왼쪽: 로고 */}
+        {/**  왼쪽: 로고 */}
         {fullLogoUrl && (
           <a href="/" className="block" style={{ width: "auto", maxWidth: "250px" }}>
             <img
@@ -27,7 +35,7 @@ function Header({ title, backgroundColor, logoUrl, menuItems = [] }) {
           </a>
         )}
 
-        {/* ✅ 오른쪽: 네비게이션 버튼 */}
+        {/*  오른쪽: 네비게이션 버튼 */}
         <div className="flex gap-4">
           {menuItems.map((item, index) => (
             <button
@@ -39,6 +47,9 @@ function Header({ title, backgroundColor, logoUrl, menuItems = [] }) {
                 border: "none",
                 cursor: "pointer",
                 fontSize: "16px",
+                fontFamily,
+                fontWeight,
+
               }}
             >
               {item}

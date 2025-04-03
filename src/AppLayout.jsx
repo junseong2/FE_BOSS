@@ -71,11 +71,7 @@ function AppLayout({
 
         <main className='main page mt-[120px] mb-24'>
           <p>이곳에서 {sellerId ?? 'N/A'}의 제품을 확인하세요.</p>
-          <p>
-            {headerId === null
-              ? '의도치 않게 이 메시지가 보인다면 App.js에서 라우팅 설정을 확인하세요!'
-              : ''}
-          </p>{' '}
+        
           {/* ✅ headerId 값 확인 */}
           <Outlet />
         </main>

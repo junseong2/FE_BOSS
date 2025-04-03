@@ -162,12 +162,30 @@ export default function SignUpPage() {
   // 폼 전송(회원가입 요청)
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!isSuccessValidationForm) {
       return alert('폼에 오류가 있습니다. 다시 확인해주세요.');
     }
-
-    const isLogin = await registerUser(formData);
+  
+    // ✅ 주소를 리스트 구조로 묶어서 전송
+    const userPayload = {
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+      phone1: formData.phone1,
+      phone2: formData.phone2,
+      phone3: formData.phone3,
+      addresses: [
+        {
+          address1: formData.address1,
+          address2: formData.address2,
+          post: formData.post,
+          isDefault: true
+        }
+      ]
+    };
+  
+    const isLogin = await registerUser(userPayload);
     if (isLogin) {
       alert('회원가입이 완료되었습니다!');
       window.location.href = '/signin';
