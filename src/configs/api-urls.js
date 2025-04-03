@@ -15,6 +15,18 @@ export const apiRoutes = {
     getAllWithHierarchy: () => BASE_URL + `/category/hierarchy`,
   },
 
+  // 리뷰
+  reviews: {
+    /**
+     * @param {*} sortby 정렬 기준으로 desc, asc 중 하나 선택(평점을 기준으로 한다.)
+     */
+    getAll: (sortby, page, size, productId) =>
+      BASE_URL + `/products/${productId}/reviews?page=${page}&size=${size}&sortby=${sortby}`,
+    insert: (productId) => BASE_URL + `/products/${productId}/reviews`,
+    update: (productId, reviewId) => BASE_URL + `/products/${productId}/reviews/${reviewId}`,
+    delete: (productId, reviewId) => BASE_URL + `/products/${productId}/reviews/${reviewId}`,
+  },
+
   // 판매자
   seller: {
     // 상품 관리
@@ -55,7 +67,26 @@ export const apiRoutes = {
       getAll: (page, size, condition) =>
         BASE_URL +
         `/seller/settlements?page=${page}&size=${size}&startDate=${condition.startDate}&endDate=${condition.endDate}&username=${condition.username}&settlementId=${condition.settlementId}`,
-      insert:() => `/seller/settlements`,
+      insert: () => `/seller/settlements`,
+    },
+    // 리뷰 관리
+    reviews: {
+      getAll: ({ page, size, sortby, isAnswered, rating }) => {
+        let url = `${BASE_URL}/seller/reviews?page=${page}&size=${size}&sortby=${sortby}`;
+
+        if (isAnswered !== undefined && isAnswered !== null) {
+          url += `&isAnswered=${isAnswered}`;
+        }
+
+        if (rating !== undefined && rating !== null) {
+          url += `&rating=${rating}`;
+        }
+
+        return url;
+      },
+      insert: (reviewId) => BASE_URL + `/seller/reviews/${reviewId}/answer`,
+      delete: (reviewId, answerId) => BASE_URL + `/seller/reviews/${reviewId}/answer/${answerId}`,
+      update: (reviewId, answerId) => BASE_URL + `/seller/reviews/${reviewId}/answer/${answerId}`,
     },
   },
 
