@@ -19,6 +19,7 @@ import CameraCapturePage from './pages/CameraCapturePage';
 import ContactPage from './pages/ContactPage';
 import MyPage from './pages/MyPage';
 import EventPage from './pages/EventPage';
+import ProductPage from './pages/ProductPage';
 import ChatBot from './components/layout/ChatBot';
 
 import CategoryPage from './pages/CategoryPage';
@@ -115,6 +116,26 @@ function App() {
     };
   }, []);
 
+  const reservedPaths = [
+    'about',
+    'event',
+    'contact',
+    'camera',
+    'signin',
+    'mypage',
+    'signup',
+    'cart',
+    'category',
+    'search',
+    'paymentpage',
+    'product',
+    'seller',
+    'editor',
+    'mobileeditor',
+    'auth'
+  ];
+  const firstSegment = location.pathname.split('/')[1] || "";
+  const isStorePage = firstSegment && !reservedPaths.includes(firstSegment.toLowerCase());
 
 
 
@@ -123,15 +144,14 @@ function App() {
   return (
     <CartProvider>
       <UserProvider>
-        <div className='relative flex-col min-h-screen'>
-          {/* ✅ 관리자 페이지가 아닐 때만 `Top`과 `MenuBar` 렌더링 */}
+        <div className="flex flex-col min-h-screen">
+          {/* ✅ 상단 영역 */}
           {!isAdminPage && <Top />}
           {!isAdminPage && <MenuBar />}
-
           <ChatBot />
-
-          <div className='flex flex-col min-h-screen'>
-            <main className='flex-grow flex-1 min-h-[calc(100vh-150px) ]'>
+  
+          {/* ✅ 메인 콘텐츠 (중복된 min-h-screen 제거됨!) */}
+          <main className="flex-grow">
               {/*150px는 header와 footer높이 합 */}
               <Routes>
                 <Route
@@ -139,6 +159,7 @@ function App() {
                   element={
                     <AppLayout
                       sellerId={sellerId}
+                      setSellerId={setSellerId}
                       headerId={headerId}
                       menuBarId={menuBarId}
                       navigationId={navigationId}
@@ -159,7 +180,18 @@ function App() {
                       />
                     }
                   />
-
+ <Route
+                    path='products'
+                    element={
+                      <ProductPage
+                        sellerId={sellerId}
+                        headerId={headerId}
+                        menuBarId={menuBarId}
+                        navigationId={navigationId}
+                        sellerMenubarColor={sellerMenubarColor}
+                      />
+                    }
+                  />
                   <Route
                     path='intro'
                     element={
@@ -211,7 +243,7 @@ function App() {
 
               </Routes>
 
-              <div className='h-300'></div>
+      
             </main>
 
 
@@ -220,9 +252,9 @@ function App() {
           </div>
 
           {!isAdminPage && isMobile && <BottomNavigation />}
-        </div>
-        {!isAdminPage && <Footer />}
-        {/* ✅ 로딩 스피너 */}
+    
+          {!isStorePage && !isAdminPage && <Footer />}
+          {/* ✅ 로딩 스피너 */}
         {loading && (
           <div className='fixed inset-0 w-full h-screen bg-white/90 flex justify-center items-center text-lg font-bold z-[9999]'>
             로딩 중...

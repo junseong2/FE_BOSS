@@ -1,12 +1,18 @@
 @import "tailwindcss";
 
-
+/* ✅ Pretendard 웹폰트 설정 */
 @font-face {
   font-family: 'Pretendard-Regular';
-
-  
-  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff')
-    format('woff');
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
   font-weight: 400;
   font-style: normal;
 }
+
+/* ✅ 레이아웃이 꼬이지 않도록 높이 설정 */
+html,
+body,
+#root {
+  height: auto;
+  min-height: 100%;
+}
+

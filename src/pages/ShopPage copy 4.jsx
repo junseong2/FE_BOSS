@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { useMediaQuery } from 'react-responsive';
 
@@ -39,8 +39,7 @@ function ShopPage() {
   const [loading, setLoading] = useState(false);
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
-  const gridColumns = 8;
-  const gridGap = 8;
+  const containerRef = useRef(null);
 
   useEffect(() => {
     const fetchSellerId = async () => {
@@ -109,41 +108,36 @@ function ShopPage() {
 
   const mobileBottomNav = selectedSettings.find((s) => s.type === "mobilebottomnavigationbar");
 
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver(() => {
+      document.body.style.minHeight = containerRef.current.scrollHeight + 'px';
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [selectedSettings]);
+
   return (
-    <div className="w-full p-2">
-      <div
-        className="grid"
-        style={{
-          gridTemplateColumns: `repeat(${gridColumns}, minmax(0, 1fr))`,
-          // gridAutoRows를 제거하여 각 컴포넌트의 height 스타일에 따라 렌더링되도록 함
-          gap: `${gridGap}px`,
-          alignItems: 'start',
-        }}
-      >
+    <div className="w-full px-4 min-h-screen pb-32" ref={containerRef}>
+      <div className="flex flex-col gap-6">
         {selectedSettings.map((component, index) => {
           const Component = componentsMap[component.type];
           if (!Component || !component.layout) return null;
 
-          const { row, column } = component.layout;
-          // size의 height가 있다면 이를 사용하여 높이를 고정합니다.
-          const height = component.properties?.size?.web?.height;
+          const width = component.properties?.size?.web?.width || '100%';
+          const height = component.properties?.size?.web?.height || 'auto';
 
           return (
             <div
               key={component.id || index}
-              style={{
-                gridColumn: `${column}`,
-                // gridRow는 레이아웃 위치를 위해 필요하다면 그대로 사용하고,
-                // 높이는 명시적으로 size의 height 값으로 설정합니다.
-                height: height || 'auto',
-              }}
-              className="w-full"
+              style={{ width, height, margin: '0 auto', display: 'block' }}
+              className="relative"
             >
               <Component
                 {...component.properties}
                 products={component.type.includes("grid") ? products : undefined}
                 storename={component.type === "header" ? storename : undefined}
-                style={{ height: height || 'auto' }}
+                style={{ height, width }}
               />
             </div>
           );
@@ -151,10 +145,12 @@ function ShopPage() {
       </div>
 
       {isMobile && mobileBottomNav && (
-        <MobileBottomNavigationBar
-          backgroundColor={mobileBottomNav.properties.backgroundColor}
-          items={mobileBottomNav.properties.items || []}
-        />
+        <div className="fixed bottom-0 left-0 w-full z-50">
+          <MobileBottomNavigationBar
+            backgroundColor={mobileBottomNav.properties.backgroundColor}
+            items={mobileBottomNav.properties.items || []}
+          />
+        </div>
       )}
     </div>
   );

@@ -13,7 +13,7 @@ import { elementTemplates, initialElements } from '../../data/shop-templates';
 import { IoCloseOutline } from 'react-icons/io5';
 import { getCategories } from '../../services/category.service';
 
-const sidebarTabList = ['요소', '설정'];
+const sidebarTabList = ['요소', '설정','탬플릿'];
 const canvasTabList = ['미리보기'];
 
 export default function ShopEditorPage() {
@@ -135,12 +135,12 @@ export default function ShopEditorPage() {
     console.log("✅ elements : ", elements);
   }, [elements]);  // elements 상태가 변경될 때마다 실행
   
-  
+
+
 
   // ✅ 요소 추가/수정/삭제 함수
   const handleUpdate = (updatedElement) => {
     console.log("🔄 `handleUpdate` 실행됨 (변경된 요소):", updatedElement);
-  
     setSelectedElement((prevSelected) =>
       prevSelected?.id === updatedElement.id ? updatedElement : prevSelected
     );
@@ -148,20 +148,56 @@ export default function ShopEditorPage() {
     setElements((prevElements) =>
       prevElements.map((el) =>
         el.id === updatedElement.id
-          ? { ...el, properties: { ...el.properties, ...updatedElement.properties } } // ✅ 해당 요소의 속성만 변경
+          ? { 
+              ...el, 
+              properties: { ...el.properties, ...updatedElement.properties },
+              layout: { ...el.layout, ...updatedElement.layout } // layout도 병합
+            }
           : el
       )
     );
   };
   
+  
 
-
-
+  const seenIds = new Set();
+  const deduplicatedElements = [];
 
   const handleAddElement = (element) => {
-    setElements([...elements, { ...element, id: `el-${Date.now()}` }]);
+    if (!element || typeof element !== 'object') {
+      console.warn("추가할 element가 유효하지 않습니다.");
+      return;
+    }
+  
+    // 현재 요소 중 가장 아래 위치 계산
+    let maxBottom = 0;
+    elements.forEach((el) => {
+      let height = el?.properties?.size?.web?.height || 100;
+      if (typeof height === 'string') {
+        height = parseInt(height.replace('px', ''), 10) || 100;
+      }
+      const top = el?.layout?.top || 0;
+      maxBottom = Math.max(maxBottom, top + height);
+    });
+  
+    // 새 ID 생성
+    const uniqueId = `el-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
+  
+    // 새로운 요소 생성
+    const newElement = {
+      ...element,
+      id: uniqueId,
+      layout: {
+        ...element.layout,
+        top: maxBottom + 20, // 하단에 20px 간격 추가
+      },
+    };
+  
+    // ✅ 여기서 newElements를 선언하고 사용
+    const newElements = [...elements, newElement];
+    setElements(newElements);
   };
-
+  
   const handleRemoveElement = (id) => {
     setElements(elements.filter((el) => el.id !== id));
   };
@@ -203,36 +239,33 @@ const handleMoveElement = (dragIndex, hoverIndex) => {
   const handleSave = async () => {
     console.log("💾 저장 실행: 현재 elements 상태 by ShopEditorPage", elements);
     console.log("🔍 elements 데이터 유형:", typeof elements);
-console.log("🔍 elements는 배열인가?", Array.isArray(elements));
-
-const syncedElements = elements.map(el =>
-  el.id === selectedElement?.id ? selectedElement : el
-);
-
-// ⭐ settings 객체로 변환
-const updatedSettings = syncedElements.map(el => ({
-  type: el.type,
-  id: el.id,
-  properties: el.properties,
-}));
-
-console.log("📤 최종 저장될 settings:", updatedSettings);
-
-try {
-  await updateSellerSettings(sellerId, updatedSettings);
-  alert('🎉 쇼핑몰 구성이 성공적으로 저장되었습니다!');
-} catch (error) {
-  console.error("❌ 저장 실패:", error);
-  alert("❌ 저장 중 문제가 발생했습니다.");
-}
-
-
-    alert('쇼핑몰 구성이 성공적으로 저장되었습니다!');
-
-
+    console.log("🔍 elements는 배열인가?", Array.isArray(elements));
+  
+    const syncedElements = elements.map(el =>
+      el.id === selectedElement?.id ? selectedElement : el
+    );
+  
+    // ⭐ settings 객체로 변환 (layout 정보도 포함)
+    const updatedSettings = syncedElements.map(el => ({
+      type: el.type,
+      id: el.id,
+      layout: el.layout, // 새 layout 형식 (예: top, column, columnSpan 등)
+      properties: el.properties,
+    }));
+  
+    console.log("📤 최종 저장될 settings:", updatedSettings);
+  
+    try {
+      await updateSellerSettings(sellerId, updatedSettings);
+      alert('🎉 쇼핑몰 구성이 성공적으로 저장되었습니다!');
+    } catch (error) {
+      console.error("❌ 저장 실패:", error);
+      alert("❌ 저장 중 문제가 발생했습니다.");
+    }
     
-    // 서버 API로 저장하는 로직 추가 가능
+    alert('쇼핑몰 구성이 성공적으로 저장되었습니다!');
   };
+  
 
 
 
@@ -263,14 +296,18 @@ try {
 
 
 
-
-            <EditorTabContent
-              targetTabName={sidebarSelectedTabName}
-              onSelectElement={handleAddElement}
-              elements={elementTemplates}
-            />
-
-
+<EditorTabContent
+  targetTabName={sidebarSelectedTabName}
+  onSelectElement={(elementOrTemplate) => {
+    if (sidebarSelectedTabName === '탬플릿') {
+      console.log("🎯 템플릿 적용:", elementOrTemplate.name);
+      setElements(elementOrTemplate.elements); // 템플릿 적용
+    } else {
+      handleAddElement(elementOrTemplate); // 일반 요소 추가
+    }
+  }}
+  elements={elementTemplates}
+/>
 
 
             
@@ -287,6 +324,7 @@ try {
               />
             }
             elements={elements}
+            sellerId={sellerId}
             selectedElement={selectedElement}
             setElements={setElements}  // setElements를 전달
             setSelectedElement={setSelectedElement}
