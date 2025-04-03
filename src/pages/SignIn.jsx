@@ -62,6 +62,7 @@ function SignIn({ onClose }) {
        fetchUserInfo(setUserId, setUserName);
 
         onClose(); // ✅ 로그인 성공 시 모달 닫기
+        navigate("/")
       } else {
         alert('로그인 실패: ' + result.error);
       }
