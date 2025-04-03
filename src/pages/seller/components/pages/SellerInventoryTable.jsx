@@ -48,9 +48,7 @@ export function SellerInventoryTable({
         </thead>
 
         <tbody>
-          {!Array.isArray(inventories) || inventories.length === 0 ? (
-            <p className='mt-5 pb-5 text-gray-500'>조회할 재고 목록이 존재하지 않습니다.</p>
-          ) : (
+          {Array.isArray(inventories) && inventories.length > 0 ? (
             inventories.map((inventory, index) => {
               const stockWarn =
                 inventory.stock < inventory.minStock && inventory.stock > 0
@@ -125,6 +123,8 @@ export function SellerInventoryTable({
                 </tr>
               );
             })
+          ) : (
+            <p className='mt-5 pb-5 text-gray-500'>조회할 재고 목록이 없습니다.</p>
           )}
         </tbody>
       </table>

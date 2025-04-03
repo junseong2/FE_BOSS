@@ -7,14 +7,20 @@ import { useEffect, useState } from 'react';
 import SellerOrderTable from './components/pages/SellerOrderTable';
 import Pagination from '../../components/Pagination';
 import TableSkeleton from '../../components/skeleton/TableSkeleton';
-import { getOrders } from '../../services/order.service';
+import { getOrderDetail, getOrders } from '../../services/order.service';
 
-const orderStatuses = [
+const orderStatus = [
   // 탭 목 데이터
   { key: '', label: '전체내역' },
   { key: 'PENDING', label: '결제대기' },
   { key: 'PAID', label: '결제완료' },
-  { key: 'CANCELLED', label: '주문취소' },
+  { key: 'CANCELLED', label: '결제취소' },
+];
+
+const paymentStatus = [
+  { key: 'PENDING', label: '결제대기' },
+  { key: 'PAID', label: '결제완료' },
+  { key: 'CANCELLED', label: '결제취소' },
 ];
 
 const PAGE_SIZE = 6;
@@ -25,34 +31,49 @@ function SellerOrderPage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [detailLoading, setDetailLoading] = useState(false);
   const [orders, setOrders] = useState([]);
-  const [totalCount, setTotalCount] = useState(100);
+  const [orderDetail, setOrderDetail] = useState('');
+  const [totalCount, setTotalCount] = useState(1);
 
   // 주문 내역 조회
-  const getOrdersFetch = async () => {
+  const getOrdersFetch = async (search) => {
     const props = {
       page,
       size: PAGE_SIZE,
-      status: selectedTab,
+      paymentStatus: selectedTab,
+      orderStatus: '',
       search,
     };
 
     setLoading(true);
-    const { orders, totalCount } = await getOrders(props);
 
-    if (orders) {
-      setOrders(orders);
-      setTotalCount(totalCount || 1);
-    } else {
-      setOrders([]);
-      setTotalCount(1);
+    try {
+      const { orders, totalCount } = await getOrders(props);
+      if (orders) {
+        setOrders(orders);
+        setTotalCount(totalCount || 1);
+      }
+    } finally {
+      setLoading(false);
     }
+  };
 
-    setLoading(false);
+  // 주문 상세 조회
+  const getOrderDetailFetch = async (orderId) => {
+    setDetailLoading(true);
+    try {
+      const data = await getOrderDetail(orderId);
+      if (data) {
+        setOrderDetail(data);
+      }
+    } finally {
+      setDetailLoading(false);
+    }
   };
 
   useEffect(() => {
-    getOrdersFetch();
+    getOrdersFetch(search);
   }, [page, search, selectedTab]);
 
   return (
@@ -63,41 +84,40 @@ function SellerOrderPage() {
         {/* 날짜 선택, 필터, 내보내기 */}
       </SellerContentHeader>
 
-      {/* 신규주문, 배송중, 배송완료, 취소/반품 통계 */}
-      {/* <div>
-        <SellerCardLayout>
-          <SellerCard bgColor={'bg-white'} amount={12} title={'신규 주문'} />
-          <SellerCard bgColor={'bg-white'} amount={8} title={'배송중'} />
-          <SellerCard bgColor={'bg-white'} amount={24} title={'배송완료'} />
-          <SellerCard bgColor={'bg-white'} amount={3} title={'취소/반품'} />
-        </SellerCardLayout>
-      </div> */}
-
       {/* 탭(메뉴) */}
       <SellerTabs
-        tabList={orderStatuses}
+        tabList={orderStatus}
         selectedTab={selectedTab}
         onTabChange={(e) => setSelectedTab(e.currentTarget.dataset.tabId)}
       />
 
       {/*  컨텐츠 */}
-      <div className='bg-white mt-5 border border-gray-200 p-3 py-0'>
+      <div className='bg-white mt-5 border border-gray-200 p-3 py-0 min-h-[512px]'>
         {/* 검색창 */}
         <div className='py-3'>
           <SellerSearch
-            placeholder={'주문번호를 입력하세요.'}
+            placeholder={'ORD-를 생략한 주문번호'}
             onSearch={(e) => {
               e.preventDefault();
-
-              const formData = new FormData();
-              const search = formData.get('search');
+              const formData = new FormData(e.currentTarget);
+              const search = formData.get('search')?.toString() || '';
               setSearch(search);
             }}
           />
         </div>
 
         {/* 테이블 */}
-        {loading ? <TableSkeleton /> : <SellerOrderTable orders={orders} />}
+        {loading ? (
+          <TableSkeleton />
+        ) : (
+          <SellerOrderTable
+            orders={orders}
+            paymentStatus={paymentStatus}
+            onOrderDetailFetch={getOrderDetailFetch}
+            orderDetail={orderDetail}
+            detailLoading={detailLoading}
+          />
+        )}
       </div>
 
       {/* 페이지네이션 */}

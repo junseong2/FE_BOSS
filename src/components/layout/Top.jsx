@@ -39,6 +39,8 @@ export default function Top() {
   }
 
   const handleLogoutClick = async () => {
+    const confirmLogout = window.confirm('정말 로그아웃하시겠습니까?');
+    if (!confirmLogout) return;
     await fetch("http://localhost:5000/auth/logout", { method: "GET", credentials: "include" })
     setUserId(null)
     setUserName(null)

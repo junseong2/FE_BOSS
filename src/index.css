@@ -8,11 +8,20 @@
   font-style: normal;
 }
 
+
 /* ✅ 레이아웃이 꼬이지 않도록 높이 설정 */
 html,
 body,
 #root {
   height: auto;
   min-height: 100%;
+}
+
+
+
+
+.main__rating_container> span{
+  display: flex;
+  
 }
 

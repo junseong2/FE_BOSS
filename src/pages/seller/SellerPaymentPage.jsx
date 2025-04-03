@@ -1,103 +1,189 @@
 import { useEffect, useState } from 'react';
-import Pagination from '../../components/Pagination';
-import TableSkeleton from '../../components/skeleton/TableSkeleton';
 import { SellerCard, SellerCardLayout } from './components/common/SellerCard';
-import SellerContentHeader from './components/common/SellerContentHeader';
-import SellerSearch from './components/common/SellerSearch';
-import SellerTabs from './components/common/SellerTabs';
-import SellerTitle from './components/common/SellerTitle';
-import SellerPaymentsTable from './components/pages/SellerPaymentsTable';
-import { getPayments } from '../../services/payment.service';
+import {
+  getPaymentSummary,
+  getSalesByCategory,
+  getSalesByMonth,
+} from '../../services/payment.service';
+import { formatLocalDate, getThisMonth, getWeekRange } from '../../utils/formatter';
+import SellerCardSkeleton from './components/common/SellerCardSkeleton';
+import SellerDateFilter from './components/common/SellerDateFilter';
+import SellerMonthlyGraph from './components/pages/SellerMonthlyGraph';
+import SellerSalesCategoryGraph from './components/pages/SellerSalesCategoryGraph';
 
-const paymentMethods = [
-  // 탭 목 데이터
-  { key: '', label: '전체내역' },
-  { key: 'PENDING', label: '결제대기' },
-  { key: 'PAID', label: '결제완료' },
-  { key: 'CANCELLED', label: '주문취소' },
-];
-
-
-const PAGE_SIZE = 6;
 function SellerPaymentPage() {
-  const [selectedTab, setSelectedTab] = useState('');
-  const [page, setPage] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [payments, setPayments] = useState();
-  const [username, setUsername] = useState('');
-  const [totalCount, setTotalCount] = useState(100);
+  // 검색할 날짜 범위 상태 저장
+  const [dateRange, setDateRange] = useState({
+    startDate: formatLocalDate(new Date()),
+    endDate: formatLocalDate(new Date()),
+  });
 
-  const getPaymentsFetch = async () => {
-    const props = {
-      page,
-      size: PAGE_SIZE,
-      search: username,
-      status: selectedTab,
-      sort: null,
-      order: null,
-    };
+  // 매출 통계 상태 저장
+  const [summaryStatistics, setSummaryStatistics] = useState({
+    totalPrice: 0,
+    totalOrderCount: 0,
+    paidOrderCount: 0,
+    canceledTotalPrice: 0,
+  });
 
-    setLoading(true);
+  const [categoryStatistics, setCategoryStatistics] = useState([]);
+  const [monthStatistics, setMonthStatistics] = useState([]);
 
+  // 로딩 상태 저장
+  const [loadingState, setLoadingState] = useState({
+    summary: false,
+    month: false,
+    category: false,
+  });
+
+  // 날짜 필터
+  const handleDateRange = (e) => {
+    const value = e.currentTarget.value;
+
+    // 오늘
+    if (value === 'now') {
+      setDateRange(() => ({
+        startDate: formatLocalDate(new Date()),
+        endDate: formatLocalDate(new Date()),
+      }));
+
+      return;
+    }
+
+    //이번 주
+    if (value === 'thisWeek') {
+      setDateRange(() => ({
+        ...getWeekRange(new Date()),
+      }));
+      return;
+    }
+
+    //이번 달
+    setDateRange(() => ({
+      ...getThisMonth(),
+    }));
+  };
+
+  // 매출 통계 요약
+  const getPaymentSummaryFetch = async (dateRange) => {
+    setLoadingState((prev) => ({ ...prev, summary: true }));
     try {
-      const { payments, totalCount } = await getPayments(props);
-
-      setPayments(payments);
-      setTotalCount(totalCount);
-
-    } catch {
-      console.log(11);
+      const stat = await getPaymentSummary(dateRange);
+      if (!stat) return setSummaryStatistics([]);
+      setSummaryStatistics(stat);
     } finally {
-      setLoading(false);
+      setLoadingState((prev) => ({ ...prev, summary: false }));
     }
   };
 
-  //
+  // 카테고리별 매출 통계
+  const getSalesByCategoryFetch = async (dateRange) => {
+    setLoadingState((prev) => ({ ...prev, category: true }));
+    try {
+      const stat = await getSalesByCategory(dateRange);
+      if (!stat) return setSummaryStatistics([]);
+      setCategoryStatistics(stat);
+    } finally {
+      setLoadingState((prev) => ({ ...prev, category: false }));
+    }
+  };
+
+  // 매출 통계 요약
+  const getSalesByMonthFetch = async (dateRange) => {
+    setLoadingState((prev) => ({ ...prev, month: true }));
+    try {
+      const stat = await getSalesByMonth(dateRange);
+      if (!stat) return setSummaryStatistics([]);
+      setMonthStatistics(stat);
+    } finally {
+      setLoadingState((prev) => ({ ...prev, month: false }));
+    }
+  };
+
   useEffect(() => {
-    getPaymentsFetch();
-  },[] );
+    getPaymentSummaryFetch(dateRange);
+  }, [dateRange]);
+
+  useEffect(() => {
+    getSalesByCategoryFetch(dateRange);
+  }, [dateRange]);
+
+  useEffect(() => {
+    getSalesByMonthFetch(dateRange);
+  }, [dateRange]);
 
   return (
     <section className='bg-[#f3f4f6] min-h-screen h-auto p-3 border border-gray-200 rounded-[5px]'>
-      {/* 헤더 */}
-      <SellerContentHeader>
-        <SellerTitle type={'main'}>결제 내역</SellerTitle>
-        {/* 날짜 선택, 필터, 내보내기 */}
-      </SellerContentHeader>
+      {/* 날짜 필터 */}
+      <SellerDateFilter onChange={handleDateRange} />
 
       {/* 신규주문, 배송중, 배송완료, 취소/반품 통계 */}
       <div>
+        <h2 className='text-2xl font-bold mb-[-1rem]'>매출통계</h2>
         <SellerCardLayout>
-          <SellerCard bgColor={'bg-white'} amount={'￦' + 100002} title={'오늘 결제'} />
-          <SellerCard bgColor={'bg-white'} amount={'￦' + 80000} title={'이번 주 결제'} />
-          <SellerCard bgColor={'bg-white'} amount={'￦' + 200004} title={'이번 달 결제'} />
-          <SellerCard bgColor={'bg-white'} amount={'￦' + 30000} title={'결제 취소'} />
+          {loadingState.summary ? (
+            <>
+              <SellerCardSkeleton />
+              <SellerCardSkeleton />
+              <SellerCardSkeleton />
+              <SellerCardSkeleton />
+            </>
+          ) : (
+            <>
+              <SellerCard
+                bgColor='bg-white'
+                amount={'￦' + (summaryStatistics.totalPrice?.toLocaleString() || 0)}
+                title='총 매출'
+              />
+              <SellerCard
+                bgColor='bg-white'
+                amount={summaryStatistics.totalOrderCount || 0}
+                title='총 주문 건수'
+              />
+              <SellerCard
+                bgColor='bg-white'
+                amount={summaryStatistics.paidOrderCount || 0}
+                title='결제 완료 주문'
+              />
+              <SellerCard
+                bgColor='bg-white'
+                amount={'￦' + (summaryStatistics.canceledTotalPrice?.toLocaleString() || 0)}
+                title='취소/환불 금액'
+              />
+            </>
+          )}
         </SellerCardLayout>
       </div>
 
-      {/* 탭(메뉴) */}
-      <SellerTabs
-        tabList={paymentMethods}
-        selectedTab={selectedTab}
-        onTabChange={(e) => setSelectedTab(e.currentTarget.dataset.tabId)}
-      />
+      {/* 매출 분석 */}
+      <div>
+        <h2 className='text-2xl font-bold pt-10 '>매출분석</h2>
+        <div className='flex gap-5 lg:flex-row flex-col '>
+          {/* 월별 매출 */}
+          <div className='bg-white mt-5 border border-gray-200 p-3 pb-5 w-full h-full min-h-[450px]  lg:max-h-1/2'>
+            <h3 className='font-bold py-5'>월별 매출</h3>
+            {loadingState.month ? (
+              <p className='text-gray-500 w-full h-[150px] flex items-center justify-center animate-pulse'>
+                데이터를 조회중입니다.
+              </p>
+            ) : (
+              <SellerMonthlyGraph data={monthStatistics} />
+            )}
+          </div>
 
-      {/*  컨텐츠 */}
-      <div className='bg-white mt-5 border border-gray-200 p-3 py-0'>
-        {/* 검색창 */}
-        <div className='py-3'>
-          <SellerSearch placeholder={'결제번호, 주문번호, 고객명 검색..'} />
+          {/* 카테고리별 매출 */}
+          <div className='bg-white lg:mt-5 mt-0 border border-gray-200 p-3 pb-5 w-full h-full min-h-[450px]  lg:max-h-1/2'>
+            <h3 className='font-bold py-5'>카테고리별 매출</h3>
+            {loadingState.category ? (
+              <p className='text-gray-500 w-full h-[150px] flex items-center justify-center  animate-pulse'>
+                데이터를 조회중입니다.
+              </p>
+            ) : (
+              <SellerSalesCategoryGraph data={categoryStatistics} />
+            )}
+          </div>
         </div>
-
-        {/* 테이블 */}
-        {loading ? <TableSkeleton /> : <SellerPaymentsTable payments={payments} paymentMethods={paymentMethods} />}
       </div>
-
-      {/* 페이지네이션 */}
-      <Pagination
-        handlePageClick={({ selected }) => setPage(selected)}
-        totalPageCount={Math.ceil(totalCount / PAGE_SIZE)}
-      />
     </section>
   );
 }

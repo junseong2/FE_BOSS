@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { UserProvider } from './context/UserContext.jsx';
+import {Toaster} from 'react-hot-toast'
 
 import AppLayout from './AppLayout';
 import ShopPage from './pages/ShopPage';
 import IntroPage from './pages/IntroPage';
 import './index.css'; // ✅ Tailwind가 적용된 index.css 사용
+import '@smastrom/react-rating/style.css';
 import Top from './components/layout/Top';
 import MenuBar from './MenuBar';
 import BottomNavigation from './components/layout/BottomNavigation';
@@ -17,7 +19,7 @@ import AboutPage from './pages/AboutPage';
 import CartPage from './pages/CartPage';
 import CameraCapturePage from './pages/CameraCapturePage';
 import ContactPage from './pages/ContactPage';
-import MyPage from './pages/MyPage';
+import MyPage from './pages/MyPage/MyPage';
 import EventPage from './pages/EventPage';
 import ProductPage from './pages/ProductPage';
 import ChatBot from './components/layout/ChatBot';
@@ -31,17 +33,24 @@ import SellerProductPage from './pages/seller/SellerProductPage.jsx';
 import SellerOrderPage from './pages/seller/SellerOrderPage.jsx';
 import SellerInventoryPage from './pages/seller/SellerInventoryPage.jsx';
 import SellerPaymentPage from './pages/seller/SellerPaymentPage.jsx';
-import ProductDetailPage from './pages/ProductDetailPage';
+import ProductDetailPage from './pages/productDetail/ProductDetailPage';
 import ShopEditorPage from './pages/editor/ShopEditorPage.jsx';
 
 import MobileShopEditorPage from './pages/editor/MobileShopEditorPage.jsx';
+import SellerSignUpPage from './pages/sellerSignup/SellerRegistrationPage.jsx';
 
 import AccountRecoveryPage from './pages/accountRecovery/AccountRecoveryPage.jsx';
 import PaymentPage from './pages/PaymentPage';
+// import AdminPage from './pages/adminPage';
+import AdminPage from './pages/admin/AdminPage.jsx';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage.jsx';
+import AdminVerificationPage from './pages/admin/AdminVerificationPage.jsx';
+import AdminSettlementPage from "./pages/admin/AdminSettlementPage";
 
 import Footer from './components/layout/Footer'; // ✅ Footer import 추가
 import SignUpPage from './pages/signup/SignUpPage.jsx';
 import SellerSettlementPage from './pages/seller/SellerSettlementPage.jsx';
+import SellerReviewPage from './pages/seller/SellerReviewPage.jsx';
 
 function App() {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -56,8 +65,8 @@ function App() {
   const location = useLocation();
   const isAdminPage =
     location.pathname.toLowerCase().startsWith('/seller') ||
-    location.pathname.toLowerCase().startsWith('/admin')||
-    location.pathname.toLowerCase().startsWith('/editor')||
+    location.pathname.toLowerCase().startsWith('/admin') ||
+    location.pathname.toLowerCase().startsWith('/editor') ||
     location.pathname.toLowerCase().startsWith('/mobileeditor');
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -103,7 +112,7 @@ function App() {
 
   useEffect(() => {
 
-    
+
     console.log("백엔드 API URL:", import.meta.env.VITE_BACKEND_URL);
     console.log("app.jsx에서 본 sellerId:", sellerId);
     const handleResize = () => {
@@ -143,6 +152,7 @@ function App() {
 
   return (
     <CartProvider>
+      <Toaster position='top-right'/>
       <UserProvider>
         <div className="flex flex-col min-h-screen">
           {/* ✅ 상단 영역 */}
@@ -219,8 +229,9 @@ function App() {
                 <Route path='/category/:categoryId' element={<CategoryPage />} />
                 <Route path='/search' element={<SearchPage />} />
                 <Route path='/paymentpage' element={<PaymentPage />} />
-                <Route path='/product/:productId' element={<ProductDetailPage />} />
                 {/* <Route path="/product/recommend-text" element={<ChatBot />} /> */}
+                <Route path='/product/:productId' element={<ProductDetailPage />} />
+                <Route path='/seller/signup' element={<SellerSignUpPage />} />
 
                 {/* ✅ 판매자 대시보드 경로 유지 */}
                 <Route path='/seller' element={<SellerPage />}>
@@ -228,22 +239,30 @@ function App() {
                   <Route path='product' element={<SellerProductPage />} />
                   <Route path='order' element={<SellerOrderPage />} />
                   <Route path='inventory' element={<SellerInventoryPage />} />
-                  <Route path='payment' element={<SellerPaymentPage/>} />
+                  <Route path='payment' element={<SellerPaymentPage />} />
                   <Route path='settlement' element={<SellerSettlementPage />} />
+                  <Route path='review' element={<SellerReviewPage />} />
                 </Route>
 
                 <Route path='/editor' element={<ShopEditorPage />}></Route>
 
-                
+                 {/* ✅ 관리자 대시보드 경로 유지 */}
+                <Route path="/admin" element={<AdminPage />}>
+                  <Route index element={<AdminDashboardPage />} />
+                  <Route path="verification" element={<AdminVerificationPage />} />
+                  <Route path="settlement" element={<AdminSettlementPage />} />
+                </Route>
+
+
                 <Route path='/mobileeditor' element={<MobileShopEditorPage />}></Route>
 
 
                 {/* 비밀번호/아이디 찾기 */}
-                <Route path='/auth/account-recovery' element={<AccountRecoveryPage/>}></Route> 
+                <Route path='/auth/account-recovery' element={<AccountRecoveryPage />}></Route>
 
               </Routes>
 
-      
+
             </main>
 
 
