@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Star, MessageCircle, Clock, TrendingUp, Search, Filter, X } from 'lucide-react';
 import { createSellerReviewAnswer, getSellerReviews } from '../../services/review.service';
 import { Rating } from '@smastrom/react-rating';
 import Pagination from '../../components/Pagination';

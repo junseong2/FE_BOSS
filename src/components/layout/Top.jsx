@@ -147,7 +147,7 @@ export default function Top() {
 
                 <button
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors relative group"
-                  onClick={() => navigate("/seller")}
+                  onClick={() => navigate("/seller/dashboard")}
                 >
                   <MdStorefront className="h-5 w-5" />
                   <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">

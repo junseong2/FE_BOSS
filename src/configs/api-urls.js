@@ -49,8 +49,8 @@ export const apiRoutes = {
     orders: {
       getAll: (page, size, search, { orderStatus, paymentStatus }, sort) =>
         BASE_URL +
-        `/seller/orders?page=${page}&size=${size}&search=${search}&orderStatus=${orderStatus}&paymentStatus=${paymentStatus}&sort=${sort}`,
-      getById: (orderId) => BASE_URL + `/seller/orders/${orderId}`,
+        `/orders/seller/orders?page=${page}&size=${size}&search=${search}&orderStatus=${orderStatus}&paymentStatus=${paymentStatus}&sort=${sort}`,
+      getById: (orderId) => BASE_URL + `/orderdetail/seller/orders/${orderId}`,
     },
 
     // 결제 관리
