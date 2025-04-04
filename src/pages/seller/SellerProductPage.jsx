@@ -23,6 +23,7 @@ function SellerProductPage() {
   const { onToggle, isOpen, toggleId } = useToggle();
   const { onToggle: onToggleNewProductForm, isOpen: isOpenNewProductForm } = useToggle();
   const [productIds, setProductIds] = useState([]);
+  const [loadingTrigger, setLoadingTrigger] = useState(false);
   const [page, setPage] = useState(0);
   const [productName, setProductName] = useState('');
   const [loading, setLoading] = useState(false);
@@ -60,7 +61,11 @@ function SellerProductPage() {
     const idsInfo = {
       ids: productIds,
     };
-    deleteSellerProduct(idsInfo);
+    try {
+      await deleteSellerProduct(idsInfo);
+    } finally {
+      setLoadingTrigger((prev) => !prev);
+    }
   }
 
   // 상품 조회
@@ -80,7 +85,12 @@ function SellerProductPage() {
   // 상품 추가
   async function onCreateProductSubmit(e, images) {
     const { requestData } = await mappingSubmitData(e, images);
-    registerSellerProduct(requestData);
+
+    try {
+    await registerSellerProduct(requestData);
+  }finally {
+    setLoadingTrigger((prev) => !prev);
+  }
   }
 
   // 상품 수정
@@ -109,6 +119,7 @@ function SellerProductPage() {
     const category = formData.get('category')?.toString().trim() || '';
     const description = formData.get('description')?.toString().trim() || '';
     const stock = Number(formData.get('stock')) || 0;
+    const minStock = Number(formData.get('minStock')) || 0;
 
     const errors = [];
 
@@ -117,6 +128,7 @@ function SellerProductPage() {
     if (!description) errors.push('상품 설명을 입력하세요.');
     if (isNaN(price) || price <= 0) errors.push('가격은 0보다 커야 합니다.');
     if (isNaN(stock) || stock < 0) errors.push('재고는 0 이상이어야 합니다.');
+    if (isNaN(minStock) || minStock < 0) errors.push('최소 재고는 0 이상이어야 합니다.');
 
     if (errors.length > 0) {
       alert(errors.join('\n'));
@@ -144,7 +156,7 @@ function SellerProductPage() {
 
   useEffect(() => {
     getProductsFetch(page, productName);
-  }, [page, productName]);
+  }, [page, productName, loadingTrigger]);
 
   return (
     <>
@@ -155,7 +167,6 @@ function SellerProductPage() {
         </SellerContentHeader>
 
         {/* 테이블 */}
-
         <div className='flex p-3 bg-white items-center mt-5 border border-gray-200 '>
           <SellerSearch
             placeholder={'상품명을 입력하세요.'}

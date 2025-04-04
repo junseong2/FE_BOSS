@@ -19,6 +19,7 @@ export default function SellerSettlementPage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [renderTrigger, setRenderTrigger] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [settlements, setSettlements] = useState([]);
   const [totalCount, setTotalCount] = useState(1);
@@ -58,6 +59,7 @@ export default function SellerSettlementPage() {
       }
     } finally {
       setSubmitLoading(false);
+      setRenderTrigger((prev) => !prev);
     }
   }
 
@@ -85,7 +87,7 @@ export default function SellerSettlementPage() {
 
   useEffect(() => {
     getSettlementsFetch();
-  }, [page, dateRange, search]);
+  }, [page, dateRange, search, renderTrigger]);
 
   return (
     <>

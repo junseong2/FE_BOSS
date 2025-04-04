@@ -1,30 +1,28 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IoCloseCircle, IoImageOutline } from 'react-icons/io5'; // 이미지 업로드 아이콘
 import Label from '../../../../components/Label';
 import Input from '../../../../components/Input';
+import { getCategories } from '../../../../services/category.service';
 
 function SellerRegisterForm({ onSubmit, onToggle }) {
   const [productName, setProductName] = useState('');
   const [category, setCategory] = useState('');
+  const [categories, setCategories] = useState([]);
   const [price, setPrice] = useState('');
   const [stock, setStock] = useState('');
   const [description, setDescription] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
   const [images, setImages] = useState([]);
 
-  const categories = [
-    '식품',
-    '음료',
-    '생활용품',
-    '미용/건강',
-    '도시락/즉석식',
-    '과자/스낵',
-    '라면/면류',
-    '탄산음료',
-    '커피',
-    '생수/이온음료',
-    '우유/두유',
-  ];
+  // 카테고리 목록 가져오기
+  const getCategoriesFetch = async () => {
+    try {
+      const categories = await getCategories();
+      setCategories(categories);
+    } finally {
+      console.log(11);
+    }
+  };
 
   // 프리뷰 이미지 설정
   const handleImageChange = (e) => {
@@ -47,6 +45,10 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
     onSubmit(e, images);
     onToggle();
   };
+
+  useEffect(() => {
+    getCategoriesFetch();
+  }, []);
 
   return (
     <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm animate-fadeIn'>
