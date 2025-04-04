@@ -18,7 +18,7 @@ import Pagination from '../../components/Pagination';
 import TableSkeleton from '../../components/skeleton/TableSkeleton';
 
 const headers = ['선택', '상품ID', '상품명', '카테고리', '설명', '가격', '재고', '작업'];
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 15;
 function SellerProductPage() {
   const { onToggle, isOpen, toggleId } = useToggle();
   const { onToggle: onToggleNewProductForm, isOpen: isOpenNewProductForm } = useToggle();
@@ -66,12 +66,15 @@ function SellerProductPage() {
   // 상품 조회
   async function getProductsFetch(page, productName) {
     setLoading(true);
-    const data = await getAllSellerProducts(Math.max(0, page), PAGE_SIZE, productName);
-    if (data) {
-      setProducts(data.products ?? []);
-      setTotalCount(data.totalCount ?? 0);
+    try {
+      const data = await getAllSellerProducts(Math.max(0, page), PAGE_SIZE, productName);
+      if (data) {
+        setProducts(data.products ?? []);
+        setTotalCount(data.totalCount ?? 0);
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   // 상품 추가
@@ -181,7 +184,7 @@ function SellerProductPage() {
         {loading ? (
           <TableSkeleton />
         ) : (
-          <div className='w-full p-3 bg-white border border-gray-200  mt-3'>
+          <div className='w-full p-3 bg-white border border-gray-200  mt-3 min-h-[512px]'>
             <SellerProductTable
               headers={headers}
               products={products}

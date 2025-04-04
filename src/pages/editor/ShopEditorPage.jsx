@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import EditorHeader from './components/layout/EditorHeader';
 import EditorSidebar from './components/layout/EditorSidebar';
 import EditorTab from './components/tab/EditorTab';
@@ -13,13 +13,12 @@ import { elementTemplates, initialElements } from '../../data/shop-templates';
 import { IoCloseOutline } from 'react-icons/io5';
 import { getCategories } from '../../services/category.service';
 
+
 const sidebarTabList = ['요소', '설정'];
 const canvasTabList = ['미리보기'];
 
 export default function ShopEditorPage() {
 
-
-  
   const [elements, setElements] = useState(initialElements); // ✅ 기본 요소 상태
   const [selectedElement, setSelectedElement] = useState(null);
   const [sidebarSelectedTabName, setSidebarSelectedTabName] = useState('요소');

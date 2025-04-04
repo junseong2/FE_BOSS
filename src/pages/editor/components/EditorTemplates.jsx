@@ -24,6 +24,92 @@ export function TemplateHeader({ properties }) {
 
       {/* 카테고리 바 */}
      
+      <ul className='p-4'>
+  {properties?.categories?.map((category, index) => {
+    const label = typeof category === "string" ? category : category.title;
+    return (
+      <li key={`${label}-${index}`} className='p-2 border-b cursor-pointer hover:bg-gray-100'>
+        {label}
+      </li>
+    );
+  })}
+</ul>
+    
+
+      {/* 로고 */}
+      <div className='w-[60px] h-[55px] text-center relative'>
+        {properties.logoUrl ? (
+          <img
+            className='w-full h-full'
+            src={`http://localhost:5000${properties.logoUrl}`}  // 절대 경로 사용
+            width={50}
+            height={50}
+            alt='로고 이미지'
+          />
+
+        ) : (
+          <img
+            className="w-full h-full"
+            src="https://placehold.co/50x50"  // 기본 이미지 사용
+            alt="기본 로고 이미지"
+            width={50}
+            height={50}
+          />
+        )}
+      </div>
+
+      {/* 네비게이션 */}
+      <div className='flex items-center max-w-[300px] w-full h-[50px]'>
+      <ul className='flex gap-[15px] m-0'>
+  {properties?.menuItems.map((menu, index) => {
+    const label = typeof menu === "string" ? menu : menu.title;
+    return <li key={`${label}-${index}`}>{label}</li>;
+  })}
+</ul>
+
+
+      </div>
+
+      {/* 오버레이 (카테고리 열렸을 때 클릭 시 닫힘) */}
+      {isCategoryOpen && (
+        <div
+          className='fixed inset-0 bg-black opacity-30 z-30'
+          onClick={() => setIsCategoryOpen(false)}
+        ></div>
+      )}
+    </div>
+  );
+
+
+
+
+
+
+
+}
+/**
+ * 커스텀 헤더2
+ * @returns
+ */
+export function TemplateHeader2({ properties }) {
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  console.log("🚀렌더링파트 헤더 Logo URL: ", properties?.logoUrl);
+
+  return (
+    <div 
+      className='relative w-full flex justify-between items-center gap-2 border-b border-[#E4E4E7] p-2'
+      style={{ backgroundColor: properties?.backgroundColor || '#fff1ff' }} // ✅ 배경색 적용
+    >
+      {/* 카테고리 버튼 */}
+      <button
+        className='z-20 p-2 bg-gray-100 rounded-md'
+        onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+      >
+        ☰
+      </button>
+
+      {/* 카테고리 바 */}
+     
   
         <ul className='p-4'>
           {properties?.categories?.map((category) => (
@@ -58,11 +144,15 @@ export function TemplateHeader({ properties }) {
 
       {/* 네비게이션 */}
       <div className='flex items-center max-w-[300px] w-full h-[50px]'>
-        <ul className='flex gap-[15px] m-0'>
-          {properties?.menuItems.map((menu) => (
-            <li key={menu}>{menu}</li>
-          ))}
-        </ul>
+      <ul className='flex gap-[15px] m-0'>
+  {properties?.menuItems.map((menu, index) => {
+    const label = typeof menu === "string" ? menu : menu.title;
+    return <li key={`${label}-${index}`}>{label}</li>;
+  })}
+</ul>
+
+
+
       </div>
 
       {/* 오버레이 (카테고리 열렸을 때 클릭 시 닫힘) */}
@@ -82,7 +172,6 @@ export function TemplateHeader({ properties }) {
 
 
 }
-
 /**
  * 커스텀 배너
  * @returns
@@ -134,7 +223,7 @@ export function TemplateBanner({ properties }) {
 export function Templategrid({ properties }) {
   const {
     columns = 3, 
-    sortList = ["실시간", "일간", "주간", "월간"],  // 기본값 설정
+    sortList = ["전체", "일간", "주간", "월간"],  // 기본값 설정
     title = "추천 상품 제목", // title이 없으면 기본값 사용
     products = []  // 기본값 설정
   } = properties;
@@ -156,17 +245,17 @@ export function Templategrid({ properties }) {
       
       {/* 상품 그리드 */}
       <div className="grid gap-4 mt-4" style={gridStyle}>
-        {products && products.length > 0 ? (
-          products.map((product, index) => (
-            <div key={index} className="p-4 border rounded-lg bg-gray-50">
-              <p>{product.name}</p>  {/* 상품 이름 */}
-              <p>{product.price}</p>  {/* 상품 가격 */}
-            </div>
-          ))
-        ) : (
-          <p>상품이 없습니다.</p> 
-        )}
+  {products && products.length > 0 ? (
+    products.map((product, index) => (
+      <div key={`${product.title}-${index}`} className="p-4 border rounded-lg bg-gray-50">
+        <p>{product.title}</p>
+        <p>{product.price}</p>
       </div>
+    ))
+  ) : (
+    <p>상품이 없습니다.</p>
+  )}
+</div>
     </div>
   );
 }
@@ -189,6 +278,52 @@ export function TemplateBlank({ properties }) {
   );
 }
 
+
+
+// 텍스트 박스 요소
+export function TemplateText({ properties }) {
+  const {
+    content = '기본 텍스트입니다.',
+    fontSize = '16px',
+    fontWeight = 'normal',
+    color = '#000000',
+    textAlign = 'left',
+  } = properties;
+
+  return (
+    <div
+      className="w-full p-4"
+      style={{
+        fontSize,
+        fontWeight,
+        color,
+        textAlign,
+      }}
+    >
+      {content}
+    </div>
+  );
+}
+
+// 이미지 박스 요소
+export function TemplateImage({ properties }) {
+  const {
+    imageUrl = 'https://placehold.co/400x200',
+    alt = '이미지',
+  } = properties;
+
+  return (
+    <div className="w-full h-full flex justify-center items-center p-4 overflow-hidden">
+      <img
+        src={`http://localhost:5000${imageUrl}`} // 로컬 이미지 경로일 경우
+        alt={alt}
+        className="w-full h-full object-contain rounded"
+      />
+    </div>
+  );
+}
+
+
 // 예시 데이터
 const products = [
   { name: '상품 1', price: '$10' },
@@ -199,7 +334,7 @@ const products = [
 const properties = {
   title: "추천 상품",
   columns: 3,
-  sortList: ["실시간", "일간", "주간", "월간"],
+  sortList: ["전체", "일간", "주간", "월간"],
   products: products,
 };
 

@@ -647,12 +647,174 @@ const handleSaveInOrder = async () => {
     placeholder="예: auto, 200px"
   />
 </div>
+<div className="mb-2">
+      <label className="block text-sm font-semibold mb-1">타이틀</label>
+      <input
+        type="text"
+        value={element.properties.title || ''}
+        onChange={(e) =>
+          onUpdate({ ...element, properties: { ...element.properties, title: e.target.value } })
+        }
+        className="w-full border rounded px-2 py-1"
+        placeholder="배너 제목을 입력하세요"
+      />
+    </div>
 
+    <div className="mb-2">
+      <label className="block text-sm font-semibold mb-1">서브타이틀</label>
+      <input
+        type="text"
+        value={element.properties.subtitle || ''}
+        onChange={(e) =>
+          onUpdate({ ...element, properties: { ...element.properties, subtitle: e.target.value } })
+        }
+        className="w-full border rounded px-2 py-1"
+        placeholder="배너 부제목을 입력하세요"
+      />
+    </div>
             </>
           );
 
 
+          case 'text':
+            case 'mobiletext':
+              return (
+                <>
+                  <div className="mb-4">
+                    <Label label="내용" />
+                    <textarea
+                      value={element.properties.content || ''}
+                      onChange={(e) =>
+                        onUpdate({
+                          ...element,
+                          properties: { ...element.properties, content: e.target.value },
+                        })
+                      }
+                      className="w-full border border-gray-300 rounded px-2 py-1"
+                      rows={4}
+                    />
+                  </div>
+                  <select
+  value={element.properties.fontFamily}
+  onChange={(e) => handleChangeFont(e.target.value)}
+>
 
+  <option value="Spoqa Han Sans Neo">Spoqa Han Sans Neo</option>
+  <option value="SUIT">SUIT</option>
+  <option value="Gmarket Sans">Gmarket Sans</option>
+  <option value="Apple SD Gothic Neo">Apple SD Gothic Neo</option>
+  <option value="IBM Plex Sans KR">IBM Plex Sans KR</option>
+  <option value="Nanum Gothic">나눔고딕</option>
+  <option value="Noto Sans KR">Noto Sans KR</option>
+  <option value="Arial">Arial</option>
+  <option value="Roboto">Roboto</option>
+  <option value="Pretendard">Pretendard</option>
+  
+</select>
+                  <div className="mb-4">
+                    <Label label="폰트 크기" />
+                    <input
+                      type="text"
+                      value={element.properties.fontSize || ''}
+                      onChange={(e) =>
+                        onUpdate({
+                          ...element,
+                          properties: { ...element.properties, fontSize: e.target.value },
+                        })
+                      }
+                      className="w-full border border-gray-300 rounded px-2 py-1"
+                    />
+                  </div>
+            
+                  <div className="mb-4">
+                    <Label label="폰트 굵기" />
+                    <input
+                      type="text"
+                      value={element.properties.fontWeight || ''}
+                      onChange={(e) =>
+                        onUpdate({
+                          ...element,
+                          properties: { ...element.properties, fontWeight: e.target.value },
+                        })
+                      }
+                      className="w-full border border-gray-300 rounded px-2 py-1"
+                    />
+                  </div>
+            
+                  <div className="mb-4">
+                    <Label label="글자 색상" />
+                    <input
+                      type="color"
+                      value={element.properties.color || '#000000'}
+                      onChange={(e) =>
+                        onUpdate({
+                          ...element,
+                          properties: { ...element.properties, color: e.target.value },
+                        })
+                      }
+                      className="w-12 h-10 p-1"
+                    />
+                  </div>
+            
+                  <div className="mb-4">
+                    <Label label="정렬" />
+                    <select
+                      value={element.properties.textAlign || 'left'}
+                      onChange={(e) =>
+                        onUpdate({
+                          ...element,
+                          properties: { ...element.properties, textAlign: e.target.value },
+                        })
+                      }
+                      className="w-full border border-gray-300 rounded px-2 py-1"
+                    >
+                      <option value="left">왼쪽 정렬</option>
+                      <option value="center">가운데 정렬</option>
+                      <option value="right">오른쪽 정렬</option>
+                    </select>
+                  </div>
+                </>
+              );
+              case 'image':
+                case 'mobileimage':
+                  return (
+                    <>
+                      <div className='mb-4'>
+                        <Label label="이미지 업로드" />
+                        <SingleImageUploader
+                          elementType={element.type}
+                          sellerId={sellerId}
+                          onUpload={(url) =>
+                            onUpdate({
+                              ...element,
+                              properties: {
+                                ...element.properties,
+                                imageUrl: url,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                
+                      <div className="mb-4">
+                        <Label label="대체 텍스트 (alt)" />
+                        <input
+                          type="text"
+                          value={element.properties.alt || ''}
+                          onChange={(e) =>
+                            onUpdate({
+                              ...element,
+                              properties: { ...element.properties, alt: e.target.value },
+                            })
+                          }
+                          className="w-full border border-gray-300 rounded px-2 py-1"
+                        />
+                      </div>
+
+                      
+                    </>
+                  );
+                            
 
 
           case 'mobileheader':

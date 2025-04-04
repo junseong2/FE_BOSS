@@ -1,17 +1,19 @@
-import { IoGridOutline, IoImageOutline, IoBagHandleOutline,IoPhonePortraitOutline ,IoSquareOutline} from 'react-icons/io5';
+import { IoGridOutline, IoImageOutline, IoBagHandleOutline,IoPhonePortraitOutline ,IoSquareOutline, IoTextOutline} from 'react-icons/io5';
 
-
+import EditorTemplateGrid from '../EditorTemplateGrid'; 
 import { MultipleImageUploader } from '../../../../components/ImageUploader';
 
 export default function EditorTabContent({ targetTabName, onSelectElement, elements }) {
   return (
     <div className='w-full px-2'>
-      {targetTabName === '설정' ? (
-        <EditorElementGrid onSelectElement={onSelectElement} elements={elements} />
-      ) : (
-        <MultipleImageUploader />
-      )}
-    </div>
+    {targetTabName === '설정' ? (
+      <EditorElementGrid onSelectElement={onSelectElement} elements={elements} />
+    ) : targetTabName === '탬플릿' ? (
+      <EditorTemplateGrid onSelectTemplate={onSelectElement} />
+    ) : (
+      <MultipleImageUploader />
+    )}
+  </div>
   );
 }
 
@@ -19,10 +21,13 @@ export default function EditorTabContent({ targetTabName, onSelectElement, eleme
 function EditorElementGrid({ onSelectElement, elements }) {
   const items = [
     { icon: <IoGridOutline />, label: '헤더', type: 'header' },
+    { icon: <IoGridOutline />, label: '헤더2', type: 'header2' }, 
     { icon: <IoImageOutline />, label: '배너', type: 'banner' },
     { icon: <IoBagHandleOutline />, label: '상품 그리드', type: 'grid' },    
     { icon: <IoPhonePortraitOutline/>, label: '바텀네비게이션바', type: 'bottomNavigationbar' },
     { icon: <IoSquareOutline/>, label: '여백', type: 'blank' },
+    { icon: <IoTextOutline />, label: '텍스트', type: 'text' },
+    { icon: <IoImageOutline />, label: '이미지', type: 'image' },
 
   ];
 
@@ -51,16 +56,16 @@ function EditorElementGrid({ onSelectElement, elements }) {
               총 4개의 헤더 중 하나를 선택해보세요!
             </div>
           )}
-          {index === 1 && (
+          {index === 2 && (
             <div className='absolute top-4 right-[-25.2rem] hidden group-hover:block border border-gray-500 px-4 py-1 rounded-md bg-white shadow-md'>
               배너를 추가하면 사용자의 눈길을 더 끌 수 있어요!
             </div>
           )}
-          {index === 2 && (
+          {index === 3 && (
             <div className='absolute top-4 right-[-22.5rem] hidden group-hover:block border border-gray-500 px-4 py-1 rounded-md bg-white shadow-md'>
               상품 그리드를 유동적으로 추가할 수 있어요!
             </div>
-          )}    {index ===3  && (
+          )}    {index ===4  && (
             <div className='absolute top-4 right-[-25.2rem] hidden group-hover:block border border-gray-500 px-4 py-1 rounded-md bg-white shadow-md'>
               모바일 환경에서 사용할 UI를 추가할 수 있어요!
             </div>
@@ -73,6 +78,26 @@ function EditorElementGrid({ onSelectElement, elements }) {
 {index ===5  && (
             <div className='absolute top-4 right-[-25.2rem] hidden group-hover:block border border-gray-500 px-4 py-1 rounded-md bg-white shadow-md'>
               여백을 추가해서 디자인을 꾸며보세요.
+            </div>
+          )
+          
+          
+          
+          }
+
+
+{index ===6  && (
+            <div className='absolute top-4 right-[-25.2rem] hidden group-hover:block border border-gray-500 px-4 py-1 rounded-md bg-white shadow-md'>
+              텍스트박스를 추가해서 디자인을 꾸며보세요.
+            </div>
+          )
+          
+          
+          
+          }
+          {index ===7  && (
+            <div className='absolute top-4 right-[-25.2rem] hidden group-hover:block border border-gray-500 px-4 py-1 rounded-md bg-white shadow-md'>
+              이미지박스를 추가해서 디자인을 꾸며보세요.
             </div>
           )
           

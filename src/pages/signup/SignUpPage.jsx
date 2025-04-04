@@ -11,6 +11,9 @@ export default function SignUpPage() {
   const [isAuthEmail, setIsAuthEmail] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // 전송 로딩 상태
 
+
+  console.log(isSendCode, isAuthEmail)
+
   // 폼 데이터 메시지
   const [formData, setFormData] = useState({
     username: '',
@@ -147,6 +150,7 @@ export default function SignUpPage() {
     }
     try {
       const isSuccess = await sendEmailAuthCode(formData.email); // 비동기 처리
+      console.log("상태:",isSuccess)
       setIsSendCode(isSuccess);
     } catch (error) {
       alert('이메일 인증 코드 전송 실패');
@@ -158,12 +162,30 @@ export default function SignUpPage() {
   // 폼 전송(회원가입 요청)
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!isSuccessValidationForm) {
       return alert('폼에 오류가 있습니다. 다시 확인해주세요.');
     }
-
-    const isLogin = await registerUser(formData);
+  
+    // ✅ 주소를 리스트 구조로 묶어서 전송
+    const userPayload = {
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+      phone1: formData.phone1,
+      phone2: formData.phone2,
+      phone3: formData.phone3,
+      addresses: [
+        {
+          address1: formData.address1,
+          address2: formData.address2,
+          post: formData.post,
+          isDefault: true
+        }
+      ]
+    };
+  
+    const isLogin = await registerUser(userPayload);
     if (isLogin) {
       alert('회원가입이 완료되었습니다!');
       window.location.href = '/signin';

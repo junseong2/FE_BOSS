@@ -17,7 +17,6 @@ const sortList = [
   { key: 'soldout', label: '품절' },
 ];
 
-
 const PAGE_SIZE = 8;
 function SellerInventoryPage() {
   const { onToggle, isOpen, toggleId } = useToggle();
@@ -48,15 +47,20 @@ function SellerInventoryPage() {
   // 재고 조회
   async function getInventoriesFetch() {
     setLoading(true);
-    const { inventories, totalCount } = await getAllSellerInventories(
-      page,
-      PAGE_SIZE,
-      productName,
-      selectedTab,
-    );
-    setInventories(inventories);
-    setTotalCount(totalCount || 1);
-    setLoading(false);
+    try {
+      const { inventories, totalCount } = await getAllSellerInventories(
+        page,
+        PAGE_SIZE,
+        productName,
+        selectedTab,
+      );
+
+      setInventories(inventories);
+      setTotalCount(totalCount || 1);
+
+    } finally {
+      setLoading(false);
+    }
   }
 
   // 재고 수정
@@ -103,7 +107,7 @@ function SellerInventoryPage() {
       />
 
       {/*  컨텐츠 */}
-      <div className='bg-white mt-5 border border-gray-200 p-3 py-0'>
+      <div className='bg-white mt-5 border border-gray-200 p-3 py-0 min-h-[512px]'>
         {/* 검색창 */}
         <div className='py-3'>
           <SellerSearch

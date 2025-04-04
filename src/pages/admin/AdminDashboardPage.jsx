@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminTabs from "./components/common/AdminTabs";
 import AdminVerification from "./AdminVerificationPage";
 import AdminSettlement from "./AdminSettlementPage";
@@ -7,6 +7,39 @@ import AdminHeader from "./components/layout/AdminHeader";
 
 export default function AdminDashboardPage() {
   const [selectedTab, setSelectedTab] = useState("AdminVerification");
+  const [stats, setStats] = useState({
+    totalSellers: 0,
+    waitingApproval: 0,
+    approved: 0,
+    rejected: 0,
+  });
+
+  useEffect(() => {
+    // API 호출
+    const fetchSellerStats = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/seller/seller-stats', {
+          method: 'GET',  // GET 방식으로 변경
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);  // 받아온 데이터로 상태 업데이트
+        } else {
+          console.error('판매자 통계 로딩 실패');
+        }
+      } catch (error) {
+        console.error('API 호출 실패:', error);
+      }
+    };
+
+    fetchSellerStats();
+  }, []);
+
 
   return (
     <div className="flex flex-col bg-gray-100">
@@ -32,10 +65,10 @@ export default function AdminDashboardPage() {
 
         {/* ✅ 통계 카드 */}
         <AdminCardLayout>
-          <AdminCard title="총 판매자" amount={10} description="운영 중" />
-          <AdminCard title="인증 대기" amount={2} description="인증 대기" />
-          <AdminCard title="인증 완료" amount={112} description="인증 완료" />
-          <AdminCard title="인증 거부" amount={3} description="인증 거부" />
+          <AdminCard title="누적 신청자" amount={stats.totalSellers} description="운영 중" />
+          <AdminCard title="인증 대기" amount={stats.waitingApproval} description="인증 대기" />
+          <AdminCard title="인증 완료" amount={stats.approved} description="인증 완료" />
+          <AdminCard title="인증 거절" amount={stats.rejected} description="인증 거부" />
         </AdminCardLayout>
 
         {/* ✅ 탭 메뉴 */}

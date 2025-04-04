@@ -39,6 +39,8 @@ export default function Top() {
   }
 
   const handleLogoutClick = async () => {
+    const confirmLogout = window.confirm('정말 로그아웃하시겠습니까?');
+    if (!confirmLogout) return;
     await fetch("http://localhost:5000/auth/logout", { method: "GET", credentials: "include" })
     setUserId(null)
     setUserName(null)
@@ -99,7 +101,7 @@ export default function Top() {
         <div className="flex items-center">
           <img
             src={`${import.meta.env.VITE_BACKEND_URL}/uploads/boss_logo.png`}
-            className="w-16 h-auto cursor-pointer transition-transform hover:scale-105"
+            className="w-16 h-auto ml-8 cursor-pointer transition-transform hover:scale-105"
             onClick={() => navigate("/")}
             alt="Boss Logo"
           />
