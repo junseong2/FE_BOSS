@@ -151,6 +151,7 @@ function PaymentPage() {
           buyer_name: userName,
           buyer_tel: '010-1234-5678',
           buyer_addr: address,
+          m_redirect_url: 'http://localhost:5173',
         },
         async (rsp) => {
           if (rsp.success) {

@@ -38,14 +38,18 @@ const OrderList = ({ userId }) => {
       });
       if (!response.ok) throw new Error("주문 내역 조회 실패");
       const data = await response.json();
-      setOrders(data);
+      const sorted = [...data].sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
+
+      setOrders(sorted); 
     } catch (error) {
       console.error("❌ 주문 내역 조회 오류:", error.message);
     }
   };
 
   const fetchOrderDetail = async (orderId) => {
+    console.log("📥 주문 상세 조회 요청 시작 - orderId:", orderId);
     if (selectedOrderId === orderId) {
+      console.log("🔄 이미 열린 주문 → 닫기 동작 수행");
       setSelectedOrderId(null);
       setOrderDetail(null);
       return;
@@ -56,8 +60,11 @@ const OrderList = ({ userId }) => {
         method: 'GET',
         credentials: 'include',
       });
+      console.log("📡 서버 응답 상태 코드:", response.status);
       if (!response.ok) throw new Error("주문 상세 조회 실패");
+      console.error("❌ 주문 상세 조회 실패 응답:", );
       const data = await response.json();
+      console.log("✅ 주문 상세 조회 성공:", data);
       setOrderDetail(data);
       setSelectedOrderId(orderId);
     } catch (error) {
