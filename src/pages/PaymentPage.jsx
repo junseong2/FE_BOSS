@@ -174,6 +174,17 @@ function PaymentPage() {
             const statusData = { impUid: rsp.imp_uid, status: 'PAID' };
             await updatePaymentStatus(statusData); // 상태 업데이트
 
+            try {
+              await fetch('http://localhost:5000/cart/clear', {
+                method: 'POST',
+                credentials: 'include',
+              });
+              console.log('🧹 장바구니 비우기 완료');
+            } catch (clearError) {
+              console.warn('⚠️ 장바구니 비우기 실패:', clearError.message);
+            }
+          
+
             navigate('/');
           } else {
             setErrorMessage('결제에 실패했습니다.');

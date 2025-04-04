@@ -1,62 +1,89 @@
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 function Header({
-  title,
   backgroundColor,
   logoUrl,
   menuItems = [],
   fontFamily = "inherit",
   fontSize = "16px",
   fontWeight = "normal",
-}){
+  top = 100
+}) {
   const navigate = useNavigate();
-  console.log("📌 Header - menuItems 값:", menuItems);
-
+  const { storename } = useParams();
   const fullLogoUrl = logoUrl ? `http://localhost:5000${logoUrl}` : null;
 
+  const [isSticky, setIsSticky] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsSticky(window.scrollY > top);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [top]);
+
   const handleCategoryClick = (category) => {
-    console.log(`📌 ${category} 버튼 클릭됨!`);
     navigate(`/${category.toLowerCase()}`);
   };
 
   return (
-    <div className="w-full shadow-md" style={{ backgroundColor }}>
-      {/**   헤더 컨테이너 (로고 왼쪽 + 네비 우측 정렬) */}
-      <div className="w-full flex items-center justify-between px-6 py-3">
-        
-        {/**  왼쪽: 로고 */}
+    <div
+      className={`w-full shadow-md z-50 transition-all duration-300 ${
+        isSticky ? "fixed left-0 right-0 top-[80px]" : "relative"
+      }`}
+      style={{ backgroundColor }}
+    >
+      <div
+        className="w-full flex items-center justify-between px-6 py-4 relative"
+        style={{ minHeight: "100px" }} // 헤더 높이 확보
+      >
+        {/* 왼쪽 메뉴 */}
+        <div className="flex gap-6">
+        {menuItems.map((item, idx) => {
+  const label = typeof item === "string" ? item : item.title;
+  const url = typeof item === "string" ? `/${item.toLowerCase()}` : item.url;
+
+            return (
+              <button
+              key={`${label}-${idx}`}
+              onClick={() =>
+                  url.startsWith("http")
+                    ? (window.location.href = url)
+                    : navigate(`/${storename}${url}`)
+                }
+                className="px-2 py-1 text-black hover:opacity-75 transition"
+                style={{ fontSize, fontFamily, fontWeight }}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* 중앙 로고 */}
         {fullLogoUrl && (
-          <a href="/" className="block" style={{ width: "auto", maxWidth: "250px" }}>
+          <a
+            href="/"
+            className="absolute left-1/2 transform -translate-x-1/2"
+            style={{ maxWidth: "250px" }}
+          >
             <img
               src={fullLogoUrl}
               alt="로고"
-              style={{ display: "block", width: "100%", height: "auto", maxHeight: "80px" }}
+              style={{
+                width: "100%",
+                height: "auto",
+                maxHeight: "70px", // 튀어나오지 않게 조절
+              }}
             />
           </a>
         )}
 
-        {/*  오른쪽: 네비게이션 버튼 */}
-        <div className="flex gap-4">
-          {menuItems.map((item, index) => (
-            <button
-              key={index}
-              onClick={() => handleCategoryClick(item)}
-              className="px-4 py-2 text-black hover:opacity-75 transition"
-              style={{
-                background: "transparent",
-                border: "none",
-                cursor: "pointer",
-                fontSize: "16px",
-                fontFamily,
-                fontWeight,
-
-              }}
-            >
-              {item}
-            </button>
-          ))}
-        </div>
-        
+        {/* 오른쪽 여백 (중앙 정렬 유지용) */}
+        <div className="w-[250px]"></div>
       </div>
     </div>
   );

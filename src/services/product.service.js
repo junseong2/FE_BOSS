@@ -10,8 +10,7 @@ export const getAllSellerProducts = async (page, size, productName = '') => {
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
-      alert(error.response?.data.message);
-      return;
+      return error.response.data;
     }
   }
 };
@@ -51,6 +50,14 @@ export const deleteSellerProduct = async (productIds) => {
   return response.data;
 };
 
+/** 상품 상세 페이지 조회 */
+export const getProductDetail = async (id) => {
+  const url = apiRoutes.products.getById(id);
+  const response = await instance.get(url);
+  return response.data;
+};
+
+
 //========구매자 =========\\
 /** 구매자 상품 조회 */
 export const getAllProducts = async (page, size) => {
@@ -58,3 +65,4 @@ export const getAllProducts = async (page, size) => {
   const response = await instance.get(url);
   return response.data;
 };
+

@@ -3,7 +3,8 @@ import { apiRoutes } from '../configs/api-urls';
 import instance from '../configs/axios.config';
 
 /** 판매자| 주문 내역 조회 */
-export const getOrders = async ({ page, size, search, status, sort }) => {
+export const getOrders = async ({ page, size, search, orderStatus, paymentStatus, sort }) => {
+  const status = { orderStatus, paymentStatus };
   const url = apiRoutes.seller.orders.getAll(page, size, search, status, sort);
 
   try {
@@ -16,6 +17,23 @@ export const getOrders = async ({ page, size, search, status, sort }) => {
   } catch (error) {
     if (error instanceof AxiosError) {
       return error.response.data;
+    }
+  }
+};
+
+/**판매자 | 주문 내역 상세 조회 */
+export const getOrderDetail = async (orderId) => {
+  const url = apiRoutes.seller.orders.getById(orderId);
+  console.log('주문 내역 상세 조회 URL: ', url);
+
+  try {
+    const response = await instance.get(url);
+    if (response.status < 300) {
+      return response.data;
+    }
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.instance.data;
     }
   }
 };
