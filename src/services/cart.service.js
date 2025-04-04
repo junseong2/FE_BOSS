@@ -15,4 +15,15 @@ export const addToCart = async (data) => {
     toastError("장바구니 추가에 실패하였습니다.")
     console.error('❌ 장바구니 추가 오류:', error);
   }
-};
+
+  // ✅ 사용자 벡터 업데이트 요청 추가
+   
+    const updateRes = await fetch(
+      `http://localhost:5000/vector/update?productId=${data.productId}`,
+      {
+        method: 'POST',
+        credentials: 'include',
+      }
+    );
+}
+
