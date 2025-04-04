@@ -6,6 +6,7 @@ export const UserProvider = ({ children }) => {
   const [userId, setUserId] = useState(null);
   const [userName, setUserName] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // ✅ 로그인 모달 상태 추가
+  const [recommendedProducts, setRecommendedProducts] = useState([]); // ✅ 추천 상품 상태
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -27,7 +28,9 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ userId, setUserId, userName, setUserName }}>
+    //컨텍스트에 recommendedProducts 추가함.250403 - 서상훈
+    <UserContext.Provider value={{ userId, setUserId, userName, setUserName, recommendedProducts,
+      setRecommendedProducts }}>
       {children}
     </UserContext.Provider>
   );

@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import React, { useState, useEffect, useContext } from 'react';
+import { addToCart } from '../services/cart.service';
 
 function CategoryPage() {
   const { categoryId } = useParams(); // URL에서 categoryId 가져오기
@@ -73,31 +74,12 @@ function CategoryPage() {
     setProducts(sorted);
     setSortOrder(order);
   };
-
-  const addToCart = async (event, productId) => {
+  // 장바구니 추가
+  const handleAddToCart = async (event, productId) => {
     event.stopPropagation(); // ✅ 상세 페이지 이동 방지
 
     try {
-      console.log(`🛒 장바구니 추가 요청: productId=${productId}`);
-
-      const response = await fetch('http://localhost:5000/cart/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // ✅ JWT 쿠키 자동 전송
-        body: JSON.stringify({ productId, quantity: 1 }), // ✅ userId 제거
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`장바구니 추가 실패: ${errorText}`);
-      }
-
-      const data = await response.json();
-
-      console.log('✅ 장바구니 추가 성공:', data);
-      alert('✅ 장바구니에 상품이 추가되었습니다!');
+      addToCart({productId,quantity:1 })
     } catch (error) {
       console.error('❌ 장바구니 추가 오류:', error);
     }
@@ -109,13 +91,13 @@ function CategoryPage() {
       {categoryName && <h2 className="text-xl text-center mt-2">카테고리: {categoryName}</h2>}
 
       <div className="flex justify-center gap-4 mt-4">
-        <button 
-          onClick={() => sortProducts('asc')} 
+        <button
+          onClick={() => sortProducts('asc')}
           disabled={sortOrder === 'asc'}
           className="px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 disabled:opacity-50"
         >가격 낮은순</button>
-        <button 
-          onClick={() => sortProducts('desc')} 
+        <button
+          onClick={() => sortProducts('desc')}
           disabled={sortOrder === 'desc'}
           className="px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 disabled:opacity-50"
         >가격 높은순</button>
@@ -125,9 +107,9 @@ function CategoryPage() {
       <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-4">
         {products.length > 0 ? (
           products.map((product) => (
-            <li 
-              key={product.productId} 
-              onClick={() => navigate(`/product/${product.productId}`)} 
+            <li
+              key={product.productId}
+              onClick={() => navigate(`/product/${product.productId}`)}
               className="flex flex-col items-center p-4 border border-gray-300 rounded-lg bg-white text-center shadow-md transition-transform hover:scale-105"
             >
               <img
@@ -140,8 +122,8 @@ function CategoryPage() {
               <p className="text-sm text-gray-600 mt-1 line-clamp-2">{product.description}</p>
               <p className="text-lg font-semibold text-gray-800 mt-2">{product.price.toLocaleString()}원</p>
               {product.expiry_date && <p className="text-sm text-red-500">유통기한: {product.expiry_date}</p>}
-              <button 
-                onClick={(e) => addToCart(e, product.productId)} 
+              <button
+                onClick={(e) => handleAddToCart(e, product.productId)}
                 className="mt-3 px-4 py-2 bg-orange-500 text-white rounded-md text-sm hover:bg-orange-600"
               >장바구니 담기</button>
             </li>
