@@ -3,12 +3,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import fetchUserInfo from '../utils/api';
 import { getUserInfo, loginRequest } from '../services/auth.service';
 import { getToken } from '../utils/storage';
+import { useUser } from '../context/UserContext'; // ✅ 전역 context import
 
 function SignIn({ onClose }) {
-  const [userId, setUserId] = useState(null);
+  const { setUserId, setUserName } = useUser(); // ✅ Context의 setter 사용
+
   const location = useLocation();
   const navigate = useNavigate();
-  const [userName, setUserName] = useState(null);
   const [redirectUrl, setRedirectUrl] = useState('/');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
