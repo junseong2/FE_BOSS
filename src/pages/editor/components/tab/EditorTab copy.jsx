@@ -6,9 +6,9 @@ export default function EditorTab({ tabList, onTabChange, targetTabName }) {
   const handleTabChange = (tabName) => {
     onTabChange(tabName);
 
-    if (tabName === '모바일미리보기') {
+    if (tabName === '모바일 편집') {
       navigate('/mobileeditor');
-    } else if (tabName === '미리보기') {
+    } else if (tabName === '웹 편집') {
       navigate('/editor');
     }
   };

@@ -4,159 +4,49 @@ import { updateSellerSettings ,updateSellerMobileSettings} from '../../../../uti
 export default function EditorHeader({ elements,  editedElement, sellerId , onUpdate , onSave}) {
 
 
-
-// 변경사항 저장 함수
-const handleSaveChanges = async () => {
-  try {
-
-    console.log("🔍 EditorHeader에서 받은 elements: by EditorHeader", elements);
-
-    if (!sellerId) {
-      console.error("❌ 판매자 ID를 찾을 수 없습니다.");
-      alert("로그인이 필요합니다.");
-      return;
-    }
-
-    if (!elements || elements.length === 0) {
-      console.error("❌ 저장할 elements가 없습니다.");
-      alert("저장할 데이터가 없습니다.");
-      return;
-    }
-
-
-// 수정 코드
-const settingsToSave = elements.map(element => {
-  const baseProperties = {
-    // 공통 필드
-    id: element.id,
-    title: element.properties.title,
-    backgroundColor: element.properties.backgroundColor,
-  };
-
-  // 타입별 추가 필드 처리
-  switch(element.type) {
-    case 'header':
-      return {
-        type: 'header',
-        properties: {
-          ...baseProperties,
-          logoUrl: element.properties.logoUrl,
-          menuItems: element.properties.menuItems,
-          categories: element.properties.categories,
-          backgroundColor: element.properties.backgroundColor // 배경색 추가
-
-        }
-      };
-    case 'banner':
-      return {
-        type: 'banner',
-        properties: {
-          ...baseProperties,
-          subtitle: element.properties.subtitle,
-          imageUrl: element.properties.imageUrl,
-          backgroundColor: element.properties.backgroundColor // 배경색 추가
-
-        }
-      };
-    case 'grid':
-      return {
-        type: 'grid',
-        properties: {
-          ...baseProperties,
-          columns: element.properties.columns,
-          sortList: element.properties.sortList,
-          backgroundColor: element.properties.backgroundColor // 배경색 추가
-
-        }
-      };
-    default:
-      return element;
-  }
-});
-
-
-
-
-
-
-
-
-
-
-
-    console.log("📤 최종 요청 데이터 (settings) by EditorHeader:", {
-      sellerId,
-      settings: settingsToSave,
-    });
-    console.log("💾 저장 실행: 현재 elements 상태 by EditorHeader", settingsToSave);
-
-
-
-
-   
-
-    elements.forEach((el) => {
-      if (el.type === "header") {
-        console.log("✅ 헤더 이미지 URL (저장 전):", el.properties.logoUrl); // ✅ 확인용 로그
-
-        settingsToSave.header = {
-          title: el.properties.title || "",
-          logoUrl: el.properties.logoUrl || "",
-          menuItems: el.properties.menuItems || [],
-          categories: el.properties.categories || [],
-          backgroundColor: el.properties.backgroundColor || "#ffffff", 
-        };
+  const handleSaveChanges = async () => {
+    try {
+      if (!sellerId) {
+        console.error("판매자 ID가 없습니다.");
+        alert("로그인이 필요합니다.");
+        return;
       }
-
-      if (el.type === "banner") {
-        console.log("✅ 배너 이미지 URL (저장 전):", el.properties.imageUrl); // ✅ 확인용 로그
-
-        settingsToSave.banner = {
-          title: el.properties.title || "",
-          subtitle: el.properties.subtitle || "",
-          imageUrl: el.properties.imageUrl || "",
-          backgroundColor: el.properties.backgroundColor || "#ffffff",
-        };
-      }
-
-
-
-      if (el.type === "grid") {
-        console.log("✅ 그리드 정보 (저장 전):", el.properties); // ✅ 확인용 로그
-      
-        settingsToSave.grid = {
-          title: el.properties.title || "추천 상품", // 기본값 "추천 상품"
-          columns: el.properties.columns || 3, // 기본값 3
-          sortList: el.properties.sortList || [], // 기본값 빈 배열
-        };}
-
-      
-    });
-
-    console.log("📤 최종 요청 데이터 (settings) by EditorHeader:", {
-      sellerId,
-      settings: settingsToSave,
-    }
   
-  );
-
-    // ✅ API 호출
-    const response = await updateSellerSettings(sellerId, settingsToSave);
-
-    if (response && response.message) {
-      console.log("✅ 설정이 성공적으로 저장되었습니다:", response);
-      console.log("✅ 설정이 성공적으로 저장되었습니다2:", settingsToSave);
-      alert("설정이 성공적으로 저장되었습니다!");
-    } else {
-      console.error("❌ 서버 응답 오류:", response);
-      alert("설정 저장에 실패했습니다. 다시 시도해주세요.");
+      if (!elements.length) {
+        console.error("저장할 데이터가 없습니다.");
+        alert("저장할 데이터가 없습니다.");
+        return;
+      }
+  
+      // ✅ 통일된 형태로 데이터 저장
+      const settingsToSave = elements.map(element => ({
+        type: element.type,
+        id: element.id,
+        layout: {
+          column: element.layout.column || 1,
+          columnSpan: element.layout.columnSpan || 1,
+          top: element.layout.top || 0
+        },
+        properties: element.properties
+      }));
+  
+      console.log("📤 최종 settings 데이터:", settingsToSave);
+  
+      const response = await updateSellerSettings(sellerId, settingsToSave);
+  
+      if (response && response.message) {
+        console.log("✅ 저장 성공:", response);
+        alert("설정이 성공적으로 저장되었습니다!");
+      } else {
+        console.error("서버 응답 오류:", response);
+        alert("설정 저장에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("저장 중 오류:", error);
+      alert("저장 중 오류가 발생했습니다.");
     }
-  } catch (error) {
-    console.error("❌ 설정 저장 실패:", error.message || error);
-    alert("저장 중 오류가 발생했습니다.");
-  }
-};
-
+  };
+  
 
 
 
@@ -212,7 +102,7 @@ const mobilesettingsToSave = elements.map(element => {
   const baseProperties = {
     // 공통 필드
     id: element.id,
-    title: element.properties.title,
+    title: element.properties.title,layout: element.layout,
     backgroundColor: element.properties.backgroundColor,
   };
 
@@ -220,7 +110,7 @@ const mobilesettingsToSave = elements.map(element => {
   switch(element.type) {
     case 'mobileheader':
       return {
-        type: 'mobileheader',
+        type: 'mobileheader',layout: element.layout,
         properties: {
           ...baseProperties,
           logoUrl: element.properties.logoUrl,
@@ -232,7 +122,7 @@ const mobilesettingsToSave = elements.map(element => {
       };
     case 'mobilebanner':
       return {
-        type: 'mobilebanner',
+        type: 'mobilebanner',layout: element.layout,
         properties: {
           ...baseProperties,
           subtitle: element.properties.subtitle,
@@ -243,7 +133,7 @@ const mobilesettingsToSave = elements.map(element => {
       };
     case 'mobilegrid':
       return {
-        type: 'mobilegrid',
+        type: 'mobilegrid',layout: element.layout,
         properties: {
           ...baseProperties,
           columns: element.properties.columns,
@@ -254,7 +144,7 @@ const mobilesettingsToSave = elements.map(element => {
       };
       case 'mobileBottomNavigationBar':
         return {
-          type: 'mobileBottomNavigationBar',
+          type: 'mobileBottomNavigationBar',layout: element.layout,
           properties: {
             ...baseProperties,
             backgroundColor: element.properties.backgroundColor, // 배경색 유지

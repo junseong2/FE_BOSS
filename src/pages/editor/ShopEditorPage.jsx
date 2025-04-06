@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import EditorHeader from './components/layout/EditorHeader';
 import EditorSidebar from './components/layout/EditorSidebar';
 import EditorTab from './components/tab/EditorTab';
@@ -13,13 +13,12 @@ import { elementTemplates, initialElements } from '../../data/shop-templates';
 import { IoCloseOutline } from 'react-icons/io5';
 import { getCategories } from '../../services/category.service';
 
+
 const sidebarTabList = ['요소', '설정'];
 const canvasTabList = ['미리보기'];
 
 export default function ShopEditorPage() {
 
-
-  
   const [elements, setElements] = useState(initialElements); // ✅ 기본 요소 상태
   const [selectedElement, setSelectedElement] = useState(null);
   const [sidebarSelectedTabName, setSidebarSelectedTabName] = useState('요소');
@@ -205,7 +204,26 @@ const handleMoveElement = (dragIndex, hoverIndex) => {
     console.log("🔍 elements 데이터 유형:", typeof elements);
 console.log("🔍 elements는 배열인가?", Array.isArray(elements));
 
+const syncedElements = elements.map(el =>
+  el.id === selectedElement?.id ? selectedElement : el
+);
 
+// ⭐ settings 객체로 변환
+const updatedSettings = syncedElements.map(el => ({
+  type: el.type,
+  id: el.id,
+  properties: el.properties,
+}));
+
+console.log("📤 최종 저장될 settings:", updatedSettings);
+
+try {
+  await updateSellerSettings(sellerId, updatedSettings);
+  alert('🎉 쇼핑몰 구성이 성공적으로 저장되었습니다!');
+} catch (error) {
+  console.error("❌ 저장 실패:", error);
+  alert("❌ 저장 중 문제가 발생했습니다.");
+}
 
 
     alert('쇼핑몰 구성이 성공적으로 저장되었습니다!');
@@ -298,6 +316,16 @@ console.log("🔍 elements는 배열인가?", Array.isArray(elements));
               categories={categories}
               elements={elements}
               setElements={setElements}
+              onSizeChange={(updatedElement) => {
+                // 예: elements 배열 상태 업데이트
+                setElements((prev) =>
+                  prev.map((el) =>
+                    el.id === updatedElement.id ? updatedElement : el
+                  )
+                );
+                setSelectedElement(updatedElement); // ✅ input 반응하도록 설정
+
+              }}
             />
           )}
         </div>

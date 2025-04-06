@@ -6,6 +6,7 @@ import Top6 from './components/layout/Top6';
 import MenuBar from './MenuBar';
 import MenuBar5 from './MenuBar5';
 import MenuBarNull from './MenuBarNull';
+import Footer from './components/layout/Footer';
 
 function AppLayout({
   headerId,
@@ -14,7 +15,6 @@ function AppLayout({
   menuBarId,
   navigationId,
   setSellerId, // ✅ 추가
-
   setStorename,
   sellerMenubarColor,
 }) {
@@ -26,60 +26,36 @@ function AppLayout({
 
   useEffect(() => {
     console.log('📌 [AppLayout] useParams()에서 가져온 storename:', storename);
-
     if (sellerId) {
       setSellerId(sellerId);
     }
     if (storename) {
       setStorename(storename);
     }
-  }, [storename, setStorename]);
+  }, [storename, setStorename, sellerId]);
+
   useEffect(() => {
     console.log('📌 [AppLayout] useParams()에서 가져온 storename:', storename);
     console.log('📌 [AppLayout] 전달된 sellerId:', sellerId);
   }, [storename, sellerId]);
 
-  let SelectedTop;
-  if (headerId === 2) {
-    SelectedTop = Top5;
-  } 
-  else if (headerId === 3) {
-    SelectedTop = Top6;
-  }else {
-    SelectedTop = Top;
-  }
 
-  let SelectedMenuBar;
-  if (menuBarId === 2) {
-    SelectedMenuBar = MenuBarNull;
- // } else if (menuBarId === 3) {
- //   SelectedMenuBar = MenuBar6;
-  }else if (menuBarId === 0) {
-    SelectedMenuBar = MenuBarNull;
-  } else {
-    SelectedMenuBar = MenuBar;
-  }
 
   return (
-    <div className='flex'>
-      {!isAdminPage && <SelectedMenuBar sellerMenubarColor={sellerMenubarColor} />}
+    <div className="min-h-screen flex flex-col">
+      {/* 상단 메뉴바 (관리자 페이지가 아닐 경우) */}
+ 
+      
+      {/* 상단 헤더 영역 (선택적 렌더링) */}
 
-      <div className={`flex-1 ${!isAdminPage}`}>
-        {/*{!isAdminPage && (
-          <SelectedTop sellerMenubarColor={sellerMenubarColor} storename={storename} />
-        )}*/}
 
-        <main className='main page mt-[120px] mb-24'>
-          <p>이곳에서 {sellerId ?? 'N/A'}의 제품을 확인하세요.</p>
-          <p>
-            {headerId === null
-              ? '의도치 않게 이 메시지가 보인다면 App.js에서 라우팅 설정을 확인하세요!'
-              : ''}
-          </p>{' '}
-          {/* ✅ headerId 값 확인 */}
-          <Outlet />
-        </main>
-      </div>
+      {/* 메인 콘텐츠 영역 */}
+      <main className="flex-grow">
+        <Outlet />
+      </main>
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
