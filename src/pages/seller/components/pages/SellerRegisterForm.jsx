@@ -2,12 +2,19 @@ import { useEffect, useState } from 'react';
 import { IoCloseCircle, IoImageOutline } from 'react-icons/io5'; // 이미지 업로드 아이콘
 import Label from '../../../../components/Label';
 import Input from '../../../../components/Input';
+import SellerCategorySelector from './SellerCategorySelector';
 import { getCategories } from '../../../../services/category.service';
+import useToggle from '../../../../hooks/useToggle';
 
 function SellerRegisterForm({ onSubmit, onToggle }) {
+  const { onToggle: onToggleCategorySelector, isOpen: isOpenCategorySelector } = useToggle();
   const [productName, setProductName] = useState('');
-  const [category, setCategory] = useState('');
-  const [categories, setCategories] = useState([]);
+  const [category, setCategory] = useState({
+    id:0,
+    name:''
+  });
+  const [categories, setCategories] = useState([]); // 카테고리 목록
+
   const [price, setPrice] = useState('');
   const [stock, setStock] = useState('');
   const [description, setDescription] = useState('');
@@ -20,8 +27,14 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
       const categories = await getCategories();
       setCategories(categories);
     } finally {
-      console.log(11);
+      console.log(1111);
     }
+  };
+
+  // 선택한 카테고리 저장
+  const handleSaveCategory = (selectCategory) => {
+    setCategory(selectCategory);
+    onToggleCategorySelector();
   };
 
   // 프리뷰 이미지 설정
@@ -105,20 +118,18 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
         {/* 카테고리 */}
         <div className='mt-4 mb-4'>
           <Label className='block mb-1 text-sm' label={'카테고리'} />
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            name='category'
-            className='w-full p-2 border border-gray-300 bg-white text-gray-800 rounded-lg text-sm'
-            required
+          <p
+            onClick={onToggleCategorySelector}
+            className='hover:text-gray-600 cursor-pointer pl-1 text-sm text-gray-500'
           >
-            <option value=''>카테고리를 선택하세요</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
+            선택된 카테고리: {category.name || '없음'}{' '}
+          </p>
+          <SellerCategorySelector
+            categories={categories}
+            onCancel={onToggleCategorySelector}
+            onSave={handleSaveCategory}
+            isOpen={isOpenCategorySelector}
+          />
         </div>
 
         {/* 상품설몀 */}

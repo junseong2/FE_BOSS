@@ -28,7 +28,7 @@ function SellerProductPage() {
   const [productName, setProductName] = useState('');
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]); // 상품 목록
-  const [totalCount, setTotalCount] = useState(0); // 전체 상품 수
+  const [totalCount, setTotalCount] = useState(1); // 전체 상품 수
 
   // 상품 선택
   async function onCheck(e) {
@@ -75,7 +75,7 @@ function SellerProductPage() {
       const data = await getAllSellerProducts(Math.max(0, page), PAGE_SIZE, productName);
       if (data) {
         setProducts(data.products ?? []);
-        setTotalCount(data.totalCount ?? 0);
+        setTotalCount(data.totalCount ?? 1);
       }
     } finally {
       setLoading(false);
