@@ -195,9 +195,81 @@ export default function Top() {
                   <span className="font-semibold text-black-600">{userName}</span>님
                 </p>
               </div>
+<<<<<<< HEAD
               {renderButtonsByRole()}
               <IconBtn icon={<IoPersonOutline />} label="마이페이지" onClick={() => navigate("/mypage")} />
               <IconBtn icon={<IoLogOutOutline />} label="로그아웃" onClick={handleLogoutClick} />
+=======
+
+              <div className="flex items-center gap-1">
+                <button
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors relative group"
+                  onClick={() => navigate("/editor")}
+                >
+                  <MdDashboard className="h-5 w-5" />
+                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    에디터
+                  </span>
+                </button>
+
+                <button
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors relative group"
+                  onClick={() => navigate("/seller/dashboard")}
+                >
+                  <MdStorefront className="h-5 w-5" />
+                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    판매자
+                  </span>
+                </button>
+
+                <button
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors relative group"
+                  onClick={() => navigate("/mypage")}
+                >
+                  <IoPersonOutline className="h-5 w-5" />
+                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    마이페이지
+                  </span>
+                </button>
+
+                <button
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors relative group"
+                  onClick={handleLogoutClick}
+                >
+                  <IoLogOutOutline className="h-5 w-5" />
+                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    로그아웃
+                  </span>
+                </button>
+
+                <div className="relative">
+                  <button
+                    className="p-2 rounded-full hover:bg-gray-100 transition-colors relative"
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    onClick={() => navigate("/cart")}
+                  >
+                    <IoCartOutline className="h-5 w-5" />
+                    {cartItems.length > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        {cartItems.length}
+                      </span>
+                    )}
+                  </button>
+
+                  {showCartPopup && (
+                    <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg w-64 z-50">
+                      <div className="p-2 font-medium border-b">장바구니</div>
+                      {loadingCart ? (
+                        <div className="py-4 text-center text-sm text-gray-500">로딩 중...</div>
+                      ) : (
+                        getCartItemList()
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+>>>>>>> 9139b99838d15f5f4b66b1e23593deaecb399e6f
             </>
           ) : (
             <button
