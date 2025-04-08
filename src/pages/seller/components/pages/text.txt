@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
-import { IoCloseCircle, IoImageOutline } from 'react-icons/io5'; // 이미지 업로드 아이콘
+import { IoCloseCircle, IoImageOutline } from 'react-icons/io5';
 import Label from '../../../../components/Label';
 import Input from '../../../../components/Input';
 import SellerCategorySelector from './SellerCategorySelector';
 import { getCategories } from '../../../../services/category.service';
 import useToggle from '../../../../hooks/useToggle';
 import SellerProductPriceSelector from './SellerProductPriceSelector';
-
-// 동일한 import 생략
 
 function SellerRegisterForm({ onSubmit, onToggle }) {
   const { onToggle: onToggleCategorySelector, isOpen: isOpenCategorySelector } = useToggle();
@@ -22,6 +20,7 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
   const [discountRate, setDiscountRate] = useState(0);
   const [stock, setStock] = useState('');
   const [description, setDescription] = useState('');
+  const [expiryDate, setExpiryDate] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
   const [images, setImages] = useState([]);
 
@@ -34,20 +33,17 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
     }
   };
 
-  // 설정된 가격정보 저장
   const onSavePrice = ({ discountedPrice, originPrice, discountRate }) => {
     setPrice(discountedPrice);
     setOriginPrice(originPrice);
     setDiscountRate(discountRate);
   };
 
-  // 카테고리 저장
   const handleSaveCategory = (selectCategory) => {
     setCategory(selectCategory);
     onToggleCategorySelector();
   };
 
-  // 이미지 변경
   const handleImageChange = (e) => {
     setImages(e.target.files);
     const file = e.target.files[0];
@@ -58,16 +54,16 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
     }
   };
 
-  // 폼 전송
   const handleSubmit = (e) => {
     const productInfo = {
-      price: price,
-      originPrice: originPrice,
-      discountRate:discountRate,
+      price,
+      originPrice,
+      discountRate,
+      expiryDate,
     };
 
     e.preventDefault();
-    onSubmit(e, images, productInfo, category.name); // 폼 데이터 전송
+    onSubmit(e, images, productInfo, category.name);
     onToggle();
   };
 
@@ -127,18 +123,28 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
         </div>
 
         {/* 재고 */}
-        <div className=' mb-5'>
-          <div className='flex-1 mt-4 sm:mt-0'>
-            <Label label='재고' className='mb-1 text-sm' />
-            <input
-              type='number'
-              name='stock'
-              value={stock}
-              onChange={(e) => setStock(e.target.value)}
-              className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm'
-              required
-            />
-          </div>
+        <div className='mb-5'>
+          <Label label='재고' className='mb-1 text-sm' />
+          <input
+            type='number'
+            name='stock'
+            value={stock}
+            onChange={(e) => setStock(e.target.value)}
+            className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm'
+            required
+          />
+        </div>
+
+        {/* 유통기한 */}
+        <div className='mb-5'>
+          <Label label='유통기한 (선택)' className='mb-1 text-sm' />
+          <input
+            type='date'
+            name='expiryDate'
+            value={expiryDate}
+            onChange={(e) => setExpiryDate(e.target.value)}
+            className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm'
+          />
         </div>
 
         {/* 카테고리 */}
@@ -208,3 +214,4 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
 }
 
 export default SellerRegisterForm;
+
