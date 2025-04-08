@@ -1,49 +1,78 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import ReplyWrite from './ReplyWrite';
-import ReplyList from './ReplyList';
-import mainurl from './mainurl';
+"use client"
 
-// 댓글 섹션 컴포넌트
-// - `Post.jsx` 내부에서 사용됨 (게시글 상세 페이지)
-// - `ReplyWrite`(댓글 입력) + `ReplyList`(댓글 목록) 포함
-// - 댓글 추가 & 삭제 시 즉시 상태 업데이트
+import { useState, useEffect } from "react"
+import axios from "axios"
+import ReplyWrite from "./ReplyWrite"
+import ReplyList from "./ReplyList"
+import mainurl from "./mainurl"
 
 function ReplySection({ articleId }) {
-  const [replies, setReplies] = useState([]); // ✅ 댓글 상태 관리
+  const [replies, setReplies] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  // ✅ 댓글 목록 불러오기
   useEffect(() => {
+    setIsLoading(true)
     axios
       .get(mainurl() + `/articles/${articleId}/comments`)
-      .then((response) => setReplies(response.data)) // ✅ API에서 가져온 댓글 목록 저장
-      .catch((error) => console.error('댓글을 불러오는 중 오류 발생:', error));
-  }, [articleId]);
+      .then((response) => {
+        setReplies(response.data)
+        setIsLoading(false)
+      })
+      .catch((error) => {
+        console.error("댓글을 불러오는 중 오류 발생:", error)
+        setError("댓글을 불러오는 중 오류가 발생했습니다.")
+        setIsLoading(false)
+      })
+  }, [articleId])
 
-  // ✅ 댓글 추가 핸들러 (새 댓글이 추가될 때 리스트 갱신)
   const handleReplyAdded = (newReply) => {
-    setReplies((prevReplies) => [...prevReplies, newReply]); // ✅ 상태 직접 추가
-  };
+    setReplies((prevReplies) => [...prevReplies, newReply])
+  }
 
-  // ✅ 댓글 삭제 핸들러
   const handleDelete = (commentId) => {
-    axios
-      .delete(mainurl() + `/articles/${articleId}/comments/${commentId}`)
-      .then(() =>
-        setReplies((prevReplies) => prevReplies.filter((reply) => reply.replyId !== commentId)),
-      ) // ✅ 삭제 즉시 반영
-      .catch((error) => console.error('댓글 삭제 중 오류 발생:', error));
-  };
+    if (window.confirm("정말 이 댓글을 삭제하시겠습니까?")) {
+      axios
+        .delete(mainurl() + `/articles/${articleId}/comments/${commentId}`)
+        .then(() => {
+          setReplies((prevReplies) => prevReplies.filter((reply) => reply.replyId !== commentId))
+        })
+        .catch((error) => {
+          console.error("댓글 삭제 중 오류 발생:", error)
+          alert("댓글 삭제 중 오류가 발생했습니다.")
+        })
+    }
+  }
 
   return (
-    <div>
-      {/* ✅ 댓글 작성 입력 필드 */}
-      <ReplyWrite articleId={articleId} onReplyAdded={handleReplyAdded} />
+    <div className="border-t border-gray-200">
+      <div className="px-6 py-5">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 mr-2 text-blue-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+            />
+          </svg>
+          댓글 {replies.length > 0 && <span className="ml-1 text-blue-500">({replies.length})</span>}
+        </h3>
 
-      {/* ✅ 댓글 목록 표시 */}
-      <ReplyList replies={replies} onDelete={handleDelete} />
+        <ReplyWrite articleId={articleId} onReplyAdded={handleReplyAdded} />
+
+        <div className="mt-6">
+          <ReplyList replies={replies} onDelete={handleDelete} isLoading={isLoading} error={error} />
+        </div>
+      </div>
     </div>
-  );
+  )
 }
 
-export default ReplySection;
+export default ReplySection
