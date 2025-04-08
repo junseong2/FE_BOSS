@@ -1,4 +1,10 @@
-const fetchUserInfo = async (setUserId, setUserName, setEmails, setPhones, setAddresses) => {
+const fetchUserInfo = async (
+  setUserId,
+  setUserName,
+  setEmails = () => {},
+  setPhones = () => {},
+  setAddresses = () => {}
+) => {
   try {
     const response = await fetch('http://localhost:5000/auth/user-info', {
       method: 'GET',

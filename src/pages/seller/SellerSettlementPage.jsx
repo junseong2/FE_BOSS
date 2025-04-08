@@ -19,6 +19,7 @@ export default function SellerSettlementPage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [renderTrigger, setRenderTrigger] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [settlements, setSettlements] = useState([]);
   const [totalCount, setTotalCount] = useState(1);
@@ -58,6 +59,7 @@ export default function SellerSettlementPage() {
       }
     } finally {
       setSubmitLoading(false);
+      setRenderTrigger((prev) => !prev);
     }
   }
 
@@ -77,7 +79,7 @@ export default function SellerSettlementPage() {
         condition,
       });
       setSettlements(settlements);
-      setTotalCount(totalCount);
+      setTotalCount(totalCount||1);
     } finally {
       setLoading(false);
     }
@@ -85,7 +87,7 @@ export default function SellerSettlementPage() {
 
   useEffect(() => {
     getSettlementsFetch();
-  }, [page, dateRange, search]);
+  }, [page, dateRange, search, renderTrigger]);
 
   return (
     <>
@@ -95,7 +97,7 @@ export default function SellerSettlementPage() {
           <SellerTitle type={'main'}>정산관리</SellerTitle>
         </SellerContentHeader>
 
-        <div className='bg-white mt-5 border border-gray-200 p-3 pb-5'>
+        <div className='bg-white mt-5 border border-gray-200 p-3 pb-5 h-[512px]'>
           <h2 className='text-xl font-semibold'>정산 내역</h2>
           {/* 검색창 */}
           <div className='py-3 flex flex-col '>

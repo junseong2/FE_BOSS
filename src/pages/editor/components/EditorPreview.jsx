@@ -1,4 +1,5 @@
-import { TemplateBanner, TemplateHeader, Templategrid } from './EditorTemplates';
+import { TemplateBanner, TemplateHeader, Templategrid, TemplateBlank  ,TemplateText,TemplateHeader2,
+  TemplateImage } from './EditorTemplates';
 import React, { useEffect, useState } from 'react'; // useState, useEffect 추가
 
 /**
@@ -6,6 +7,10 @@ import React, { useEffect, useState } from 'react'; // useState, useEffect 추�
  * @param {element} element 템플릿 요소
  */
 export default function EditorPreview({ element }) {
+  if (!element?.type || !element?.properties) {
+    return <p className="text-red-400">잘못된 요소입니다.</p>;
+  }
+
   const [previewElement, setPreviewElement] = useState(element);
 
   useEffect(() => {
@@ -30,6 +35,13 @@ export default function EditorPreview({ element }) {
           properties={elementWithIndex.properties}
         />
       );
+      case 'header2':
+        return (
+          <TemplateHeader2
+            key={previewElement.id} // 🔥 변경될 때마다 리렌더링 강제
+            properties={elementWithIndex.properties}
+          />
+        );
     case 'banner':
       return <TemplateBanner properties={elementWithIndex.properties} />;
     case 'grid':
@@ -37,6 +49,15 @@ export default function EditorPreview({ element }) {
       console.log("🚀 grid element:", elementWithIndex); // 값 출력
       return <Templategrid properties={elementWithIndex.properties} />;
 
+    case 'blank':
+      console.log("🚀 blank properties:", elementWithIndex.properties); // 값 출력
+      return <TemplateBlank properties={elementWithIndex.properties} />;
+      case 'text':
+        console.log("🚀 text properties:", elementWithIndex.properties);
+        return <TemplateText properties={elementWithIndex.properties} />;
+      case 'image':
+        console.log("🚀 image properties:", elementWithIndex.properties);
+        return <TemplateImage properties={elementWithIndex.properties} />;
     default:
       return <p className="text-gray-400">지원되지 1않는 요소 타입: {elementWithIndex.type}</p>;
   }

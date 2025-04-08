@@ -15,10 +15,25 @@ export const apiRoutes = {
     getAllWithHierarchy: () => BASE_URL + `/category/hierarchy`,
   },
 
+  // 리뷰
+  reviews: {
+    /**
+     * @param {*} sortby 정렬 기준으로 desc, asc 중 하나 선택(평점을 기준으로 한다.)
+     */
+    getAll: (sortby, page, size, productId) =>
+      BASE_URL + `/products/${productId}/reviews?page=${page}&size=${size}&sortby=${sortby}`,
+    insert: (productId) => BASE_URL + `/products/${productId}/reviews`,
+    update: (productId, reviewId) => BASE_URL + `/products/${productId}/reviews/${reviewId}`,
+    delete: (productId, reviewId) => BASE_URL + `/products/${productId}/reviews/${reviewId}`,
+  },
+
   // 판매자
   seller: {
     // 상품 관리
     products: {
+      getAllWithDashboard: (page, size, productName, state) =>
+        BASE_URL +
+        `/seller/dashboard/products?page=${page}&size=${size}&search=${productName}&state=${state}`,
       getAll: (page, size, productName, state) =>
         BASE_URL +
         `/seller/products?page=${page}&size=${size}&search=${productName}&state=${state}`,
@@ -37,8 +52,8 @@ export const apiRoutes = {
     orders: {
       getAll: (page, size, search, { orderStatus, paymentStatus }, sort) =>
         BASE_URL +
-        `/seller/orders?page=${page}&size=${size}&search=${search}&orderStatus=${orderStatus}&paymentStatus=${paymentStatus}&sort=${sort}`,
-      getById: (orderId) => BASE_URL + `/seller/orders/${orderId}`,
+        `/orders/seller/orders?page=${page}&size=${size}&search=${search}&orderStatus=${orderStatus}&paymentStatus=${paymentStatus}&sort=${sort}`,
+      getById: (orderId) => BASE_URL + `/orderdetail/seller/orders/${orderId}`,
     },
 
     // 결제 관리
@@ -54,8 +69,27 @@ export const apiRoutes = {
     settlements: {
       getAll: (page, size, condition) =>
         BASE_URL +
-        `/seller/settlements?page=${page}&size=${size}&startDate=${condition.startDate}&endDate=${condition.endDate}&username=${condition.username}&settlementId=${condition.settlementId}`,
-      insert:() => `/seller/settlements`,
+        `/settlements/seller/check?page=${page}&size=${size}&startDate=${condition.startDate}&endDate=${condition.endDate}&username=${condition.username}&settlementId=${condition.settlementId}`,
+      insert: () => `/settlements/seller/request`,
+    },
+    // 리뷰 관리
+    reviews: {
+      getAll: ({ page, size, sortby, isAnswered, rating }) => {
+        let url = `${BASE_URL}/seller/reviews?page=${page}&size=${size}&sortby=${sortby}`;
+
+        if (isAnswered !== undefined && isAnswered !== null) {
+          url += `&isAnswered=${isAnswered}`;
+        }
+
+        if (rating !== undefined && rating !== null) {
+          url += `&rating=${rating}`;
+        }
+
+        return url;
+      },
+      insert: (reviewId) => BASE_URL + `/seller/reviews/${reviewId}/answer`,
+      delete: (reviewId, answerId) => BASE_URL + `/seller/reviews/${reviewId}/answer/${answerId}`,
+      update: (reviewId, answerId) => BASE_URL + `/seller/reviews/${reviewId}/answer/${answerId}`,
     },
   },
 

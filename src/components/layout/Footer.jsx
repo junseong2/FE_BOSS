@@ -5,7 +5,7 @@ function Footer() {
   return (
 
     
-    <div className="bg-gray-900 text-white py-10 w-full">
+    <div className="bg-gray-900 text-white  w-full">
      
       <section className="text-center px-4">
         <p className="text-lg font-semibold">

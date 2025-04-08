@@ -151,6 +151,7 @@ function PaymentPage() {
           buyer_name: userName,
           buyer_tel: '010-1234-5678',
           buyer_addr: address,
+          m_redirect_url: 'http://localhost:5173',
         },
         async (rsp) => {
           if (rsp.success) {
@@ -172,6 +173,17 @@ function PaymentPage() {
             // ✅ 4. 결제 상태 업데이트 (PAID)
             const statusData = { impUid: rsp.imp_uid, status: 'PAID' };
             await updatePaymentStatus(statusData); // 상태 업데이트
+
+            try {
+              await fetch('http://localhost:5000/cart/clear', {
+                method: 'POST',
+                credentials: 'include',
+              });
+              console.log('🧹 장바구니 비우기 완료');
+            } catch (clearError) {
+              console.warn('⚠️ 장바구니 비우기 실패:', clearError.message);
+            }
+          
 
             navigate('/');
           } else {

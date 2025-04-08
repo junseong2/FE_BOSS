@@ -150,14 +150,46 @@ export default function MobileShopEditorPage() {
       )
     );
   };
+
+      const handleAddElement = (element) => {
+        if (!element || typeof element !== 'object') {
+          console.warn("추가할 element가 유효하지 않습니다.");
+          return;
+        }
+      
+        // 현재 요소 중 가장 아래 위치 계산
+        let maxBottom = 0;
+        elements.forEach((el) => {
+          let height = el?.properties?.size?.web?.height || 100;
+          if (typeof height === 'string') {
+            height = parseInt(height.replace('px', ''), 10) || 100;
+          }
+          const top = el?.layout?.top || 0;
+          maxBottom = Math.max(maxBottom, top + height);
+        });
+      
+        // 새 ID 생성
+        const uniqueId = `el-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
+      
+        // 새로운 요소 생성
+        const newElement = {
+          ...element,
+          id: uniqueId,
+          layout: {
+            ...element.layout,
+            top: maxBottom + 20, // 하단에 20px 간격 추가
+          },
+        };
+      
+     
+
+
+        
+        const newElements = [...elements, newElement];
+        setElements(newElements);
+      };
+      
   
-
-
-
-
-  const handleAddElement = (element) => {
-    setElements([...elements, { ...element, id: `el-${Date.now()}` }]);
-  };
 
   const handleRemoveElement = (id) => {
     setElements(elements.filter((el) => el.id !== id));

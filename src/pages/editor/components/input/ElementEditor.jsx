@@ -8,7 +8,7 @@ import { updateSellerMobileSettings } from '../../../../utils/usercustomui'; // 
 import { fetchSellerMobileSettings } from '../../../../utils/usercustomui';
 
 
-export default function ElementEditor({ element, onUpdate, sellerId, categories, elements, setElements }) {
+export default function ElementEditor({ element, onUpdate, sellerId, categories, elements, setElements , onSizeChange}) {
   const [headerLogoUrl, setHeaderLogoUrl] = useState(`http://localhost:5000/uploads/${sellerId}_headerlogo.png`);
   const [headerLogoFile, setHeaderLogoFile] = useState(null);
   const isFirstLoad = useRef(true);
@@ -16,6 +16,9 @@ export default function ElementEditor({ element, onUpdate, sellerId, categories,
   const [bannerUrl, setBannerUrl] = useState(`http://localhost:5000/uploads/${sellerId}_banner.png`);
   const [backgroundImage, setBackgroundImage] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const currentDevice = element.type.startsWith('mobile') ? 'mobile' : 'web';
+  const currentSize = element.properties.size?.[currentDevice] || {};
+
   if (!sellerId) {
     console.error("❌ `sellerId`가 정의되지 않았습니다.");
     return <div>오류: 판매자 정보를 불러올 수 없습니다.</div>;
@@ -207,7 +210,23 @@ export default function ElementEditor({ element, onUpdate, sellerId, categories,
 
 
 
-
+  const handleSizeChange = (key, value) => {
+    const newSize = {
+      ...(element.properties.size || {}),
+      [currentDevice]: {
+        ...(element.properties.size?.[currentDevice] || {}),
+        [key]: value,
+      },
+    };
+  
+    onSizeChange({
+      ...element,
+      properties: {
+        ...element.properties,
+        size: newSize,
+      },
+    });
+  };
 
 
   const handleBannerUpload = async (uploadedUrl) => {
@@ -327,7 +346,8 @@ const handleSaveInOrder = async () => {
   }
 
   try {
-    await updateSellerSettings(sellerId, settings);     alert("🎉 설정이 성공적으로 저장되었습니다!");
+    await updateSellerSettings(sellerId, updatedSettings);    
+    alert("🎉 설정이 성공적으로 저장되었습니다!");
 
     // 저장 후 최신 데이터 다시 불러오기
     const newSettings = await fetchSellerSettings(sellerId);
@@ -445,7 +465,18 @@ const handleSaveInOrder = async () => {
 
 
 
-
+  const handleChangeFont = (value) => {
+    const updatedElement = {
+      ...element,
+      properties: {
+        ...element.properties,
+        fontFamily: value,
+      },
+    };
+  
+    onUpdate(updatedElement);
+  };
+  
   
   const handleChangeImage = (previewImgUrl) => {
     setEditedElement((prev) => ({
@@ -467,6 +498,11 @@ const handleSaveInOrder = async () => {
   // ✅ 편집기 렌더링
   const renderEditor = () => {
     switch (element.type) {
+
+
+
+
+
       case 'header':
         return (
           <>
@@ -497,6 +533,37 @@ const handleSaveInOrder = async () => {
                 />
               </div>
             </div>
+
+
+            <div className="mb-4">
+  <label className="block text-sm font-medium text-gray-700">넓이 (width)</label>
+  <input
+    type="text"
+    value={currentSize.width || ''}
+    onChange={(e) => handleSizeChange('width', e.target.value)}
+    className="w-full border border-gray-300 rounded px-2 py-1"
+    placeholder="예: 100%, 300px"
+  />
+</div>
+
+<div className="mb-4">
+  <label className="block text-sm font-medium text-gray-700">높이 (height)</label>
+  <input
+    type="text"
+    value={currentSize.height || ''}
+    onChange={(e) => handleSizeChange('height', e.target.value)}
+    className="w-full border border-gray-300 rounded px-2 py-1"
+    placeholder="예: auto, 200px"
+  />
+</div>
+<select value={element.properties.fontFamily} 
+    onChange={(e) => handleChangeFont(e.target.value)}
+>
+  <option value="Nanum Gothic">나눔고딕</option>
+  <option value="Arial">Arial</option>
+  <option value="Noto Sans KR">Noto Sans KR</option>
+  ...
+</select>
           </>
         );
 
@@ -557,11 +624,197 @@ const handleSaveInOrder = async () => {
                   />
                 </div>
               </div>
+
+
+              <div className="mb-4">
+  <label className="block text-sm font-medium text-gray-700">넓이 (width)</label>
+  <input
+    type="text"
+    value={currentSize.width || ''}
+    onChange={(e) => handleSizeChange('width', e.target.value)}
+    className="w-full border border-gray-300 rounded px-2 py-1"
+    placeholder="예: 100%, 300px"
+  />
+</div>
+
+<div className="mb-4">
+  <label className="block text-sm font-medium text-gray-700">높이 (height)</label>
+  <input
+    type="text"
+    value={currentSize.height || ''}
+    onChange={(e) => handleSizeChange('height', e.target.value)}
+    className="w-full border border-gray-300 rounded px-2 py-1"
+    placeholder="예: auto, 200px"
+  />
+</div>
+<div className="mb-2">
+      <label className="block text-sm font-semibold mb-1">타이틀</label>
+      <input
+        type="text"
+        value={element.properties.title || ''}
+        onChange={(e) =>
+          onUpdate({ ...element, properties: { ...element.properties, title: e.target.value } })
+        }
+        className="w-full border rounded px-2 py-1"
+        placeholder="배너 제목을 입력하세요"
+      />
+    </div>
+
+    <div className="mb-2">
+      <label className="block text-sm font-semibold mb-1">서브타이틀</label>
+      <input
+        type="text"
+        value={element.properties.subtitle || ''}
+        onChange={(e) =>
+          onUpdate({ ...element, properties: { ...element.properties, subtitle: e.target.value } })
+        }
+        className="w-full border rounded px-2 py-1"
+        placeholder="배너 부제목을 입력하세요"
+      />
+    </div>
             </>
           );
 
 
+          case 'text':
+            case 'mobiletext':
+              return (
+                <>
+                  <div className="mb-4">
+                    <Label label="내용" />
+                    <textarea
+                      value={element.properties.content || ''}
+                      onChange={(e) =>
+                        onUpdate({
+                          ...element,
+                          properties: { ...element.properties, content: e.target.value },
+                        })
+                      }
+                      className="w-full border border-gray-300 rounded px-2 py-1"
+                      rows={4}
+                    />
+                  </div>
+                  <select
+  value={element.properties.fontFamily}
+  onChange={(e) => handleChangeFont(e.target.value)}
+>
 
+  <option value="Spoqa Han Sans Neo">Spoqa Han Sans Neo</option>
+  <option value="SUIT">SUIT</option>
+  <option value="Gmarket Sans">Gmarket Sans</option>
+  <option value="Apple SD Gothic Neo">Apple SD Gothic Neo</option>
+  <option value="IBM Plex Sans KR">IBM Plex Sans KR</option>
+  <option value="Nanum Gothic">나눔고딕</option>
+  <option value="Noto Sans KR">Noto Sans KR</option>
+  <option value="Arial">Arial</option>
+  <option value="Roboto">Roboto</option>
+  <option value="Pretendard">Pretendard</option>
+  
+</select>
+                  <div className="mb-4">
+                    <Label label="폰트 크기" />
+                    <input
+                      type="text"
+                      value={element.properties.fontSize || ''}
+                      onChange={(e) =>
+                        onUpdate({
+                          ...element,
+                          properties: { ...element.properties, fontSize: e.target.value },
+                        })
+                      }
+                      className="w-full border border-gray-300 rounded px-2 py-1"
+                    />
+                  </div>
+            
+                  <div className="mb-4">
+                    <Label label="폰트 굵기" />
+                    <input
+                      type="text"
+                      value={element.properties.fontWeight || ''}
+                      onChange={(e) =>
+                        onUpdate({
+                          ...element,
+                          properties: { ...element.properties, fontWeight: e.target.value },
+                        })
+                      }
+                      className="w-full border border-gray-300 rounded px-2 py-1"
+                    />
+                  </div>
+            
+                  <div className="mb-4">
+                    <Label label="글자 색상" />
+                    <input
+                      type="color"
+                      value={element.properties.color || '#000000'}
+                      onChange={(e) =>
+                        onUpdate({
+                          ...element,
+                          properties: { ...element.properties, color: e.target.value },
+                        })
+                      }
+                      className="w-12 h-10 p-1"
+                    />
+                  </div>
+            
+                  <div className="mb-4">
+                    <Label label="정렬" />
+                    <select
+                      value={element.properties.textAlign || 'left'}
+                      onChange={(e) =>
+                        onUpdate({
+                          ...element,
+                          properties: { ...element.properties, textAlign: e.target.value },
+                        })
+                      }
+                      className="w-full border border-gray-300 rounded px-2 py-1"
+                    >
+                      <option value="left">왼쪽 정렬</option>
+                      <option value="center">가운데 정렬</option>
+                      <option value="right">오른쪽 정렬</option>
+                    </select>
+                  </div>
+                </>
+              );
+              case 'image':
+                case 'mobileimage':
+                  return (
+                    <>
+                      <div className='mb-4'>
+                        <Label label="이미지 업로드" />
+                        <SingleImageUploader
+                          elementType={element.type}
+                          sellerId={sellerId}
+                          onUpload={(url) =>
+                            onUpdate({
+                              ...element,
+                              properties: {
+                                ...element.properties,
+                                imageUrl: url,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                
+                      <div className="mb-4">
+                        <Label label="대체 텍스트 (alt)" />
+                        <input
+                          type="text"
+                          value={element.properties.alt || ''}
+                          onChange={(e) =>
+                            onUpdate({
+                              ...element,
+                              properties: { ...element.properties, alt: e.target.value },
+                            })
+                          }
+                          className="w-full border border-gray-300 rounded px-2 py-1"
+                        />
+                      </div>
+
+                      
+                    </>
+                  );
+                            
 
 
           case 'mobileheader':
@@ -594,6 +847,29 @@ const handleSaveInOrder = async () => {
                     />
                   </div>
                 </div>
+
+                <div className="mb-4">
+  <label className="block text-sm font-medium text-gray-700">넓이 (width)</label>
+  <input
+    type="text"
+    value={currentSize.width || ''}
+    onChange={(e) => handleSizeChange('width', e.target.value)}
+    className="w-full border border-gray-300 rounded px-2 py-1"
+    placeholder="예: 100%, 300px"
+  />
+</div>
+
+<div className="mb-4">
+  <label className="block text-sm font-medium text-gray-700">높이 (height)</label>
+  <input
+    type="text"
+    value={currentSize.height || ''}
+    onChange={(e) => handleSizeChange('height', e.target.value)}
+    className="w-full border border-gray-300 rounded px-2 py-1"
+    placeholder="예: auto, 200px"
+  />
+</div>
+
               </>
             );
     
@@ -654,6 +930,31 @@ const handleSaveInOrder = async () => {
                       />
                     </div>
                   </div>
+
+
+
+                  <div className="mb-4">
+  <label className="block text-sm font-medium text-gray-700">넓이 (width)</label>
+  <input
+    type="text"
+    value={currentSize.width || ''}
+    onChange={(e) => handleSizeChange('width', e.target.value)}
+    className="w-full border border-gray-300 rounded px-2 py-1"
+    placeholder="예: 100%, 300px"
+  />
+</div>
+
+<div className="mb-4">
+  <label className="block text-sm font-medium text-gray-700">높이 (height)</label>
+  <input
+    type="text"
+    value={currentSize.height || ''}
+    onChange={(e) => handleSizeChange('height', e.target.value)}
+    className="w-full border border-gray-300 rounded px-2 py-1"
+    placeholder="예: auto, 200px"
+  />
+</div>
+
                 </>
               );
     
@@ -700,6 +1001,29 @@ const handleSaveInOrder = async () => {
                         />
                       </div>
                     </div>
+
+                    <div className="mb-4">
+  <label className="block text-sm font-medium text-gray-700">넓이 (width)</label>
+  <input
+    type="text"
+    value={currentSize.width || ''}
+    onChange={(e) => handleSizeChange('width', e.target.value)}
+    className="w-full border border-gray-300 rounded px-2 py-1"
+    placeholder="예: 100%, 300px"
+  />
+</div>
+
+<div className="mb-4">
+  <label className="block text-sm font-medium text-gray-700">높이 (height)</label>
+  <input
+    type="text"
+    value={currentSize.height || ''}
+    onChange={(e) => handleSizeChange('height', e.target.value)}
+    className="w-full border border-gray-300 rounded px-2 py-1"
+    placeholder="예: auto, 200px"
+  />
+</div>
+
                   </>
                 );
               

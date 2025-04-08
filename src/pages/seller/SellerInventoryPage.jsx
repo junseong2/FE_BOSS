@@ -18,7 +18,7 @@ const sortList = [
 ];
 
 const PAGE_SIZE = 8;
-function SellerInventoryPage() {
+function SellerInventoryPage({ mode }) {
   const { onToggle, isOpen, toggleId } = useToggle();
   const [inventoryIds, setInventoryIds] = useState([]);
   const [inventories, setInventories] = useState([]);
@@ -57,7 +57,6 @@ function SellerInventoryPage() {
 
       setInventories(inventories);
       setTotalCount(totalCount || 1);
-
     } finally {
       setLoading(false);
     }

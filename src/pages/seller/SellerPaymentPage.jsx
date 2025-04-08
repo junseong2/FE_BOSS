@@ -10,6 +10,9 @@ import SellerCardSkeleton from './components/common/SellerCardSkeleton';
 import SellerDateFilter from './components/common/SellerDateFilter';
 import SellerMonthlyGraph from './components/pages/SellerMonthlyGraph';
 import SellerSalesCategoryGraph from './components/pages/SellerSalesCategoryGraph';
+import SellerActionButton from './components/common/SellerActionButton';
+import { IoCalendar } from 'react-icons/io5';
+import DateRangePicker from '../../components/DateRangeSelector';
 
 function SellerPaymentPage() {
   // 검색할 날짜 범위 상태 저장
@@ -26,6 +29,9 @@ function SellerPaymentPage() {
     canceledTotalPrice: 0,
   });
 
+  // 날짜 선택기 폼 토글
+  const [openDateRangeForm, setOpenDateRangeForm] = useState(false);
+
   const [categoryStatistics, setCategoryStatistics] = useState([]);
   const [monthStatistics, setMonthStatistics] = useState([]);
 
@@ -35,6 +41,11 @@ function SellerPaymentPage() {
     month: false,
     category: false,
   });
+
+  // 날짜 범위 선택 폼 토글
+  function onToggleDateRangeForm() {
+    setOpenDateRangeForm((prev) => !prev);
+  }
 
   // 날짜 필터
   const handleDateRange = (e) => {
@@ -115,7 +126,12 @@ function SellerPaymentPage() {
   return (
     <section className='bg-[#f3f4f6] min-h-screen h-auto p-3 border border-gray-200 rounded-[5px]'>
       {/* 날짜 필터 */}
-      <SellerDateFilter onChange={handleDateRange} />
+      <div className='flex items-center gap-3 mb-8'>
+        <SellerDateFilter onChange={handleDateRange} />
+        <SellerActionButton onClick={onToggleDateRangeForm}>
+          <IoCalendar /> 날짜선택
+        </SellerActionButton>
+      </div>
 
       {/* 신규주문, 배송중, 배송완료, 취소/반품 통계 */}
       <div>
@@ -184,6 +200,9 @@ function SellerPaymentPage() {
           </div>
         </div>
       </div>
+      {openDateRangeForm ? (
+        <DateRangePicker onClose={onToggleDateRangeForm} setDateRange={setDateRange} />
+      ) : null}
     </section>
   );
 }
