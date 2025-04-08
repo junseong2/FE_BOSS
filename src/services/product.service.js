@@ -4,7 +4,7 @@ import instance from '../configs/axios.config';
 
 /** 판매자 상품 조회*/
 export const getAllSellerProducts = async (page, size, productName = '') => {
-  const url = apiRoutes.seller.products.getAll(page, size, productName);
+  const url = apiRoutes.seller.products.getAllWithDashboard(page, size, productName);
   try {
     const response = await instance.get(url);
     return response.data;

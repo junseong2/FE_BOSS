@@ -28,7 +28,7 @@ function SellerProductPage() {
   const [productName, setProductName] = useState('');
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]); // 상품 목록
-  const [totalCount, setTotalCount] = useState(0); // 전체 상품 수
+  const [totalCount, setTotalCount] = useState(1); // 전체 상품 수
 
   // 상품 선택
   async function onCheck(e) {
@@ -75,7 +75,7 @@ function SellerProductPage() {
       const data = await getAllSellerProducts(Math.max(0, page), PAGE_SIZE, productName);
       if (data) {
         setProducts(data.products ?? []);
-        setTotalCount(data.totalCount ?? 0);
+        setTotalCount(data.totalCount ?? 1);
       }
     } finally {
       setLoading(false);
@@ -83,14 +83,13 @@ function SellerProductPage() {
   }
 
   // 상품 추가
-  async function onCreateProductSubmit(e, images) {
-    const { requestData } = await mappingSubmitData(e, images);
-
+  async function onCreateProductSubmit(e, images, productInfo, category) {
+    const { requestData } = await mappingSubmitData(e, images, productInfo, category);
     try {
-    await registerSellerProduct(requestData);
-  }finally {
-    setLoadingTrigger((prev) => !prev);
-  }
+      await registerSellerProduct(requestData);
+    } finally {
+      setLoadingTrigger((prev) => !prev);
+    }
   }
 
   // 상품 수정
@@ -111,12 +110,10 @@ function SellerProductPage() {
   }
 
   // 상품 추가/수정 시 데이터 맵핑
-  async function mappingSubmitData(e, images) {
+  async function mappingSubmitData(e, images, productInfo, category) {
     const formData = new FormData(e.currentTarget);
     const productId = Number(formData.get('productId')) || 0;
     const name = formData.get('name')?.toString().trim() || '';
-    const price = Number(formData.get('price')) || 0;
-    const category = formData.get('category')?.toString().trim() || '';
     const description = formData.get('description')?.toString().trim() || '';
     const stock = Number(formData.get('stock')) || 0;
     const minStock = Number(formData.get('minStock')) || 0;
@@ -126,7 +123,6 @@ function SellerProductPage() {
     if (!name) errors.push('상품명을 입력하세요.');
     if (!category) errors.push('카테고리를 선택하세요.');
     if (!description) errors.push('상품 설명을 입력하세요.');
-    if (isNaN(price) || price <= 0) errors.push('가격은 0보다 커야 합니다.');
     if (isNaN(stock) || stock < 0) errors.push('재고는 0 이상이어야 합니다.');
     if (isNaN(minStock) || minStock < 0) errors.push('최소 재고는 0 이상이어야 합니다.');
 
@@ -134,9 +130,12 @@ function SellerProductPage() {
       alert(errors.join('\n'));
       return;
     }
+
     const product = {
       name,
-      price,
+      price: Number(productInfo.price), // 할인된 가격
+      originPrice: Number(productInfo.originPrice), // 원본 가격
+      discountRate: productInfo.discountRate, // 할인율
       categoryName: category,
       description,
       stock,

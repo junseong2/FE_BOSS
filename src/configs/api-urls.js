@@ -31,6 +31,9 @@ export const apiRoutes = {
   seller: {
     // 상품 관리
     products: {
+      getAllWithDashboard: (page, size, productName, state) =>
+        BASE_URL +
+        `/seller/dashboard/products?page=${page}&size=${size}&search=${productName}&state=${state}`,
       getAll: (page, size, productName, state) =>
         BASE_URL +
         `/seller/products?page=${page}&size=${size}&search=${productName}&state=${state}`,
@@ -66,8 +69,8 @@ export const apiRoutes = {
     settlements: {
       getAll: (page, size, condition) =>
         BASE_URL +
-        `/seller/settlements?page=${page}&size=${size}&startDate=${condition.startDate}&endDate=${condition.endDate}&username=${condition.username}&settlementId=${condition.settlementId}`,
-      insert: () => `/seller/settlements`,
+        `/settlements/seller/check?page=${page}&size=${size}&startDate=${condition.startDate}&endDate=${condition.endDate}&username=${condition.username}&settlementId=${condition.settlementId}`,
+      insert: () => `/settlements/seller/request`,
     },
     // 리뷰 관리
     reviews: {
