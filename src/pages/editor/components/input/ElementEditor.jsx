@@ -2,10 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import Label from '../../../../components/Label';
 import Input from '../../../../components/Input';
 import { fetchSellerSettings } from '../../../../utils/usercustomui';
-import { SingleImageUploader } from '../../../../components/ImageUploader';
+import { SingleImageUploader ,SingleProductImageUploader } from '../../../../components/ImageUploader';
+
 import { updateSellerSettings } from '../../../../utils/usercustomui'; // ✅ API 호출 함수 추가
 import { updateSellerMobileSettings } from '../../../../utils/usercustomui'; // ✅ API 호출 함수 추가
 import { fetchSellerMobileSettings } from '../../../../utils/usercustomui';
+import EditorTemplateGrid from '../EditorTemplateGrid';
 
 
 export default function ElementEditor({ element, onUpdate, sellerId, categories, elements, setElements , onSizeChange}) {
@@ -436,7 +438,7 @@ const handleSaveInOrder = async () => {
 
     try {
       const elements = []; 
-      await updateSellerSettings(sellerId, settings); // ✅ elements 전달    
+      await updateSellerSettings(sellerId, updatedSettings); // ✅ elements 전달    
        alert("🎉 설정이 성공적으로 저장되었습니다!");
   
       // ✅ 저장 후 최신 데이터를 다시 불러와 UI 업데이트
@@ -463,7 +465,23 @@ const handleSaveInOrder = async () => {
   
 
 
-
+  const handleMenuItemChange = (index, field, value) => {
+    const updatedMenuItems = [...element.properties.menuItems];
+    updatedMenuItems[index][field] = value;
+    onUpdate({ ...element, properties: { ...element.properties, menuItems: updatedMenuItems } });
+  };
+  
+  const handleAddMenuItem = () => {
+    const newMenuItem = { title: '', url: '', highlight: false };
+    const updatedMenuItems = [...element.properties.menuItems, newMenuItem];
+    onUpdate({ ...element, properties: { ...element.properties, menuItems: updatedMenuItems } });
+  };
+  
+  const handleRemoveMenuItem = (index) => {
+    const updatedMenuItems = element.properties.menuItems.filter((_, i) => i !== index);
+    onUpdate({ ...element, properties: { ...element.properties, menuItems: updatedMenuItems } });
+  };
+  
 
   const handleChangeFont = (value) => {
     const updatedElement = {
@@ -508,14 +526,59 @@ const handleSaveInOrder = async () => {
           <>
             <div className='space-y-2'>
               <Label label={'로고 설정'} />
-              <SingleImageUploader 
-                elementType="header"  // ✅ 헤더 업로드일 경우
+              <SingleProductImageUploader 
+  elementType="header" // ✅ 헤더용 업로드
+  sellerId={sellerId} 
+  elementId={element.id} // ✅ 이거 추가해주세요!
+  onUpdateImage={(imgUrl) => console.log("미리보기:", imgUrl)}
+  onUpload={handleLogoUpload}
+/>          
+    </div>
+<div className="space-y-2 mb-4">
+  <Label label="메뉴 항목 설정" />
 
-    sellerId={sellerId} 
-    onUpdateImage={(imgUrl) => console.log("미리보기:", imgUrl)}
-    onUpload={handleLogoUpload}  // ✅ 로고 업로드
-    />            </div>
+  {element.properties.menuItems.map((item, idx) => (
+    <div key={idx} className="border p-2 rounded-md space-y-1 bg-gray-50">
+<div className="space-y-2">
+<input
+          type="text"
+          value={item.title}
+          onChange={(e) => handleMenuItemChange(idx, 'title', e.target.value)}
+          placeholder="메뉴 제목 (예: NEW)"
+          className="flex-1 border rounded px-2 py-1"
+        />
+        <input
+          type="text"
+          value={item.url}
+          onChange={(e) => handleMenuItemChange(idx, 'url', e.target.value)}
+          placeholder="링크 주소 (예: /new)"
+          className="flex-1 border rounded px-2 py-1"
+        />
+      </div>
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={item.highlight}
+          onChange={(e) => handleMenuItemChange(idx, 'highlight', e.target.checked)}
+        />
+        <span className="text-sm text-gray-700">강조 표시</span>
+        <button
+          onClick={() => handleRemoveMenuItem(idx)}
+          className="ml-auto text-red-500 text-sm"
+        >
+          삭제
+        </button>
+      </div>
+    </div>
+  ))}
 
+  <button
+    onClick={handleAddMenuItem}
+    className="mt-2 text-sm text-blue-600 hover:underline"
+  >
+    + 메뉴 항목 추가
+  </button>
+</div>
             <div className='space-y-2 mb-4'>
               <Label htmlFor={'headerBackgroundColor'} label={'헤더 배경 색상'} />
               <div className='flex gap-2 items-center'>
@@ -556,6 +619,39 @@ const handleSaveInOrder = async () => {
     placeholder="예: auto, 200px"
   />
 </div>
+<input
+  type="text"
+  value={element.properties.fontSize || ''}
+  onChange={(e) =>
+    onUpdate({
+      ...element,
+      properties: {
+        ...element.properties,
+        fontSize: e.target.value,
+      },
+    })
+  }
+/>
+<select
+  value={element.properties.fontWeight || ''}
+  onChange={(e) =>
+    onUpdate({
+      ...element,
+      properties: {
+        ...element.properties,
+        fontWeight: e.target.value,
+      },
+    })
+  }
+>
+  <option value="400">보통 (Normal)</option>
+  <option value="500">중간 (Medium)</option>
+  <option value="600">약간 굵게 (Semi-bold)</option>
+  <option value="700">굵게 (Bold)</option>
+  <option value="800">매우 굵게 (Extra-bold)</option>
+</select>
+
+
 <select value={element.properties.fontFamily} 
     onChange={(e) => handleChangeFont(e.target.value)}
 >
@@ -727,19 +823,33 @@ const handleSaveInOrder = async () => {
                   </div>
             
                   <div className="mb-4">
-                    <Label label="폰트 굵기" />
-                    <input
-                      type="text"
-                      value={element.properties.fontWeight || ''}
-                      onChange={(e) =>
-                        onUpdate({
-                          ...element,
-                          properties: { ...element.properties, fontWeight: e.target.value },
-                        })
-                      }
-                      className="w-full border border-gray-300 rounded px-2 py-1"
-                    />
-                  </div>
+  <Label label="폰트 굵기" />
+  <select
+    value={element.properties.fontWeight || ''}
+    onChange={(e) =>
+      onUpdate({
+        ...element,
+        properties: { ...element.properties, fontWeight: e.target.value },
+      })
+    }
+    className="w-full border border-gray-300 rounded px-2 py-1"
+  >
+    <option value="">선택하세요</option>
+    <option value="normal">보통 (normal)</option>
+    <option value="bold">굵게 (bold)</option>
+    <option value="lighter">얇게 (lighter)</option>
+    <option value="100">100</option>
+    <option value="200">200</option>
+    <option value="300">300</option>
+    <option value="400">400</option>
+    <option value="500">500</option>
+    <option value="600">600</option>
+    <option value="700">700</option>
+    <option value="800">800</option>
+    <option value="900">900</option>
+  </select>
+</div>
+
             
                   <div className="mb-4">
                     <Label label="글자 색상" />
@@ -773,6 +883,25 @@ const handleSaveInOrder = async () => {
                       <option value="right">오른쪽 정렬</option>
                     </select>
                   </div>
+                  <div className="mb-4">
+  <Label label="등장 애니메이션" />
+  <select
+    value={element.properties.animate ? 'true' : 'false'}
+    onChange={(e) =>
+      onUpdate({
+        ...element,
+        properties: {
+          ...element.properties,
+          animate: e.target.value === 'true',
+        },
+      })
+    }
+    className="w-full border border-gray-300 rounded px-2 py-1"
+  >
+    <option value="true">사용</option>
+    <option value="false">사용 안 함</option>
+  </select>
+</div>
                 </>
               );
               case 'image':
@@ -780,9 +909,10 @@ const handleSaveInOrder = async () => {
                   return (
                     <>
                       <div className='mb-4'>
-                        <Label label="이미지 업로드" />
-                        <SingleImageUploader
+                        <Label label="이미지/동영상업로드" />
+                        <SingleProductImageUploader
                           elementType={element.type}
+                          elementId={element.id} 
                           sellerId={sellerId}
                           onUpload={(url) =>
                             onUpdate({
@@ -795,7 +925,31 @@ const handleSaveInOrder = async () => {
                           }
                         />
                       </div>
-                
+                      <div className="mb-4">
+  <Label label="모서리 둥글기" />
+  <select
+    value={element.properties.borderRadius || '0px'}
+    onChange={(e) =>
+      onUpdate({
+        ...element,
+        properties: {
+          ...element.properties,
+          borderRadius: e.target.value,
+        },
+      })
+    }
+    className="w-full border border-gray-300 rounded px-2 py-1"
+  >
+    <option value="0px">각지게 (0px)</option>
+    <option value="8px">조금 둥글게 (8px)</option>
+    <option value="16px">중간 정도 둥글게 (16px)</option>
+    <option value="32px">많이 둥글게 (32px)</option>
+    <option value="9999px">완전 원형 (9999px)</option>
+    <option value="50%">정사각형이면 원형 (50%)</option>
+  </select>
+</div>
+
+
                       <div className="mb-4">
                         <Label label="대체 텍스트 (alt)" />
                         <input
@@ -815,7 +969,66 @@ const handleSaveInOrder = async () => {
                     </>
                   );
                             
-
+                  case 'colorbox':
+                    return (
+                      <>
+                        <div className="space-y-2 mb-4">
+                          <Label label="배경 색상" />
+                          <div className="flex gap-2 items-center">
+                            <Input
+                              type="color"
+                              value={element.properties.backgroundColor || '#ffffff'}
+                              onChange={(e) =>
+                                onUpdate({
+                                  ...element,
+                                  properties: {
+                                    ...element.properties,
+                                    backgroundColor: e.target.value,
+                                  },
+                                })
+                              }
+                              className="w-12 h-10 p-1"
+                            />
+                            <Input
+                              type="text"
+                              value={element.properties.backgroundColor || '#ffffff'}
+                              onChange={(e) =>
+                                onUpdate({
+                                  ...element,
+                                  properties: {
+                                    ...element.properties,
+                                    backgroundColor: e.target.value,
+                                  },
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+                  
+                        <div className="mb-4">
+                          <Label label="넓이 (width)" />
+                          <Input
+                            type="text"
+                            value={currentSize.width || ''}
+                            onChange={(e) => handleSizeChange('width', e.target.value)}
+                            className="w-full border border-gray-300 rounded px-2 py-1"
+                            placeholder="예: 100%, 300px"
+                          />
+                        </div>
+                  
+                        <div className="mb-4">
+                          <Label label="높이 (height)" />
+                          <Input
+                            type="text"
+                            value={currentSize.height || ''}
+                            onChange={(e) => handleSizeChange('height', e.target.value)}
+                            className="w-full border border-gray-300 rounded px-2 py-1"
+                            placeholder="예: auto, 200px"
+                          />
+                        </div>
+                      </>
+                    );
+                  
 
           case 'mobileheader':
             return (

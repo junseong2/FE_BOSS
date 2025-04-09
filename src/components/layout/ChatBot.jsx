@@ -62,47 +62,68 @@ function ChatBot() {
 
   return (
     <div>
-      <div className="chatbot-button" onClick={toggleChat}>
+<div
+  className="fixed bottom-4 right-4 w-14 h-14 bg-blue-500 text-white rounded-full flex items-center justify-center text-2xl z-[9999] cursor-pointer shadow-lg"
+  onClick={toggleChat}
+>
         💬
       </div>
 
       {isOpen && (
-        <div className="chatbot-window">
-          <div className="chatbot-header">
-            <h4>🎉 상품 추천 챗봇</h4>
-            <button onClick={toggleChat}>✖</button>
-          </div>
+  <div className="fixed bottom-20 right-4 w-80 h-[500px] bg-white shadow-xl border rounded-lg flex flex-col z-[9999]">
+    {/* 헤더 */}
+    <div className="flex items-center justify-between p-3 bg-blue-500 text-white">
+      <h4 className="text-lg font-semibold">🎉 상품 추천 챗봇</h4>
+      <button onClick={toggleChat} className="text-xl">✖</button>
+    </div>
 
-          <div className="chatbot-messages">
-            {messages.map((msg, index) => (
-              <div key={index} className={`chatbot-message ${msg.sender}`}>
-                <p>{msg.text}</p>
+    {/* 메시지 영역 */}
+    <div className="flex-1 overflow-y-auto p-3 space-y-2">
+      {messages.map((msg, index) => (
+        <div
+          key={index}
+          className={`p-2 rounded-md ${
+            msg.sender === "user" ? "bg-blue-100 text-right" : "bg-gray-100"
+          }`}
+        >
+          <p className="text-sm">{msg.text}</p>
 
-                {/* 추천 메시지일 경우 */}
-                {msg.class === 1 && Array.isArray(msg.recommendation) && (
-                  msg.recommendation.map((item, idx) => (
-                    <ProductRecommendationCard
-                      key={idx}
-                      productId={item.productId}
-                      reason={item.reason}
-                    />
-                  ))
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div className="chatbot-input">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="추천받고 싶은 상품을 입력하세요!"
-            />
-            <button onClick={sendMessage}>전송</button>
-          </div>
+          {/* 추천 카드일 경우 */}
+          {msg.class === 1 && Array.isArray(msg.recommendation) && (
+            msg.recommendation.map((item, idx) => (
+              <ProductRecommendationCard
+                key={idx}
+                productId={item.productId}
+                reason={item.reason}
+              />
+            ))
+          )}
         </div>
-      )}
+      ))}
+    </div>
+
+    {/* 입력창 */}
+    <div className="p-2 border-t flex">
+      <input
+        type="text"
+        className="flex-1 border rounded-l px-3 py-1 text-sm focus:outline-none"
+        placeholder="추천받고 싶은 상품을 입력하세요!"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+      />
+      <button
+        onClick={sendMessage}
+        className="bg-blue-500 text-white px-4 py-1 rounded-r text-sm hover:bg-blue-600"
+      >
+        전송
+      </button>
+    </div>
+  </div>
+)}
+
+
+
+   
     </div>
   );
 }

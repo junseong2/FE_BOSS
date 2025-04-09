@@ -96,6 +96,7 @@ export const apiRoutes = {
     },
   },
 
+
   // 인증
   auth: {
     signup: () => BASE_URL + `/auth/signup`,

@@ -1,11 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import EditorHeader from './components/layout/EditorHeader';
 import EditorSidebar from './components/layout/EditorSidebar';
 import EditorTab from './components/tab/EditorTab';
 import EditorTabContent from './components/tab/EditorTabContent';
 import EditorCanvas from './components/EditorCanvas';
 import MobileEditorCanvas from './components/EditorCanvas';
+import { createPortal } from 'react-dom';
 
+import EditorTemplateGrid from './components/EditorTemplateGrid';
 import ElementEditor from './components/input/ElementEditor';
 import fetchUserInfo from '../../utils/api';
 import axios from 'axios';
@@ -13,12 +15,23 @@ import { elementTemplates, initialElements } from '../../data/shop-templates';
 import { IoCloseOutline } from 'react-icons/io5';
 import { getCategories } from '../../services/category.service';
 
-
-const sidebarTabList = ['요소', '설정'];
+const sidebarTabList = ['요소', '설정','탬플릿'];
 const canvasTabList = ['미리보기'];
 
 export default function ShopEditorPage() {
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
 
+  const handleTemplateSelect = (template) => {
+    try {
+      console.log('@@@@@@선택된 템플릿:', template);
+      setElements(template.elements);  // 여기가 실패할 수도 있음
+      setIsTemplateModalOpen(false);
+      setSidebarSelectedTabName('요소');
+    } catch (err) {
+      console.error('💥 템플릿 선택 처리 중 오류 발생:', err);
+    }
+  };
+  
   const [elements, setElements] = useState(initialElements); // ✅ 기본 요소 상태
   const [selectedElement, setSelectedElement] = useState(null);
   const [sidebarSelectedTabName, setSidebarSelectedTabName] = useState('요소');
@@ -134,12 +147,12 @@ export default function ShopEditorPage() {
     console.log("✅ elements : ", elements);
   }, [elements]);  // elements 상태가 변경될 때마다 실행
   
-  
+
+
 
   // ✅ 요소 추가/수정/삭제 함수
   const handleUpdate = (updatedElement) => {
     console.log("🔄 `handleUpdate` 실행됨 (변경된 요소):", updatedElement);
-  
     setSelectedElement((prevSelected) =>
       prevSelected?.id === updatedElement.id ? updatedElement : prevSelected
     );
@@ -147,20 +160,56 @@ export default function ShopEditorPage() {
     setElements((prevElements) =>
       prevElements.map((el) =>
         el.id === updatedElement.id
-          ? { ...el, properties: { ...el.properties, ...updatedElement.properties } } // ✅ 해당 요소의 속성만 변경
+          ? { 
+              ...el, 
+              properties: { ...el.properties, ...updatedElement.properties },
+              layout: { ...el.layout, ...updatedElement.layout } // layout도 병합
+            }
           : el
       )
     );
   };
   
+  
 
-
-
+  const seenIds = new Set();
+  const deduplicatedElements = [];
 
   const handleAddElement = (element) => {
-    setElements([...elements, { ...element, id: `el-${Date.now()}` }]);
+    if (!element || typeof element !== 'object') {
+      console.warn("추가할 element가 유효하지 않습니다.");
+      return;
+    }
+  
+    // 현재 요소 중 가장 아래 위치 계산
+    let maxBottom = 0;
+    elements.forEach((el) => {
+      let height = el?.properties?.size?.web?.height || 100;
+      if (typeof height === 'string') {
+        height = parseInt(height.replace('px', ''), 10) || 100;
+      }
+      const top = el?.layout?.top || 0;
+      maxBottom = Math.max(maxBottom, top + height);
+    });
+  
+    // 새 ID 생성
+    const uniqueId = `el-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
+  
+    // 새로운 요소 생성
+    const newElement = {
+      ...element,
+      id: uniqueId,
+      layout: {
+        ...element.layout,
+        top: maxBottom + 20, // 하단에 20px 간격 추가
+      },
+    };
+  
+    // ✅ 여기서 newElements를 선언하고 사용
+    const newElements = [...elements, newElement];
+    setElements(newElements);
   };
-
+  
   const handleRemoveElement = (id) => {
     setElements(elements.filter((el) => el.id !== id));
   };
@@ -202,56 +251,48 @@ const handleMoveElement = (dragIndex, hoverIndex) => {
   const handleSave = async () => {
     console.log("💾 저장 실행: 현재 elements 상태 by ShopEditorPage", elements);
     console.log("🔍 elements 데이터 유형:", typeof elements);
-console.log("🔍 elements는 배열인가?", Array.isArray(elements));
-
-const syncedElements = elements.map(el =>
-  el.id === selectedElement?.id ? selectedElement : el
-);
-
-// ⭐ settings 객체로 변환
-const updatedSettings = syncedElements.map(el => ({
-  type: el.type,
-  id: el.id,
-  properties: el.properties,
-}));
-
-console.log("📤 최종 저장될 settings:", updatedSettings);
-
-try {
-  await updateSellerSettings(sellerId, updatedSettings);
-  alert('🎉 쇼핑몰 구성이 성공적으로 저장되었습니다!');
-} catch (error) {
-  console.error("❌ 저장 실패:", error);
-  alert("❌ 저장 중 문제가 발생했습니다.");
-}
-
-
-    alert('쇼핑몰 구성이 성공적으로 저장되었습니다!');
-
-
+    console.log("🔍 elements는 배열인가?", Array.isArray(elements));
+  
+    const syncedElements = elements.map(el =>
+      el.id === selectedElement?.id ? selectedElement : el
+    );
+  
+    // ⭐ settings 객체로 변환 (layout 정보도 포함)
+    const updatedSettings = syncedElements.map(el => ({
+      type: el.type,
+      id: el.id,
+      layout: el.layout, // 새 layout 형식 (예: top, column, columnSpan 등)
+      properties: el.properties,
+    }));
+  
+    console.log("📤 최종 저장될 settings:", updatedSettings);
+  
+    try {
+      await updateSellerSettings(sellerId, updatedSettings);
+      alert('🎉 쇼핑몰 구성이 성공적으로 저장되었습니다!');
+    } catch (error) {
+      console.error("❌ 저장 실패:", error);
+      alert("❌ 저장 중 문제가 발생했습니다.");
+    }
     
-    // 서버 API로 저장하는 로직 추가 가능
+    alert('쇼핑몰 구성이 성공적으로 저장되었습니다!');
   };
-
-
-
   
 
-  return (
- 
-    
 
-    <div className='w-full h-full absolute left-0 top-0 flex'>
-      <div className='w-full'>
+
+  return (
+    <div className="w-full h-full absolute left-0 top-0 flex">
+      <div className="w-full">
         {/* 헤더 */}
         <EditorHeader
-  elements={elements} // ✅ elements를 전달
-  sellerId={sellerId}
+          elements={elements}
+          sellerId={sellerId}
           onSave={handleSave}
-          onUpdate={handleUpdate} // ✅ `onUpdate` 추가 (오류 수정됨)
+          onUpdate={handleUpdate}
         />
-
-        <div className='flex h-full'>
+  
+        <div className="flex h-full">
           {/* 사이드바 */}
           <EditorSidebar>
             <EditorTab
@@ -259,25 +300,23 @@ try {
               targetTabName={sidebarSelectedTabName}
               onTabChange={setSidebarSelectedTabName}
             />
-
-
-
-
+  
             <EditorTabContent
               targetTabName={sidebarSelectedTabName}
-              onSelectElement={handleAddElement}
+              onSelectElement={(elementOrTemplate) => {
+                if (sidebarSelectedTabName === '탬플릿') {
+                  setIsTemplateModalOpen(true);
+                } else {
+                  handleAddElement(elementOrTemplate);
+                }
+              }}
               elements={elementTemplates}
             />
-
-
-
-
-            
           </EditorSidebar>
-
+  
           {/* 캔버스 */}
           <EditorCanvas
-            tab='editor'
+            tab="editor"
             editorTab={
               <EditorTab
                 tabList={canvasTabList}
@@ -286,8 +325,9 @@ try {
               />
             }
             elements={elements}
+            sellerId={sellerId}
             selectedElement={selectedElement}
-            setElements={setElements}  // setElements를 전달
+            setElements={setElements}
             setSelectedElement={setSelectedElement}
             onElementUpdate={handleUpdate}
             onElementRemove={handleRemoveElement}
@@ -295,41 +335,63 @@ try {
           />
         </div>
       </div>
-
+  
       {/* 세부 편집기 */}
       {selectedElement && (
-        <div className='w-80 border-l border-[#E4E4E7] p-4 overflow-auto'>
-          <div className='flex justify-between items-center mb-4'>
-            <h3 className='font-medium'>
-              {selectedElement?.name || '요소 없음'} 편집
-            </h3>
-            <button className='border rounded-xl' onClick={() => setSelectedElement(null)}>
-              <IoCloseOutline className='w-4 h-4' />
+        <div className="w-80 border-l border-[#E4E4E7] p-4 overflow-auto">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="font-medium">{selectedElement?.name || '요소 없음'} 편집</h3>
+            <button className="border rounded-xl" onClick={() => setSelectedElement(null)}>
+              <IoCloseOutline className="w-4 h-4" />
             </button>
           </div>
-
-          {selectedElement && (
-            <ElementEditor
-              element={selectedElement}
-              onUpdate={handleUpdate} // ✅ 최신 데이터 전달
-              sellerId={sellerId}
-              categories={categories}
-              elements={elements}
-              setElements={setElements}
-              onSizeChange={(updatedElement) => {
-                // 예: elements 배열 상태 업데이트
-                setElements((prev) =>
-                  prev.map((el) =>
-                    el.id === updatedElement.id ? updatedElement : el
-                  )
-                );
-                setSelectedElement(updatedElement); // ✅ input 반응하도록 설정
-
-              }}
-            />
-          )}
+  
+          <ElementEditor
+            element={selectedElement}
+            onUpdate={handleUpdate}
+            sellerId={sellerId}
+            categories={categories}
+            elements={elements}
+            setElements={setElements}
+            onSizeChange={(updatedElement) => {
+              setElements((prev) =>
+                prev.map((el) => (el.id === updatedElement.id ? updatedElement : el))
+              );
+              setSelectedElement(updatedElement);
+            }}
+          />
         </div>
       )}
+  
+      {/* ✅ 템플릿 모달 (항상 별도 포탈로 분리) */}
+      {isTemplateModalOpen &&
+        createPortal(
+          <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+            <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto p-6 relative">
+              <button
+                onClick={() => setIsTemplateModalOpen(false)}
+                className="absolute top-4 right-4 text-gray-500 hover:text-black"
+              >
+                <IoCloseOutline size={24} />
+              </button>
+              <h2 className="text-xl font-bold mb-4"> 템플릿 선택</h2>
+              <EditorTemplateGrid
+                onSelectTemplate={(template) => {
+                  setElements(template.elements);
+                  setIsTemplateModalOpen(false);
+                  setSidebarSelectedTabName('요소');
+                }}
+              />
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   );
+  
 }
+
+
+
+
+

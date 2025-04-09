@@ -10,7 +10,7 @@ const fetchUserInfo = async (
   try {
     const response = await fetch('http://localhost:5000/auth/user-info', {
       method: 'GET',
-      credentials: 'include', // ✅ JWT 쿠키 포함
+      credentials: 'include',
     });
 
     if (!response.ok) {

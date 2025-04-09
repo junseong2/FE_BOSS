@@ -14,19 +14,30 @@ function SignIn({ onClose }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000' ;
+  // 로그인 폼의 이메일, 비밀번호 상태 관리
 
+
+  // 사용자 정보 상태 관리
+  
+  const [phones, setPhones] = useState([]);
+  const [addresses, setAddresses] = useState([]);
   // 로그인 상태 추적
   const checkLoginStatus = async () => {
     try {
-      const token = getToken();
-      if (!token) return;
-      const data = getUserInfo();
-      setUserName(data.userName);
-      navigate('/home');
+      const res = await fetch(`${BASE_URL}/auth/user-info`, {
+        credentials: 'include', // ✅ 쿠키 포함 필수!
+      });
+  
+      if (res.ok) {
+        const data = await res.json();
+        setUserName(data.userName);
+        setUserId(data.userId);
+      }
     } catch (error) {
       console.error('로그인 상태 확인 중 오류 발생:', error);
     }
   };
+  
 
   // 소셜 로그인 인증 경로 리디렉트
   const getRedirectUrl = async () => {
@@ -39,10 +50,29 @@ function SignIn({ onClose }) {
   };
 
   useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.has('code') && (window.location.href.includes('naver') || window.location.href.includes('kakao'))) {
+      console.log("✅ 소셜 로그인 콜백 감지됨, 사용자 정보 요청");
+      fetchUserInfo(setUserId, setUserName, setEmail, setPhones, setAddresses);
+      onClose?.();
+    }
+  }, [location.search]);
+  
+  useEffect(() => {
     checkLoginStatus();
     getRedirectUrl();
-  }, [location.search]);
+    const token = getToken();
+    if (token) {
+      console.log("✅ JWT 쿠키 있음, 유저 정보 요청");
+      fetchUserInfo(setUserId, setUserName, setEmail, setPhones, setAddresses); // ✅ 모든 상태 업데이트 함수들을 전달
+    }
+    else{
 
+      console.log("✅ JWT 쿠키 없음");
+
+    }
+  }, [location.search]);
+  
 
   // 로그인 폼 요청
   const handleLogin = async () => {
