@@ -1,19 +1,15 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
-import { IoSearch, IoCartOutline, IoPersonOutline, IoLogOutOutline } from "react-icons/io5"
+import { IoSearch, IoCartOutline, IoPersonOutline, IoLogOutOutline, IoClose } from "react-icons/io5"
 import { MdDashboard, MdStorefront } from "react-icons/md"
 import { useCart } from "../../context/CartContext"
 import fetchUserInfo from "../../utils/api.js"
 import { useUser } from "../../context/UserContext"
 import SignIn from "../../pages/SignIn"
-
-// Since you're using Vite with React Router, you likely don't have the shadcn/ui components
-// Let's create a version that uses standard HTML elements with Tailwind classes
+import SellerRegistrationPage from "../../pages/sellerSignup/SellerRegistrationPage.jsx"
 
 export default function Top() {
-  const { userId, setUserId, userName, setUserName } = useUser()
+  const { userId, setUserId, userName, setUserName, role, setRole } = useUser()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [emails, setEmails] = useState([""])
   const [phones, setPhones] = useState([""])
@@ -24,27 +20,61 @@ export default function Top() {
   const [loadingCart, setLoadingCart] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
+  const [isSellerModalOpen, setIsSellerModalOpen] = useState(false)
+  const [modalAnimation, setModalAnimation] = useState(false)
+
+
+  const [trigger, setTrigger] = useState(false)
 
   useEffect(() => {
     const getUserInfo = async () => {
-      await fetchUserInfo(setUserId, setUserName, setEmails, setPhones, setAddresses)
+      await fetchUserInfo(setUserId, setUserName, setEmails, setPhones, setAddresses, (role) => {
+        setRole(role)
+        setTrigger(prev => !prev) // 👈 트리거 강제 업데이트
+      })
+
     }
     getUserInfo()
   }, [])
+  
 
-  const handleSignInClick = async () => {
+
+  
+
+  useEffect(() => {
+
+    if (isSellerModalOpen) {
+      document.body.style.overflow = "hidden"
+      setTimeout(() => setModalAnimation(true), 50)
+    } else {
+      document.body.style.overflow = ""
+      setModalAnimation(false)
+    }
+
+    return () => {
+      document.body.style.overflow = ""
+    }
+  }, [isSellerModalOpen])
+
+  const handleSignInClick = () => {
     const currentUrl = location.pathname + location.search
     console.log("현재 URL:", currentUrl)
     setIsModalOpen(true)
   }
 
   const handleLogoutClick = async () => {
-    const confirmLogout = window.confirm('정말 로그아웃하시겠습니까?');
-    if (!confirmLogout) return;
+    const confirmLogout = window.confirm("정말 로그아웃하시겠습니까?")
+    if (!confirmLogout) return
     await fetch("http://localhost:5000/auth/logout", { method: "GET", credentials: "include" })
     setUserId(null)
     setUserName(null)
+    setRole(null)
     navigate("/")
+  }
+
+  const closeSellerModal = () => {
+    setModalAnimation(false)
+    setTimeout(() => setIsSellerModalOpen(false), 300)
   }
 
   const handleSearch = (e) => {
@@ -92,12 +122,57 @@ export default function Top() {
     )
   }
 
+  const renderButtonsByRole = () => {
+    switch (role) {
+      case "SELLER":
+        return (
+          <>
+            <IconBtn icon={<MdDashboard />} label="에디터" onClick={() => navigate("/editor")} />
+            <IconBtn icon={<MdStorefront />} label="판매자" onClick={() => navigate("/seller")} />
+          </>
+        )
+      case "ADMIN":
+        return (
+          <>
+            <IconBtn icon={<MdStorefront />} label="관리자" onClick={() => navigate("/admin")} />
+          </>
+        )
+      case "CUSTOMER":
+      default:
+        return (
+          <>
+            <IconBtn icon={<MdStorefront />} label="판매업 등록" onClick={() => setIsSellerModalOpen(true)} />
+            <IconBtn
+              icon={<IoCartOutline />}
+              label="장바구니"
+              onClick={() => navigate("/cart")}
+              badge={cartItems.length}
+            />
+          </>
+        )
+    }
+  }
+
+  const IconBtn = ({ icon, label, onClick, badge }) => (
+    <div className="relative group">
+      <button className="p-2 rounded-full hover:bg-gray-100 transition-colors relative" onClick={onClick}>
+        {icon}
+        {badge > 0 && (
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+            {badge}
+          </span>
+        )}
+      </button>
+      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+        {label}
+      </span>
+    </div>
+  )
+
   return (
     <>
       <div className="h-20"></div>
       <header className="fixed top-0 left-0 w-full h-20 bg-white border-b border-gray-200 flex items-center justify-between px-4 z-50 shadow-sm">
-      
-        
         <div className="flex items-center">
           <img
             src={`${import.meta.env.VITE_BACKEND_URL}/uploads/boss_logo.png`}
@@ -105,7 +180,6 @@ export default function Top() {
             onClick={() => navigate("/")}
             alt="Boss Logo"
           />
-
           <form className="hidden md:flex items-center ml-8" onSubmit={handleSearch}>
             <div className="relative">
               <input
@@ -134,74 +208,12 @@ export default function Top() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-1">
-                <button
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors relative group"
-                  onClick={() => navigate("/editor")}
-                >
-                  <MdDashboard className="h-5 w-5" />
-                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    에디터
-                  </span>
-                </button>
 
-                <button
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors relative group"
-                  onClick={() => navigate("/seller")}
-                >
-                  <MdStorefront className="h-5 w-5" />
-                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    판매자
-                  </span>
-                </button>
+              {renderButtonsByRole()}
+              <IconBtn icon={<IoPersonOutline />} label="마이페이지" onClick={() => navigate("/mypage")} />
+              <IconBtn icon={<IoLogOutOutline />} label="로그아웃" onClick={handleLogoutClick} />
 
-                <button
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors relative group"
-                  onClick={() => navigate("/mypage")}
-                >
-                  <IoPersonOutline className="h-5 w-5" />
-                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    마이페이지
-                  </span>
-                </button>
 
-                <button
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors relative group"
-                  onClick={handleLogoutClick}
-                >
-                  <IoLogOutOutline className="h-5 w-5" />
-                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    로그아웃
-                  </span>
-                </button>
-
-                <div className="relative">
-                  <button
-                    className="p-2 rounded-full hover:bg-gray-100 transition-colors relative"
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                    onClick={() => navigate("/cart")}
-                  >
-                    <IoCartOutline className="h-5 w-5" />
-                    {cartItems.length > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                        {cartItems.length}
-                      </span>
-                    )}
-                  </button>
-
-                  {showCartPopup && (
-                    <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg w-64 z-50">
-                      <div className="p-2 font-medium border-b">장바구니</div>
-                      {loadingCart ? (
-                        <div className="py-4 text-center text-sm text-gray-500">로딩 중...</div>
-                      ) : (
-                        getCartItemList()
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
             </>
           ) : (
             <button
@@ -221,7 +233,62 @@ export default function Top() {
           </div>
         </div>
       )}
+
+      {/* 판매업 등록 모달 */}
+      {isSellerModalOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm transition-opacity duration-300"
+          style={{ opacity: modalAnimation ? 1 : 0 }}
+          onClick={closeSellerModal}
+        >
+          <div
+            className={`bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transition-all duration-500 ${
+              modalAnimation ? "scale-100 opacity-100" : "scale-95 opacity-0"
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 모달 헤더 */}
+            <div className="relative bg-gradient-to-r from-emerald-500 to-blue-500 p-6">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+
+              <div className="flex justify-between items-center relative z-10">
+                <div>
+                  <h2 className="text-2xl font-bold text-white">판매업 등록</h2>
+                  <p className="text-green-50 mt-1">쉽고 빠르게 판매자가 되어보세요</p>
+                </div>
+                <button
+                  className="text-white hover:text-green-100 transition-colors p-2 rounded-full hover:bg-white/10"
+                  onClick={closeSellerModal}
+                >
+                  <IoClose className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+
+            {/* 모달 내용 */}
+            <div className="overflow-y-auto max-h-[calc(90vh-100px)]">
+              <SellerRegistrationPage onClose={closeSellerModal} />
+            </div>
+
+            {/* 모달 푸터 */}
+            <div className="p-4 border-t border-gray-100 bg-gray-50 flex justify-between items-center">
+              <p className="text-xs text-gray-500">
+                판매자 등록에 문제가 있으신가요?
+                <a href="#" className="text-green-600 hover:underline ml-1">
+                  고객센터에 문의하세요
+                </a>
+              </p>
+              <button
+                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+                onClick={closeSellerModal}
+              >
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
-

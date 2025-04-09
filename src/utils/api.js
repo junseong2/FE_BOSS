@@ -1,10 +1,11 @@
-// utils/api.js
+// setRole 추가!
 const fetchUserInfo = async (
   setUserId,
   setUserName,
-  setEmails = () => {},  // 기본 값으로 빈 함수 추가
-  setPhones = () => {},  // 기본 값으로 빈 함수 추가
-  setAddresses = () => {} // 기본 값으로 빈 함수 추가
+  setEmails = () => {},
+  setPhones = () => {},
+  setAddresses = () => {},
+  setRole = () => {} // ✅ 여기에 기본 파라미터 추가!
 ) => {
   try {
     const response = await fetch('http://localhost:5000/auth/user-info', {
@@ -22,12 +23,15 @@ const fetchUserInfo = async (
     const data = await response.json();
     console.log('✅ 사용자 정보:', data);
 
-    // ✅ 상태 업데이트 (NULL 방지)
+    // ✅ 상태 업데이트
     setUserId(data.userId || '');
     setUserName(data.userName || '');
-    setEmails([data.userEmail || '']);
-    setPhones([data.userPhone1, data.userPhone2, data.userPhone3].filter(Boolean));
-    setAddresses([]); // 아직 주소 안 내려주는 경우 빈 배열로 처리
+    setEmails([data.userEmail] || []);
+    setPhones([data.userPhone1, data.userPhone2, data.userPhone3]);
+    setAddresses([]); // 주소는 다른 API에서 따로 불러오면 됩니다
+
+    // ✅ 역할 설정 (SELLER, CUSTOMER, ADMIN 등)
+    setRole(data.userRole || 'CUSTOMER');
   } catch (error) {
     console.error('❌ 사용자 정보 조회 오류:', error.message);
   }

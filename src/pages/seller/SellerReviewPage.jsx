@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Star, MessageCircle, Clock, TrendingUp, Search, Filter, X } from 'lucide-react';
 import { createSellerReviewAnswer, getSellerReviews } from '../../services/review.service';
 import { Rating } from '@smastrom/react-rating';
 import Pagination from '../../components/Pagination';
@@ -17,7 +16,7 @@ export default function SellerReviewPage() {
 
   const [page, setPage] = useState(0);
   const [reviews, setReviews] = useState([]); // 리뷰 목록
-  const [totalCount, setTotalCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(1);
 
   // 별점 필터링
   const handleRatingFiltering = (rating) => {
@@ -39,7 +38,7 @@ export default function SellerReviewPage() {
       });
 
       setReviews(data.reviews || []);
-      setTotalCount(data.totalCount || 0);
+      setTotalCount(data.totalCount || 1);
     } finally {
       setLoading(false);
     }
@@ -68,8 +67,6 @@ export default function SellerReviewPage() {
   useEffect(() => {
     getReviewsFetch();
   }, [page, renderTrigger, activeTab, selectedRating]);
-
-  console.log(reviews, totalCount);
 
   return (
     <section>

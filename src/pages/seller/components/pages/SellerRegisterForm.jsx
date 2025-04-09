@@ -1,143 +1,179 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IoCloseCircle, IoImageOutline } from 'react-icons/io5'; // 이미지 업로드 아이콘
 import Label from '../../../../components/Label';
 import Input from '../../../../components/Input';
+import SellerCategorySelector from './SellerCategorySelector';
+import { getCategories } from '../../../../services/category.service';
+import useToggle from '../../../../hooks/useToggle';
+import SellerProductPriceSelector from './SellerProductPriceSelector';
+
+// 동일한 import 생략
 
 function SellerRegisterForm({ onSubmit, onToggle }) {
+  const { onToggle: onToggleCategorySelector, isOpen: isOpenCategorySelector } = useToggle();
+  const { onToggle: onToggledPriceSelector, isOpen: isOpenPriceSelector } = useToggle();
+
   const [productName, setProductName] = useState('');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState({ id: 0, name: '' });
+  const [categories, setCategories] = useState([]);
+
   const [price, setPrice] = useState('');
+  const [originPrice, setOriginPrice] = useState('');
+  const [discountRate, setDiscountRate] = useState(0);
   const [stock, setStock] = useState('');
   const [description, setDescription] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
   const [images, setImages] = useState([]);
 
-  const categories = [
-    '식품',
-    '음료',
-    '생활용품',
-    '미용/건강',
-    '도시락/즉석식',
-    '과자/스낵',
-    '라면/면류',
-    '탄산음료',
-    '커피',
-    '생수/이온음료',
-    '우유/두유',
-  ];
+  const getCategoriesFetch = async () => {
+    try {
+      const categories = await getCategories();
+      setCategories(categories);
+    } finally {
+      console.log(1111);
+    }
+  };
 
-  // 프리뷰 이미지 설정
+  // 설정된 가격정보 저장
+  const onSavePrice = ({ discountedPrice, originPrice, discountRate }) => {
+    setPrice(discountedPrice);
+    setOriginPrice(originPrice);
+    setDiscountRate(discountRate);
+  };
+
+  // 카테고리 저장
+  const handleSaveCategory = (selectCategory) => {
+    setCategory(selectCategory);
+    onToggleCategorySelector();
+  };
+
+  // 이미지 변경
   const handleImageChange = (e) => {
-    setImages(e.target.files); // 다중 이미지 상태 관리
-
-    // 프리뷰 이미지 설정
+    setImages(e.target.files);
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
+      reader.onloadend = () => setImagePreview(reader.result);
       reader.readAsDataURL(file);
     }
   };
 
-  // 상품 추가 정보 전송
+  // 폼 전송
   const handleSubmit = (e) => {
+    const productInfo = {
+      price: price,
+      originPrice: originPrice,
+      discountRate:discountRate,
+    };
+
     e.preventDefault();
-    onSubmit(e, images);
+    onSubmit(e, images, productInfo, category.name); // 폼 데이터 전송
     onToggle();
   };
+
+  useEffect(() => {
+    getCategoriesFetch();
+  }, []);
 
   return (
     <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm animate-fadeIn'>
       <form
         onSubmit={handleSubmit}
-        className='bg-white rounded-lg text-black w-full max-w-lg p-6 shadow-xl animate-slideUp relative'
+        className='overflow-y-auto overflow-x-hidden max-h-[600px] bg-white rounded-2xl text-black w-full max-w-lg p-6 shadow-xl animate-slideUp relative'
       >
-        <h2 className='text-xl font-semibold mb-6 text-center '>상품 추가</h2>
+        <h2 className='text-xl font-semibold mb-6 text-center'>상품 추가</h2>
         <button onClick={onToggle} className='absolute top-3 right-3 text-2xl' title='닫기 버튼'>
           <IoCloseCircle />
         </button>
 
         {/* 상품명 */}
-        <div className='mb-4'>
-          <Label className='block mb-1 text-sm' label={'상품명'}></Label>
+        <div className='mb-5'>
+          <Label label='상품명' className='mb-1 text-sm' />
           <Input
             type='text'
             name='name'
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
-            className='w-full px-2 py-2 border border-gray-300 bg-white text-gray-800 rounded-lg text-sm'
+            className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm'
             required
           />
         </div>
 
         {/* 가격 */}
-        <div className='flex flex-col sm:flex-row sm:gap-4 sm:space-x-4 mb-4'>
+        <div className='sm:space-x-4 mb-5'>
           <div className='flex-1'>
-            <Label className='block mb-1 text-sm' label={'가격'} />
-            <Input
-              type='number'
-              value={price}
-              name='price'
-              onChange={(e) => setPrice(e.target.value)}
-              className='w-full px-2 py-2 border border-gray-300 bg-white text-gray-800 rounded-lg text-sm'
-              required
+            <div className='flex justify-between items-center mb-1'>
+              <Label label='가격' className='text-sm' />
+              <button
+                type='button'
+                onClick={onToggledPriceSelector}
+                className='text-xs text-white bg-black px-2 py-0.5 rounded hover:opacity-80'
+              >
+                할인설정
+              </button>
+            </div>
+            <ul className='text-xs text-gray-500 space-y-0.5 pl-2'>
+              <li>원본 가격: {originPrice || '-'}</li>
+              <li>할인 가격: {price || '-'}</li>
+              <li>할인율: {discountRate || '-'}%</li>
+            </ul>
+
+            <SellerProductPriceSelector
+              isOpen={isOpenPriceSelector}
+              onToggle={onToggledPriceSelector}
+              onSave={onSavePrice}
             />
           </div>
+        </div>
 
-          {/* 재고 */}
-          <div className='flex-1'>
-            <Label className='block mb-1 text-sm' label={'재고'} />
+        {/* 재고 */}
+        <div className=' mb-5'>
+          <div className='flex-1 mt-4 sm:mt-0'>
+            <Label label='재고' className='mb-1 text-sm' />
             <input
               type='number'
-              value={stock}
               name='stock'
+              value={stock}
               onChange={(e) => setStock(e.target.value)}
-              className='w-full p-2 border border-gray-300 bg-white text-gray-800 rounded-lg text-sm'
+              className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm'
               required
             />
           </div>
         </div>
 
         {/* 카테고리 */}
-        <div className='mt-4 mb-4'>
-          <Label className='block mb-1 text-sm' label={'카테고리'} />
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            name='category'
-            className='w-full p-2 border border-gray-300 bg-white text-gray-800 rounded-lg text-sm'
-            required
+        <div className='mb-5'>
+          <Label label='카테고리' className='mb-1 text-sm' />
+          <p
+            onClick={onToggleCategorySelector}
+            className='text-sm text-gray-600 hover:text-gray-800 cursor-pointer pl-1'
           >
-            <option value=''>카테고리를 선택하세요</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
+            선택된 카테고리: <span className='font-medium'>{category.name || '없음'}</span>
+          </p>
+          <SellerCategorySelector
+            categories={categories}
+            onCancel={onToggleCategorySelector}
+            onSave={handleSaveCategory}
+            isOpen={isOpenCategorySelector}
+          />
         </div>
 
-        {/* 상품설몀 */}
-        <div className='mt-4 mb-4'>
-          <Label className='block mb-1 text-sm' label={'상품 설명'} />
+        {/* 설명 */}
+        <div className='mb-5'>
+          <Label label='상품 설명' className='mb-1 text-sm' />
           <textarea
-            value={description}
             name='description'
+            value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className='w-full p-2 border border-gray-300 bg-white text-gray-800 rounded-lg text-sm h-24'
+            className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm h-24 resize-none'
             required
           />
         </div>
 
-        {/* 이미지 업로드 영역 */}
-        <div className='mt-4 mb-4'>
-          <Label className='block mb-1 text-sm' label={'상품 이미지'} />
-
-          {/* 미리보기 이미지 */}
-
-          <div className='relative w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer overflow-hidden'>
+        {/* 이미지 업로드 */}
+        <div className='mb-6'>
+          <Label label='상품 이미지' className='mb-1 text-sm' />
+          <div className='relative w-full h-32 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden'>
             <input
               type='file'
               accept='image/*'
@@ -148,13 +184,11 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
             />
             <div className='flex items-center justify-center w-full h-full'>
               {imagePreview ? (
-                <div className='mt-4 max-w-24 mx-auto'>
-                  <img
-                    src={imagePreview}
-                    alt='상품 미리보기'
-                    className='w-full h-auto rounded-lg object-contain'
-                  />
-                </div>
+                <img
+                  src={imagePreview}
+                  alt='상품 미리보기'
+                  className='h-full max-h-28 object-contain rounded-lg'
+                />
               ) : (
                 <IoImageOutline className='text-gray-400 text-4xl' />
               )}
@@ -164,7 +198,7 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
 
         <button
           type='submit'
-          className='mt-6 w-full bg-[#4294F2] font-semibold py-3 text-white cursor-pointer rounded-lg hover:bg-blue-500 transition'
+          className='w-full bg-[#4294F2] text-white py-3 font-semibold rounded-lg hover:bg-blue-500 transition'
         >
           등록
         </button>
