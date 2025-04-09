@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink , useNavigate } from 'react-router-dom';
 import {
   IoLogOutOutline,
   IoBarChartOutline,
@@ -12,6 +12,7 @@ import {
 } from 'react-icons/io5';
 
 function SellerSideBar() {
+  const navigate = useNavigate();
   return (
     <>
       <div className='transition lg:max-w-[200px] min-w-[60px] max-w-[60px] h-full w-full'></div>
@@ -96,6 +97,7 @@ function SellerSideBar() {
           <button
             className='lg:ml-2 lg:mt-0 mt-3 ml-0 flex items-center justify-center text-white hover:text-gray-400'
             title='로그아웃'
+            onClick={() => navigate('/')}
           >
             <IoLogOutOutline />
           </button>
