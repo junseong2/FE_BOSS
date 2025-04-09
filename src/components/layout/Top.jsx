@@ -195,11 +195,6 @@ export default function Top() {
                   <span className="font-semibold text-black-600">{userName}</span>님
                 </p>
               </div>
-<<<<<<< HEAD
-              {renderButtonsByRole()}
-              <IconBtn icon={<IoPersonOutline />} label="마이페이지" onClick={() => navigate("/mypage")} />
-              <IconBtn icon={<IoLogOutOutline />} label="로그아웃" onClick={handleLogoutClick} />
-=======
 
               <div className="flex items-center gap-1">
                 <button
@@ -269,7 +264,6 @@ export default function Top() {
                   )}
                 </div>
               </div>
->>>>>>> 9139b99838d15f5f4b66b1e23593deaecb399e6f
             </>
           ) : (
             <button
