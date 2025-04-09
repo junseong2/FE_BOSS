@@ -5,11 +5,12 @@ import HomeBanner from './components/HomeBanner';
 import HomeCategories from './components/HomeCategories';
 import HomeProducts from './components/HomeProducts';
 import RecommendHomeProducts from './components/RecommendHomeProducts'; // ✅ 추천 전용 컴포넌트
+import HomeStores from './components/HomeStores';
 
 export default function HomePage() {
   const { recommendedProducts } = useUser();
   const [recommendedProductList, setRecommendedProductList] = useState([]);
-  
+
   // 추천 상품 정보 fetch
   useEffect(() => {
     const fetchRecommendedProductDetails = async () => {
@@ -17,7 +18,7 @@ export default function HomePage() {
 
       try {
         const productDetailPromises = recommendedProducts.map((id) =>
-          fetch(`http://localhost:5000/products/${id}`).then((res) => res.json())
+          fetch(`http://localhost:5000/products/${id}`).then((res) => res.json()),
         );
 
         const results = await Promise.all(productDetailPromises);
@@ -39,6 +40,7 @@ export default function HomePage() {
 
         {/* 상품 리스트 */}
         <div>
+          <HomeStores/>
           <HomeProducts
             products={mockProductList}
             title={'2030이 많이 찾는 상품'}
@@ -52,11 +54,11 @@ export default function HomePage() {
           />
 
           {recommendedProductList.length > 0 && (
-          <RecommendHomeProducts
-            products={recommendedProductList}
-            title={'회원님을 위한 맞춤 추천'}
-            customClassName={'bg-[rgba(0,0,0,0.025)]'}
-          />
+            <RecommendHomeProducts
+              products={recommendedProductList}
+              title={'회원님을 위한 맞춤 추천'}
+              customClassName={'bg-[rgba(0,0,0,0.025)]'}
+            />
           )}
         </div>
       </div>

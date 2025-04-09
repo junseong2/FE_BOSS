@@ -30,6 +30,9 @@ export const apiRoutes = {
   // 판매자
   seller: {
     // 상품 관리
+    sellers: {
+      getAll: (page, size) => BASE_URL + `/seller/stores?page=${page}&size=${size}`,
+    },
     products: {
       getAllWithDashboard: (page, size, productName, state) =>
         BASE_URL +
