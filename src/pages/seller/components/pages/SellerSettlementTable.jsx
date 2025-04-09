@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { formatLocalDate } from '../../../../utils/formatter';
 
 /** 정산상태 컬러 라벨링 */
@@ -6,9 +5,9 @@ const getStatusClassName = (status) => {
   switch (status) {
     case 'PENDING':
       return 'bg-green-100 text-green-800';
-    case 'PAID':
+    case 'COMPLETED':
       return 'bg-yellow-100 text-yellow-800';
-    case 'FAILED':
+    case 'REJECTED':
       return 'bg-red-100 text-red-800';
     default:
       return 'bg-gray-100 text-gray-800';
@@ -17,17 +16,12 @@ const getStatusClassName = (status) => {
 
 const settleStatus = [
   { key: 'PENDING', label: '정산요청' },
-  { key: 'PAID', label: '정산완료' },
-  { key: 'CANCELLED', label: '취소/거절' },
+  { key: 'COMPLETED', label: '정산완료' },
+  { key: 'REJECTED', label: '취소/거절' },
 ];
 
 export default function SellerSettlementTable({ settlements }) {
-  const [showDropdown, setShowDropdown] = useState(null);
 
-  /** 필터 드롭다운 토글 */
-  const toggleDropdown = (id) => {
-    setShowDropdown(showDropdown === id ? null : id);
-  };
 
   /** 영어로 작성된 상태를 한글로 */
   function getLabel(status) {
@@ -52,7 +46,7 @@ export default function SellerSettlementTable({ settlements }) {
         </thead>
         <tbody className='divide-y divide-gray-200'>
           
-          { settlements.length>0 ?
+          { settlements?.length>0 ?
           
           settlements?.map((settlement) => (
             <tr key={settlement.settlementId} className='hover:bg-gray-50'>

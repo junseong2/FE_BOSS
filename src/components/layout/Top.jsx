@@ -23,6 +23,7 @@ export default function Top() {
   const [isSellerModalOpen, setIsSellerModalOpen] = useState(false)
   const [modalAnimation, setModalAnimation] = useState(false)
 
+
   const [trigger, setTrigger] = useState(false)
 
   useEffect(() => {
@@ -31,18 +32,17 @@ export default function Top() {
         setRole(role)
         setTrigger(prev => !prev) // 👈 트리거 강제 업데이트
       })
+
     }
     getUserInfo()
   }, [])
   
 
-  useEffect(() => {
-    console.log("📌 현재 role:", role)
-  }, [role])
-  
+
   
 
   useEffect(() => {
+
     if (isSellerModalOpen) {
       document.body.style.overflow = "hidden"
       setTimeout(() => setModalAnimation(true), 50)
@@ -208,9 +208,11 @@ export default function Top() {
                 </p>
               </div>
 
+
               {renderButtonsByRole()}
               <IconBtn icon={<IoPersonOutline />} label="마이페이지" onClick={() => navigate("/mypage")} />
               <IconBtn icon={<IoLogOutOutline />} label="로그아웃" onClick={handleLogoutClick} />
+
 
             </>
           ) : (
