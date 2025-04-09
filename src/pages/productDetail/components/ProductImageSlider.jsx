@@ -25,6 +25,7 @@ export default function ProductImageSlider({ imageList }) {
         className='mySwiper2 mb-10'
       >
         {imageList.map((imageUrl) => {
+          console.log(imageUrl)
           return (
             <SwiperSlide key={imageUrl}>
               <img src={imageUrl} className='rounded-md' />
