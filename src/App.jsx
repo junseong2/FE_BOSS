@@ -39,7 +39,7 @@ import ShopEditorPage from './pages/editor/ShopEditorPage.jsx';
 import MobileShopEditorPage from './pages/editor/MobileShopEditorPage.jsx';
 import SellerSignUpPage from './pages/sellerSignup/SellerRegistrationPage.jsx';
 
-import AccountRecoveryPage from './pages/accountRecovery/AccountRecoveryPage.jsx';
+import AccountRecoveryPage from './pages/accountRecovery/PasswordResetPage.jsx';
 import PaymentPage from './pages/PaymentPage';
 // import AdminPage from './pages/adminPage';
 import AdminPage from './pages/admin/AdminPage.jsx';

@@ -473,8 +473,8 @@ useEffect(() => {
                       <label htmlFor="current-password" className="block text-sm font-medium text-gray-700 mb-1">
                         현재 비밀번호
                       </label>
-                      <Input id="current-password" type="password" placeholder="••••••••" className="w-full" autoComplete="current-password" />
-                      </div>
+                      <Input id="current-password" type="password" placeholder="••••••••" className="w-full" />
+                    </div>
   
                     <div>
                       <label htmlFor="new-password" className="block text-sm font-medium text-gray-700 mb-1">
