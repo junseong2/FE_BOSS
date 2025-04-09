@@ -70,7 +70,29 @@ function App() {
     location.pathname.toLowerCase().startsWith('/mobileeditor');
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/user-info`, {
+          credentials: 'include',
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+          setUserId(data.userId);
+          setUserName(data.userName);
+          console.log("✅ 로그인된 유저 정보 불러오기 성공", data);
+        } else {
+          console.log("❌ 로그인되지 않은 상태입니다.");
+        }
+      } catch (err) {
+        console.error("❌ 로그인 확인 중 에러 발생", err);
+      }
+    };
+  
+    checkAuth();
+  }, []);
+  
   useEffect(() => {
     if (!storename) {
       setLoading(false);

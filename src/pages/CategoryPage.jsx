@@ -1,158 +1,153 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Filter } from "lucide-react";
 
-function CategoryPage() {
-  const { categoryId } = useParams(); // URL에서 categoryId 가져오기
+// 기본 버튼
+const Button = ({ children, variant, className = "", ...props }) => {
+  const baseStyle = "px-4 py-2 border rounded text-sm";
+  return (
+    <button
+      className={`${baseStyle} ${variant === "outline" ? "border-gray-300" : "bg-black text-white"} ${className}`}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+
+// 체크박스 컴포넌트
+const Checkbox = ({ id, checked, onChange }) => (
+  <input id={id} type="checkbox" checked={checked} onChange={onChange} className="w-4 h-4" />
+);
+
+const BASE_IMAGE_URL = 'http://localhost:5000/uploads';
+const DEFAULT_IMAGE_PATH = `${BASE_IMAGE_URL}/default-product.jpg`;
+
+const getFirstImageUrl = (product) => {
+  const gimage = product.gImage || product.gimage || product.g_image;
+  if (!gimage) return DEFAULT_IMAGE_PATH;
+  const list = Array.isArray(gimage) ? gimage : gimage.split(',').map((img) => img.trim());
+  return `${BASE_IMAGE_URL}/${list[0]}`;
+};
+
+export default function CategoryPage() {
+  const { categoryId } = useParams();
   const [products, setProducts] = useState([]);
-  const [sortOrder, setSortOrder] = useState('asc'); // ✅ 가격 정렬 상태 추가
-  const [categoryName, setCategoryName] = useState(''); // ✅ 카테고리 이름 저장
-  const [userId, setUserId] = useState(null);
+  const [categoryName, setCategoryName] = useState('');
+  const [sortOrder, setSortOrder] = useState('recommend');
+  const [showFilter, setShowFilter] = useState(true);
   const navigate = useNavigate();
 
-  // ✅ 사용자 정보 요청 (로그인 상태 확인)
+  const fetchProducts = useCallback(async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/products/category/${categoryId}?sort=${sortOrder}`);
+      setProducts(response.data);
+    } catch (error) {
+      console.error('❌ 상품 불러오기 실패:', error);
+    }
+  }, [categoryId, sortOrder]);
+
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/auth/user-info', {
-          method: 'GET',
-          credentials: 'include',
-        });
+    fetchProducts();
+  }, [fetchProducts]);
 
-        if (!response.ok) {
-          throw new Error('로그인 정보 조회 실패');
-        }
-
-        const data = await response.json();
-        setUserId(data.userId);
-      } catch (error) {
-        console.error('사용자 정보 조회 오류:', error.message);
-      }
-    };
-
-    fetchUserInfo();
-  }, []);
-
-  // ✅ 카테고리 이름 가져오기
   useEffect(() => {
-    console.log(`🔍 Fetching category name for ID: ${categoryId}`);
     const fetchCategoryName = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/category/${categoryId}`);
-        console.log('✅ Category Name Fetched:', response.data);
         setCategoryName(response.data.name);
       } catch (error) {
-        console.error('❌ 카테고리 정보를 불러오는 중 오류 발생:', error);
+        console.error('❌ 카테고리 이름 불러오기 실패:', error);
       }
     };
-
     fetchCategoryName();
   }, [categoryId]);
 
-  // ✅ 카테고리별 상품 조회
-  useEffect(() => {
-    console.log(`🔍 Fetching products for category ID: ${categoryId}`);
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/products/category/${categoryId}`);
-        console.log('✅ Category Products:', response.data);
-        setProducts(response.data);
-      } catch (error) {
-        console.error('❌ 상품 목록을 불러오는 중 오류 발생:', error);
-      }
-    };
-
-    fetchProducts();
-  }, [categoryId]);
-
-  // ✅ 가격 정렬 함수
-  const sortProducts = (order) => {
-    const sorted = [...products].sort((a, b) => {
-      return order === 'asc' ? a.price - b.price : b.price - a.price;
-    });
-    setProducts(sorted);
+  const handleSortChange = (order) => {
     setSortOrder(order);
   };
 
-  const addToCart = async (event, productId) => {
-    event.stopPropagation(); // ✅ 상세 페이지 이동 방지
-
-    try {
-      console.log(`🛒 장바구니 추가 요청: productId=${productId}`);
-
-      const response = await fetch('http://localhost:5000/cart/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // ✅ JWT 쿠키 자동 전송
-        body: JSON.stringify({ productId, quantity: 1 }), // ✅ userId 제거
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`장바구니 추가 실패: ${errorText}`);
-      }
-
-      const data = await response.json();
-
-      console.log('✅ 장바구니 추가 성공:', data);
-      alert('✅ 장바구니에 상품이 추가되었습니다!');
-    } catch (error) {
-      console.error('❌ 장바구니 추가 오류:', error);
-    }
-  };
-
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold text-center">상품 목록</h1>
-      {categoryName && <h2 className="text-xl text-center mt-2">카테고리: {categoryName}</h2>}
-
-      <div className="flex justify-center gap-4 mt-4">
-        <button 
-          onClick={() => sortProducts('asc')} 
-          disabled={sortOrder === 'asc'}
-          className="px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 disabled:opacity-50"
-        >가격 낮은순</button>
-        <button 
-          onClick={() => sortProducts('desc')} 
-          disabled={sortOrder === 'desc'}
-          className="px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 disabled:opacity-50"
-        >가격 높은순</button>
+    <div className="min-h-screen bg-white">
+      <div className="container mx-auto px-4 py-6">
+        <h1 className="text-2xl font-bold text-center">카테고리: {categoryName || '로딩 중...'}</h1>
       </div>
-      <br />
 
-      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-4">
-        {products.length > 0 ? (
-          products.map((product) => (
-            <li 
-              key={product.productId} 
-              onClick={() => navigate(`/product/${product.productId}`)} 
-              className="flex flex-col items-center p-4 border border-gray-300 rounded-lg bg-white text-center shadow-md transition-transform hover:scale-105"
-            >
-              <img
-                src={product.gimage?.[0] || '/default-product.jpg'}
-                alt={product.name}
-                className="w-full max-w-[250px] h-60 object-cover rounded-lg"
-                onError={(e) => (e.target.src = 'http://localhost:5173/src/assets/default-product.jpg')}
-              />
-              <p className="text-lg font-bold mt-3">{product.name}</p>
-              <p className="text-sm text-gray-600 mt-1 line-clamp-2">{product.description}</p>
-              <p className="text-lg font-semibold text-gray-800 mt-2">{product.price.toLocaleString()}원</p>
-              {product.expiry_date && <p className="text-sm text-red-500">유통기한: {product.expiry_date}</p>}
-              <button 
-                onClick={(e) => addToCart(e, product.productId)} 
-                className="mt-3 px-4 py-2 bg-orange-500 text-white rounded-md text-sm hover:bg-orange-600"
-              >장바구니 담기</button>
-            </li>
-          ))
-        ) : (
-          <p className="col-span-4 text-center text-gray-500">상품이 없습니다.</p>
-        )}
-      </ul>
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex justify-between items-center">
+          <Button
+            variant="outline"
+            className="flex items-center gap-2 border-gray-300"
+            onClick={() => setShowFilter(!showFilter)}
+          >
+            <Filter className="h-4 w-4" />
+            {showFilter ? '필터 닫기' : '필터 열기'}
+          </Button>
+          <div className="text-sm text-gray-500">
+            {products.length}개 제품
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full px-0 py-6">
+        <div className="flex flex-col md:flex-row">
+
+          {/* 필터 영역 */}
+          {showFilter && (
+            <div className="md:w-64 w-full px-4">
+              <div className="space-y-2">
+                <label className="flex items-center space-x-2">
+                  <Checkbox id="recommend" checked={sortOrder === 'recommend'} onChange={() => handleSortChange('recommend')} />
+                  <span>추천순</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <Checkbox id="popular" checked={sortOrder === 'popular'} onChange={() => handleSortChange('popular')} />
+                  <span>판매순</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <Checkbox id="low" checked={sortOrder === 'low'} onChange={() => handleSortChange('low')} />
+                  <span>가격 낮은 순</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <Checkbox id="high" checked={sortOrder === 'high'} onChange={() => handleSortChange('high')} />
+                  <span>가격 높은 순</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <Checkbox id="latest" checked={sortOrder === 'latest'} onChange={() => handleSortChange('latest')} />
+                  <span>최신 등록 순</span>
+                </label>
+              </div>
+            </div>
+          )}
+
+          {/* 상품 목록 */}
+          <div className="flex-1 px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {products.length > 0 ? (
+                products.map((product) => (
+                  <div
+                    key={product.productId}
+                    onClick={() => navigate(`/product/${product.productId}`)}
+                    className="group cursor-pointer p-4 border border-gray-200 rounded-xl bg-white text-center shadow-sm transition hover:shadow-lg hover:-translate-y-1 hover:scale-105"
+                  >
+                    <img
+                      src={getFirstImageUrl(product)}
+                      alt={product.name}
+                      onError={(e) => (e.currentTarget.src = DEFAULT_IMAGE_PATH)}
+                      className="w-full h-60 object-cover rounded-lg"
+                    />
+                    <h3 className="text-lg font-semibold mt-3">{product.name}</h3>
+                    <p className="text-gray-800 mt-1 font-medium">{product.price.toLocaleString()}원</p>
+                  </div>
+                ))
+              ) : (
+                <p className="col-span-full text-center text-gray-500">상품이 없습니다.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
-
-
-export default CategoryPage;

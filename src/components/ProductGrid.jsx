@@ -133,6 +133,8 @@ const ProductGrid = ({
           onItemClick(product);
         } else {
           navigate(`/product/${product.productId}`);
+window.scrollTo({ top: 0 });
+
         }
       }}
     >
@@ -152,7 +154,7 @@ const ProductGrid = ({
         style={{
           padding: '8px 12px',
           borderRadius: 4,
-          background: '#f97316',
+          background: '#000000',
           color: '#fff',
           border: 'none',
         }}
