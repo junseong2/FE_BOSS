@@ -36,10 +36,6 @@ export default function Top() {
     }
     getUserInfo()
   }, [])
-  
-
-
-  
 
   useEffect(() => {
 
@@ -84,43 +80,7 @@ export default function Top() {
     }
   }
 
-  const handleMouseEnter = async () => {
-    setLoadingCart(true)
-    await loadCart()
-    setLoadingCart(false)
-    setShowCartPopup(true)
-  }
 
-  const handleMouseLeave = () => {
-    setShowCartPopup(false)
-  }
-
-  const getCartItemList = () => {
-    if (cartItems.length === 0) {
-      return <p className="py-2 text-center text-sm text-gray-500">장바구니가 비어 있습니다</p>
-    }
-    return (
-      <div className="max-h-60 overflow-y-auto">
-        {cartItems.map((item, index) => (
-          <div key={index} className="py-2 px-3 border-b border-gray-100 last:border-0">
-            <div className="font-medium text-sm">{item.productName}</div>
-            <div className="flex justify-between text-sm text-gray-600">
-              <span>{item.productPrice.toLocaleString()}원</span>
-              <span>수량: {item.quantity}</span>
-            </div>
-          </div>
-        ))}
-        <div className="p-2 mt-2">
-          <button
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded text-sm transition-colors"
-            onClick={() => navigate("/cart")}
-          >
-            장바구니 보기
-          </button>
-        </div>
-      </div>
-    )
-  }
 
   const renderButtonsByRole = () => {
     switch (role) {
@@ -229,10 +189,14 @@ export default function Top() {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <SignIn onClose={() => setIsModalOpen(false)} />
+            <SignIn
+              onClose={() => setIsModalOpen(false)}
+              onLoginSuccess={() => setTrigger(prev => !prev)} // ✅ 트리거 전달
+            />
           </div>
         </div>
       )}
+
 
       {/* 판매업 등록 모달 */}
       {isSellerModalOpen && (
@@ -242,9 +206,8 @@ export default function Top() {
           onClick={closeSellerModal}
         >
           <div
-            className={`bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transition-all duration-500 ${
-              modalAnimation ? "scale-100 opacity-100" : "scale-95 opacity-0"
-            }`}
+            className={`bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transition-all duration-500 ${modalAnimation ? "scale-100 opacity-100" : "scale-95 opacity-0"
+              }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* 모달 헤더 */}

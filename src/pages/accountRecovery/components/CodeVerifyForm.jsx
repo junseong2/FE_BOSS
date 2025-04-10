@@ -140,7 +140,9 @@ export default function CodeVerifyForm({ code, setCode, email, setStep }) {
               className="w-full pl-10 pr-3 py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all shadow-sm text-center font-medium tracking-wider"
               placeholder="인증번호 5자리"
               value={code}
-              onChange={(e) => setCode(e.target.value.replace(/[^0-9]/g, ""))}
+              onChange={(e) => {
+                setCode(e.target.value);
+              }}
               maxLength={6}
               required
             />
