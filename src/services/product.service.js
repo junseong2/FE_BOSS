@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios';
 import { apiRoutes } from '../configs/api-urls';
 import instance from '../configs/axios.config';
+import { toastSuccess } from '../components/toast/CustomToast';
 
 /** 판매자 상품 조회*/
 export const getAllSellerProducts = async (page, size, productName = '') => {
@@ -25,17 +26,21 @@ export const registerSellerProduct = async (requestData) => {
     },
   });
   if (response.status === 201) {
-    alert('상품목록에 정상적으로 반영하였습니다.');
+    toastSuccess('상품목록에 정상적으로 반영하였습니다.');
   }
   return response.data;
 };
 
 /** 판매자 상품 수정 */
-export const updateSellerProduct = async (productId, product) => {
+export const updateSellerProduct = async (productId, requestData) => {
   const url = apiRoutes.seller.products.update(productId);
-  const response = await instance.patch(url, product);
+  const response = await instance.patch(url, requestData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
   if (response.status < 300) {
-    alert('정상적으로 수정되었습니다.');
+    toastSuccess('정상적으로 반영하였습니다.');
   }
   return response.data;
 };
@@ -57,7 +62,6 @@ export const getProductDetail = async (id) => {
   return response.data;
 };
 
-
 //========구매자 =========\\
 /** 구매자 상품 조회 */
 export const getAllProducts = async (page, size) => {
@@ -65,4 +69,3 @@ export const getAllProducts = async (page, size) => {
   const response = await instance.get(url);
   return response.data;
 };
-

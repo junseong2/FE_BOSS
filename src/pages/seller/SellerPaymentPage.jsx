@@ -147,22 +147,22 @@ function SellerPaymentPage() {
           ) : (
             <>
               <SellerCard
-                bgColor='bg-white'
+                bgColor='bg-white rounded-md'
                 amount={'￦' + (summaryStatistics.totalPrice?.toLocaleString() || 0)}
                 title='총 매출'
               />
               <SellerCard
-                bgColor='bg-white'
+                bgColor='bg-white rounded-md'
                 amount={summaryStatistics.totalOrderCount || 0}
                 title='총 주문 건수'
               />
               <SellerCard
-                bgColor='bg-white'
+                bgColor='bg-white rounded-md'
                 amount={summaryStatistics.paidOrderCount || 0}
                 title='결제 완료 주문'
               />
               <SellerCard
-                bgColor='bg-white'
+                bgColor='bg-white rounded-md'
                 amount={'￦' + (summaryStatistics.canceledTotalPrice?.toLocaleString() || 0)}
                 title='취소/환불 금액'
               />
@@ -176,7 +176,7 @@ function SellerPaymentPage() {
         <h2 className='text-2xl font-bold pt-10 '>매출분석</h2>
         <div className='flex gap-5 lg:flex-row flex-col '>
           {/* 월별 매출 */}
-          <div className='bg-white mt-5 border border-gray-200 p-3 pb-5 w-full h-full min-h-[450px]  lg:max-h-1/2'>
+          <div className='bg-white mt-5 border  rounded-md border-gray-200 p-3 pb-5 w-full h-full min-h-[450px]  lg:max-h-1/2'>
             <h3 className='font-bold py-5'>월별 매출</h3>
             {loadingState.month ? (
               <p className='text-gray-500 w-full h-[150px] flex items-center justify-center animate-pulse'>
@@ -188,7 +188,7 @@ function SellerPaymentPage() {
           </div>
 
           {/* 카테고리별 매출 */}
-          <div className='bg-white lg:mt-5 mt-0 border border-gray-200 p-3 pb-5 w-full h-full min-h-[450px]  lg:max-h-1/2'>
+          <div className='bg-white lg:mt-5  rounded-md mt-0 border border-gray-200 p-3 pb-5 w-full h-full min-h-[450px]  lg:max-h-1/2'>
             <h3 className='font-bold py-5'>카테고리별 매출</h3>
             {loadingState.category ? (
               <p className='text-gray-500 w-full h-[150px] flex items-center justify-center  animate-pulse'>
