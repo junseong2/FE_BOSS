@@ -1,18 +1,31 @@
 import { useState, useEffect } from 'react';
 import { IoCalculator, IoCloseOutline } from 'react-icons/io5';
 
-export default function SellerProductPriceSelector({ isOpen, onToggle, onSave }) {
-  const [originalPrice, setOriginalPrice] = useState('');
-  const [discountedPrice, setDiscountedPrice] = useState('');
+export default function SellerProductPriceSelector({
+  isOpen,
+  onToggle,
+  onSave,
+  oldPrice,
+  oldDiscountRate,
+  oldOriginPrice,
+}) {
+  const [originalPrice, setOriginalPrice] = useState(0);
+  const [discountedPrice, setDiscountedPrice] = useState(0);
   const [discountRate, setDiscountRate] = useState(0);
 
   // 고정 할인율 목록
   const discountOptions = [2, 3, 5, 10, 15, 20, 25, 30];
 
+
+  //  새값 || 기존값 : 수정한 값이 없으면 기존 값을 사용하기 위함
   useEffect(() => {
-    if (originalPrice && discountedPrice && Number(originalPrice) > 0) {
-      const original = Number(originalPrice);
-      const discounted = Number(discountedPrice);
+    if (
+      originalPrice ||
+      (oldOriginPrice && discountedPrice) ||
+      (oldPrice && Number(originalPrice || oldOriginPrice) > 0)
+    ) {
+      const original = Number(originalPrice || oldOriginPrice);
+      const discounted = Number(discountedPrice || oldPrice);
       const rate = ((original - discounted) / original) * 100;
       setDiscountRate(Math.round(rate * 10) / 10);
     } else {
@@ -23,8 +36,8 @@ export default function SellerProductPriceSelector({ isOpen, onToggle, onSave })
   // 할인률 적용
   const applyDiscountRate = (rate) => {
     setDiscountRate(rate);
-    if (originalPrice && Number(originalPrice) > 0) {
-      const calculatedPrice = Number(originalPrice) * (1 - rate / 100);
+    if (originalPrice || (oldOriginPrice && Number(originalPrice || oldOriginPrice) > 0)) {
+      const calculatedPrice = Number(originalPrice) || oldOriginPrice * (1 - rate / 100);
       setDiscountedPrice(Math.floor(calculatedPrice).toString());
     }
   };
@@ -37,13 +50,15 @@ export default function SellerProductPriceSelector({ isOpen, onToggle, onSave })
   // 최종 가격 저장
   const handleSave = () => {
     alert(
-      `할인이 적용되었습니다: 원가 ${originalPrice}원, 할인가 ${discountedPrice}원, 할인율 ${discountRate}%`,
+      `할인이 적용되었습니다: 원가 ${originalPrice || oldOriginPrice}원, 할인가 ${discountedPrice || oldPrice}원, 할인율 ${discountRate || oldDiscountRate}%`,
     );
     onToggle();
-    onSave({ originPrice: originalPrice, discountedPrice: Number(discountedPrice), discountRate });
+    onSave({
+      originPrice: originalPrice || oldOriginPrice,
+      discountedPrice: discountedPrice || oldPrice,
+      discountRate: discountRate || oldDiscountRate,
+    });
   };
-
-  if (!isOpen) return null;
 
   return (
     <div
@@ -67,7 +82,8 @@ export default function SellerProductPriceSelector({ isOpen, onToggle, onSave })
             <div className='relative flex-1'>
               <input
                 type='number'
-                value={originalPrice}
+                value={originalPrice || oldOriginPrice}
+                name='originPrice'
                 onChange={(e) => setOriginalPrice(Number(e.target.value))}
                 className='w-full p-2 border rounded-md pr-10'
                 placeholder='0'
@@ -83,7 +99,8 @@ export default function SellerProductPriceSelector({ isOpen, onToggle, onSave })
             <div className='relative flex-1'>
               <input
                 type='number'
-                value={discountedPrice}
+                value={discountedPrice || oldPrice}
+                name='price'
                 onChange={(e) => setDiscountedPrice(Number(e.target.value))}
                 className='w-full p-2 border rounded-md pr-10'
                 placeholder='0'
@@ -103,6 +120,7 @@ export default function SellerProductPriceSelector({ isOpen, onToggle, onSave })
                 {discountRate > 0 && `(${originalPrice - discountedPrice}원 할인)`}
               </div>
             </div>
+            <input className='hidden' name='discountRate' value={discountRate || oldDiscountRate} />
           </div>
 
           {/* 할인율 선택 리스트 */}

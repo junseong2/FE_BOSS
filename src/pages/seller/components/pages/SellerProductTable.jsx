@@ -1,61 +1,31 @@
-import { useState, useEffect } from 'react';
-import SellerEditButton from '../common/SellerEditButton';
+import { IoBuildOutline } from 'react-icons/io5';
 
-export default function SellerProductTable({
-  products,
-  actionButtonName,
-  onToggle,
-  onUpdate,
-  onCheck,
-  toggleId,
-}) {
-  const [modifiedProducts, setModifiedProducts] = useState(products);
-
-  useEffect(() => {
-    // 페이지 로드시 toggleId 초기화
-    if (toggleId === undefined) {
-      onToggle(-1);
-    }
-  }, [toggleId, onToggle]);
-
-  // 사용자 입력값 처리 이벤트 핸들러
-  const handleInputChange = (e, targetProductId, field) => {
-    const updatedProducts = products.map((product) =>
-      product.productId === targetProductId ? { ...product, [field]: e.target.value } : product,
-    );
-    setModifiedProducts(updatedProducts);
-  };
-
-  // 상품 정보 업데이트
-  const handleUpdate = (productId) => {
-    const updatedProduct = modifiedProducts.find((product) => product.productId === productId);
-    if (updatedProduct) {
-      onUpdate(updatedProduct); // 수정된 상품 정보를 부모에게 전달
-      onToggle(-1); // 등록 후 토글 상태 초기화
-    }
-  };
+export default function SellerProductTable({ products, onToggle, onSelect }) {
+  function handleToggleClick(product) {
+    onSelect(product); // 수정할 상품 정보 설정
+    onToggle(); // 편칩창 오픈
+  }
 
   return (
     <div className='mt-2 w-full overflow-x-auto'>
       <table className='w-full table-auto min-w-[768px] '>
         <thead>
           <tr className='bg-[#F3F4F6] text-gray-600 text-sm'>
-            <th className='py-3 px-4 text-left font-medium'>선택</th>
-            <th className='py-3 px-4 text-left font-medium'>상품ID</th>
-            <th className='py-3 px-4 text-left font-medium'>상품명</th>
+            <th className='py-3 px-4 text-center font-medium'>선택</th>
+            <th className='py-3 px-4 text-center font-medium'>상품ID</th>
+            <th className='py-3 px-4 text-center font-medium'>상품명</th>
             <th className='py-3 px-4 text-center font-medium'>분류</th>
-            <th className='py-3 px-4 text-left font-medium'>설명</th>
-            <th className='py-3 px-4 text-left font-medium'>가격</th>
-            <th className='py-3 px-4 text-left font-medium'>재고</th>
+            <th className='py-3 px-4 text-center font-medium'>설명</th>
+            <th className='py-3 px-4 text-center font-medium'>가격</th>
+            <th className='py-3 px-4 text-center font-medium'>재고</th>
             <th className='py-3 px-4 text-center font-medium'>작업</th>
           </tr>
         </thead>
 
         <tbody>
           {products.length > 0 ? (
-            products.map((product, index) => {
-              const isEditableRow = index === toggleId;
-
+            products.map((product) => {
+              console.log(product)
               return (
                 <tr
                   key={product.productId}
@@ -65,91 +35,32 @@ export default function SellerProductTable({
                     <input
                       type='checkbox'
                       name='productId'
-                      onChange={onCheck}
                       value={product.productId}
                       className='accent-blue-500'
                     />
                   </td>
-                  <td className='px-2 py-1 text-sm'>{product.productId}</td>
+                  <td className='px-2 py-1 text-sm text-center'>{product.productId}</td>
+                  <td className='px-2 py-1 text-sm flex items-center gap-2'>
+                    <img className='w-10 h-10 border  rounded-sm border-gray-200 p-1' src={product.gimages?.length>0 ? 'http://localhost:5000/uploads/'+product.gimages[0]: 'https://picsum.photos/50/50'} alt={product.name+" 상품 이미지"}/>
+                    {product.name}
+                    </td>
+                  <td className='px-2 py-1 text-sm'>{product.categoryName}</td>
+                  <td className='px-2 py-1 text-sm'>{product.description}</td>
                   <td className='px-2 py-1 text-sm'>
-                    {isEditableRow ? (
-                      <input
-                        className='text-gray-800 border border-gray-400 rounded-md w-full px-3 py-2 text-sm'
-                        type='text'
-                        defaultValue={product.name} // 수정된 부분
-                        onChange={(e) => handleInputChange(e, product.productId, 'name')}
-                      />
-                    ) : (
-                      product.name
-                    )}
+                    <span className='flex'>
+                      ￦
+                      <span>{product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</span>
+                    </span>
                   </td>
+                  <td className='px-2 py-1 text-sm text-center'>{product.stock || 0}</td>
                   <td className='px-2 py-1 text-sm'>
-                    {isEditableRow ? (
-                      <input
-                        className='text-gray-800 border border-gray-400 rounded-md w-full px-3 py-2 text-sm'
-                        type='text'
-                        defaultValue={product.categoryName} // 수정된 부분
-                        onChange={(e) => handleInputChange(e, product.productId, 'categoryName')}
-                      />
-                    ) : (
-                      product.categoryName
-                    )}
-                  </td>
-                  <td className='px-2 py-1 text-sm'>
-                    {isEditableRow ? (
-                      <input
-                        className='text-gray-800 border border-gray-400 rounded-md w-full px-3 py-2 text-sm'
-                        type='text'
-                        defaultValue={product.description} // 수정된 부분
-                        onChange={(e) => handleInputChange(e, product.productId, 'description')}
-                      />
-                    ) : (
-                      product.description
-                    )}
-                  </td>
-                  <td className='px-2 py-1 text-sm'>
-                    {isEditableRow ? (
-                      <input
-                        className='text-gray-800 border border-gray-400 rounded-md w-full px-3 py-2 text-sm'
-                        type='number'
-                        defaultValue={product.price} // 수정된 부분
-                        onChange={(e) => handleInputChange(e, product.productId, 'price')}
-                      />
-                    ) : (
-                      `￦ ${product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`
-                    )}
-                  </td>
-                  <td className='px-2 py-1 text-sm'>
-                    {isEditableRow ? (
-                      <input
-                        className='text-gray-800 border border-gray-400 rounded-md w-full px-3 py-2 text-sm'
-                        type='number'
-                        defaultValue={product.stock} // 수정된 부분
-                        onChange={(e) => handleInputChange(e, product.productId, 'stock')}
-                      />
-                    ) : (
-                      product.stock
-                    )}
-                  </td>
-                  <td className='px-2 py-1 text-sm'>
-                    {/* 편집(등록) 버튼 */}
-                    <SellerEditButton
-                      isEditable={isEditableRow}
-                      index={index}
-                      onToggle={onToggle}
-                      onUpdate={handleUpdate}
-                      productId={product.productId}
-                      actionButtonName={actionButtonName}
-                    />
-                    {/* 편집 취소 버튼 */}
-                    {isEditableRow && (
-                      <button
-                        className='flex items-center gap-2 justify-center cursor-pointer hover:placeholder-gray-100 bg-white text-black font-normal py-1 px-4 rounded-md mt-2 border border-gray-300 w-full text-sm hover:bg-gray-200 transition-colors'
-                        onClick={() => onToggle(-1)} // 취소 버튼 클릭 시 수정 모드 해제
-                      >
-                        취소
-                      </button>
-                    )}
+                    <button
+                      onClick={() => handleToggleClick(product)}
+                      title='수정'
+                      className='bg-[#1a2b3e] text-white p-1 px-2 rounded-sm hover:opacity-70 cursor-pointer'
+                    >
+                      <IoBuildOutline />
+                    </button>
                   </td>
                 </tr>
               );
