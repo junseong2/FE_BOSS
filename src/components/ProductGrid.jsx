@@ -7,11 +7,10 @@ const DEFAULT_IMAGE_PATH = `${BASE_IMAGE_URL}/default-product.jpg`;
 
 const ProductGrid = ({
   title,
-  sellerId = null, // ✅ 판매자 ID가 있으면 판매자 인기상품 조회
+  sellerId = null,
   getFirstImageUrl = (gimage) => {
     if (!gimage) return DEFAULT_IMAGE_PATH;
     const imageName = gimage.includes(',') ? gimage.split(',')[0] : gimage;
-    
     return `${BASE_IMAGE_URL}/${imageName}`;
   },
   onItemClick,
@@ -26,28 +25,31 @@ const ProductGrid = ({
   const containerRef = useRef(null);
   const navigate = useNavigate();
 
-  // ✅ 인기 상품 데이터 불러오기
+
+  const fetchedMapRef = useRef({});
+
   const fetchPopularProducts = async (type) => {
     try {
       let url;
       if (sellerId) {
-        console.log(sellerId,'의인기상품!');
         url = `${import.meta.env.VITE_BACKEND_URL}/seller/products/popular?sellerId=${sellerId}&sortBy=${type}`;
       } else {
-        console.log(
-          '전체 인기상품');
         url = `${import.meta.env.VITE_BACKEND_URL}/products/popular?sortBy=${type}`;
       }
-
       const res = await axios.get(url);
       setProducts(res.data);
+      setCurrentPage(0); // 페이지도 초기화
     } catch (err) {
       console.error('🔥 인기 상품 불러오기 실패:', err);
     }
   };
 
+  // ✅ sortType이 바뀌었을 때만 fetch (한 번만)
   useEffect(() => {
-    fetchPopularProducts(sortType);
+    if (!fetchedMapRef.current[sortType]) {
+      fetchPopularProducts(sortType);
+      fetchedMapRef.current[sortType] = true;
+    }
   }, [sortType, sellerId]);
 
   const getCurrentPageProducts = () => {
@@ -58,9 +60,9 @@ const ProductGrid = ({
 
   const handlePageChange = (direction) => {
     if (direction === 'next' && currentPage < Math.floor(products.length / pageSize)) {
-      setCurrentPage(currentPage + 1);
+      setCurrentPage((prev) => prev + 1);
     } else if (direction === 'prev' && currentPage > 0) {
-      setCurrentPage(currentPage - 1);
+      setCurrentPage((prev) => prev - 1);
     }
   };
 
@@ -113,58 +115,57 @@ const ProductGrid = ({
             padding: '0 40px',
           }}
         >
-       {getCurrentPageProducts()?.map((product) => {
-  console.log("내려받은 상품",product); // 🔍 product 객체 구조 확인용 로그
-  console.log("🔥 gimage 원본:", product.gImage);
-  console.log("✅ 최종 이미지 URL:", getFirstImageUrl(product.gImage));
-  return (
-    <div
-      key={product.productId}
-      style={{
-        minWidth: cardWidth,
-        border: '1px solid #ddd',
-        borderRadius: 4,
-        padding: 10,
-        textAlign: 'center',
-        cursor: 'pointer',
-      }}
-      onClick={() => {
-        if (onItemClick) {
-          onItemClick(product);
-        } else {
-          navigate(`/product/${product.productId}`);
-window.scrollTo({ top: 0 });
-
-        }
-      }}
-    >
-      <img
-        src={getFirstImageUrl(product.gImage || product.gimage || product.g_image || product.g_Image)
-        }
-        alt={product.name}
-        style={{ width: '100%', height: 150, objectFit: 'cover', borderRadius: 4 }}
-        onError={(e) => (e.currentTarget.src = DEFAULT_IMAGE_PATH)}
-      />
-      <p style={{ margin: '10px 0', fontWeight: 600 }}>{product.name}</p>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onAddToCart(e, product.productId);
-        }}
-        style={{
-          padding: '8px 12px',
-          borderRadius: 4,
-          background: '#000000',
-          color: '#fff',
-          border: 'none',
-        }}
-      >
-        장바구니 담기
-      </button>
-    </div>
-  );
-})}
-
+          {getCurrentPageProducts().map((product) => (
+            <div
+              key={product.productId}
+              style={{
+                minWidth: cardWidth,
+                border: '1px solid #ddd',
+                borderRadius: 4,
+                padding: 10,
+                textAlign: 'center',
+                cursor: 'pointer',
+              }}
+              onClick={() => {
+                if (onItemClick) {
+                  onItemClick(product);
+                } else {
+                  navigate(`/product/${product.productId}`);
+                  window.scrollTo({ top: 0 });
+                }
+              }}
+            >
+              <img
+                src={getFirstImageUrl(
+                  product.gImage || product.gimage || product.g_image || product.g_Image
+                )}
+                alt={product.name}
+                style={{
+                  width: '100%',
+                  height: 150,
+                  objectFit: 'cover',
+                  borderRadius: 4,
+                }}
+                onError={(e) => (e.currentTarget.src = DEFAULT_IMAGE_PATH)}
+              />
+              <p style={{ margin: '10px 0', fontWeight: 600 }}>{product.name}</p>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onAddToCart(e, product.productId);
+                }}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: 4,
+                  background: '#000000',
+                  color: '#fff',
+                  border: 'none',
+                }}
+              >
+                장바구니 담기
+              </button>
+            </div>
+          ))}
         </div>
 
         <button
