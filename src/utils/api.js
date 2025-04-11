@@ -1,14 +1,16 @@
+// setRole 추가!
 const fetchUserInfo = async (
   setUserId,
   setUserName,
   setEmails = () => {},
   setPhones = () => {},
-  setAddresses = () => {}
+  setAddresses = () => {},
+  setRole = () => {} // ✅ 여기에 기본 파라미터 추가!
 ) => {
   try {
     const response = await fetch('http://localhost:5000/auth/user-info', {
       method: 'GET',
-      credentials: 'include', // ✅ JWT 쿠키 포함
+      credentials: 'include',
     });
 
     if (!response.ok) {
@@ -21,16 +23,18 @@ const fetchUserInfo = async (
     const data = await response.json();
     console.log('✅ 사용자 정보:', data);
 
-    // ✅ 상태 업데이트 (NULL 방지)
+    // ✅ 상태 업데이트
     setUserId(data.userId || '');
     setUserName(data.userName || '');
-    setEmails(Array.isArray(data.emails) ? data.emails : []); // ✅ undefined 방지
-    setPhones(Array.isArray(data.phones) ? data.phones : []);
-    setAddresses(Array.isArray(data.addresses) ? data.addresses : []);
+    setEmails([data.userEmail] || []);
+    setPhones([data.userPhone1, data.userPhone2, data.userPhone3]);
+    setAddresses([]); // 주소는 다른 API에서 따로 불러오면 됩니다
+
+    // ✅ 역할 설정 (SELLER, CUSTOMER, ADMIN 등)
+    setRole(data.userRole || 'CUSTOMER');
   } catch (error) {
     console.error('❌ 사용자 정보 조회 오류:', error.message);
   }
 };
 
-// 기본 내보내기 추가
 export default fetchUserInfo;

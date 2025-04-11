@@ -13,17 +13,29 @@ import SellerTitle from './components/common/SellerTitle';
 import SellerSearch from './components/common/SellerSearch';
 import SellerActionButton from './components/common/SellerActionButton';
 import SellerProductTable from './components/pages/SellerProductTable';
-import SellerRegisterForm from './components/pages/SellerRegisterForm';
+import SellerRegisterForm from './components/form/SellerRegisterForm';
 import Pagination from '../../components/Pagination';
 import TableSkeleton from '../../components/skeleton/TableSkeleton';
+
 import CrawledProductRegisterForm from './components/pages/CrawledProductRegisterForm'; // 🆕 [상품 받아오기 모달 import]
+
+import { toastError } from '../../components/toast/CustomToast';
+import SellerEditForm from './components/form/SellerEditForm';
+
 
 const headers = ['선택', '상품ID', '상품명', '카테고리', '설명', '가격', '재고', '작업'];
 const PAGE_SIZE = 15;
 function SellerProductPage() {
   const { onToggle, isOpen, toggleId } = useToggle();
+
   const { onToggle: onToggleNewProductForm, isOpen: isOpenNewProductForm } = useToggle();
   const { onToggle: onToggleCrawledForm, isOpen: isOpenCrawledForm } = useToggle(); // 🆕 [크롤링 모달 토글]
+
+  const { onToggle: onToggleRegisterForm, isOpen: isOpenRegisterForm } = useToggle();
+  const { onToggle: onToggleEditForm, isOpen: isOpenEditForm } = useToggle();
+
+  const [selectedProduct, setSelectedProduct]  = useState([]);
+
   const [productIds, setProductIds] = useState([]);
   const [loadingTrigger, setLoadingTrigger] = useState(false);
   const [page, setPage] = useState(0);
@@ -76,6 +88,7 @@ function SellerProductPage() {
     try {
       const data = await getAllSellerProducts(Math.max(0, page), PAGE_SIZE, productName);
       if (data) {
+        console.log(data)
         setProducts(data.products ?? []);
         setTotalCount(data.totalCount ?? 1);
       }
@@ -85,8 +98,9 @@ function SellerProductPage() {
   }
 
   // 상품 추가
-  async function onCreateProductSubmit(e, images, productInfo, category) {
-    const { requestData } = await mappingSubmitData(e, images, productInfo, category);
+  async function onCreateProductSubmit(e, images, category) {
+    const { requestData } = await mappingSubmitData(e, images, category);
+
     try {
       await registerSellerProduct(requestData);
     } finally {
@@ -95,30 +109,37 @@ function SellerProductPage() {
   }
 
   // 상품 수정
-  async function onUpdateProduct(product) {
-    const updatedProducts = products.map((oldProduct) => {
-      if (oldProduct.productId === product.productId) {
-        return product;
+  async function onUpdateProductSubmit(e, productId, images, category) {
+    const { requestData } = await mappingSubmitData(e, images, category);
+    try {
+      const data = await updateSellerProduct(productId, requestData);
+      if (data.status === 'OK') {
+        alert(data.data.productName + '의 정보가 수정되었습니다.');
       }
-      return oldProduct;
-    });
-    setProducts(updatedProducts);
-
-    const data = await updateSellerProduct(product.productId, product);
-
-    if (data.status === 'OK') {
-      alert(data.data.productName + '의 정보가 수정되었습니다.');
+    } finally {
+      setLoadingTrigger((prev) => !prev);
     }
   }
 
   // 상품 추가/수정 시 데이터 맵핑
-  async function mappingSubmitData(e, images, productInfo, category) {
+  async function mappingSubmitData(e, images, category) {
     const formData = new FormData(e.currentTarget);
     const productId = Number(formData.get('productId')) || 0;
     const name = formData.get('name')?.toString().trim() || '';
     const description = formData.get('description')?.toString().trim() || '';
+    const price = Number(formData.get('price')) || 0;
+    const originPrice = Number(formData.get('originPrice')) || 0;
+    const discountRate = Number(formData.get('discountRate')) || 0;
     const stock = Number(formData.get('stock')) || 0;
     const minStock = Number(formData.get('minStock')) || 0;
+    let expiryDate = new Date(formData.get('expiryDate'));
+
+    if (expiryDate instanceof Date) {
+      expiryDate = expiryDate.toISOString().slice(0, 19);
+    } else {
+      toastError(expiryDate + '는 잘못된 날짜 형식입니다. YYYY-MM-DD 형식을 맞춰주세요.');
+      return;
+    }
 
     const errors = [];
 
@@ -127,6 +148,8 @@ function SellerProductPage() {
     if (!description) errors.push('상품 설명을 입력하세요.');
     if (isNaN(stock) || stock < 0) errors.push('재고는 0 이상이어야 합니다.');
     if (isNaN(minStock) || minStock < 0) errors.push('최소 재고는 0 이상이어야 합니다.');
+    if (isNaN(price) || price < 0) errors.push('(할인된) 상품 가격은 0 이상이어야 합니다.');
+    if (isNaN(originPrice) || originPrice < 0) errors.push('원본 상품 가격은 0 이상이어야 합니다.');
 
     if (errors.length > 0) {
       alert(errors.join('\n'));
@@ -135,13 +158,16 @@ function SellerProductPage() {
 
     const product = {
       name,
-      price: Number(productInfo.price), // 할인된 가격
-      originPrice: Number(productInfo.originPrice), // 원본 가격
-      discountRate: productInfo.discountRate, // 할인율
+      price, // 할인된 가격
+      originPrice, // 원본 가격
+      discountRate, // 할인율
       categoryName: category,
       description,
+      minStock,
+      expiryDate,
       stock,
     };
+
 
     // FormData를 보내기
     const requestData = new FormData();
@@ -187,7 +213,7 @@ function SellerProductPage() {
             </SellerActionButton>
 
             {/* 새상품 추가 버튼 */}
-            <SellerActionButton onClick={onToggleNewProductForm}>
+            <SellerActionButton onClick={onToggleRegisterForm}>
               <IoAddCircleOutline />새 상품
             </SellerActionButton>
 
@@ -206,12 +232,9 @@ function SellerProductPage() {
             <SellerProductTable
               headers={headers}
               products={products}
-              actionButtonName={'수정'}
               onCheck={onCheck}
-              onToggle={onToggle}
-              isToggle={isOpen}
-              toggleId={toggleId}
-              onUpdate={onUpdateProduct}
+              onToggle={onToggleEditForm}
+              onSelect={setSelectedProduct}
               onDelete={onDeleteProduct}
             />
           </div>
@@ -226,6 +249,7 @@ function SellerProductPage() {
         />
       </section>
 
+
       {isOpenNewProductForm ? (
         <SellerRegisterForm onToggle={onToggleNewProductForm} onSubmit={onCreateProductSubmit} />
       ) : null}
@@ -238,6 +262,12 @@ function SellerProductPage() {
         />
       )}
       {/* 🆕 [상품 받아오기 모달 렌더링 - 끝] */}
+
+      {isOpenRegisterForm ? (
+        <SellerRegisterForm onToggle={onToggleRegisterForm} onSubmit={onCreateProductSubmit} />
+      ) : null}
+      {isOpenEditForm ? <SellerEditForm onToggle={onToggleEditForm} onUpdateSubmit={onUpdateProductSubmit} oldProduct={selectedProduct} /> : null}
+
     </>
   );
 }

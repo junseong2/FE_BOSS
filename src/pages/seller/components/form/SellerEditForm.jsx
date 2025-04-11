@@ -1,28 +1,23 @@
 import { useEffect, useState } from 'react';
-import { IoCloseCircle, IoImageOutline } from 'react-icons/io5'; // 이미지 업로드 아이콘
+import { IoCloseCircle, IoImageOutline } from 'react-icons/io5';
 import Label from '../../../../components/Label';
 import Input from '../../../../components/Input';
-import SellerCategorySelector from './SellerCategorySelector';
+import SellerCategorySelector from '../pages/SellerCategorySelector';
 import { getCategories } from '../../../../services/category.service';
 import useToggle from '../../../../hooks/useToggle';
-import SellerProductPriceSelector from './SellerProductPriceSelector';
+import SellerProductPriceSelector from '../pages/SellerProductPriceSelector';
+import { toastInfo } from '../../../../components/toast/CustomToast';
 
-// 동일한 import 생략
-
-function SellerRegisterForm({ onSubmit, onToggle }) {
+function SellerEditForm({ onUpdateSubmit, onToggle, oldProduct }) {
   const { onToggle: onToggleCategorySelector, isOpen: isOpenCategorySelector } = useToggle();
   const { onToggle: onToggledPriceSelector, isOpen: isOpenPriceSelector } = useToggle();
 
-  const [productName, setProductName] = useState('');
-  const [category, setCategory] = useState({ id: 0, name: '' });
+  const [category, setCategory] = useState({ id: 0, name: oldProduct.categoryName });
   const [categories, setCategories] = useState([]);
-
-  const [price, setPrice] = useState('');
-  const [originPrice, setOriginPrice] = useState('');
+  const [price, setPrice] = useState(0);
+  const [originPrice, setOriginPrice] = useState(0);
   const [discountRate, setDiscountRate] = useState(0);
-  const [stock, setStock] = useState('');
-  const [description, setDescription] = useState('');
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreviews, setImagePreviews] = useState([]);
   const [images, setImages] = useState([]);
 
   const getCategoriesFetch = async () => {
@@ -34,40 +29,50 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
     }
   };
 
-  // 설정된 가격정보 저장
   const onSavePrice = ({ discountedPrice, originPrice, discountRate }) => {
     setPrice(discountedPrice);
     setOriginPrice(originPrice);
     setDiscountRate(discountRate);
   };
 
-  // 카테고리 저장
+  // 선택한 카테고리 선택
   const handleSaveCategory = (selectCategory) => {
     setCategory(selectCategory);
     onToggleCategorySelector();
   };
 
-  // 이미지 변경
+  // 이미지 업로드 처리
   const handleImageChange = (e) => {
-    setImages(e.target.files);
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setImagePreview(reader.result);
-      reader.readAsDataURL(file);
+    const files = e.target.files;
+    setImages(files); // 이미지 상태 저장
+  
+    // 미리보기 배열 초기화
+    setImagePreviews([]);
+  
+    if (files?.length > 0) {
+      const fileArray = Array.from(files);
+
+
+      if(fileArray.length>8){
+        return toastInfo("이미지는 최대 8장 까지만 가능합니다.")
+      }
+  
+      fileArray.forEach((file) => {
+        const reader = new FileReader();
+  
+        reader.onloadend = () => {
+          setImagePreviews((prev) => [...prev, reader.result]);
+        };
+  
+        reader.readAsDataURL(file);
+      });
     }
   };
-
+  
   // 폼 전송
   const handleSubmit = (e) => {
-    const productInfo = {
-      price: price,
-      originPrice: originPrice,
-      discountRate:discountRate,
-    };
-
     e.preventDefault();
-    onSubmit(e, images, productInfo, category.name); // 폼 데이터 전송
+    onUpdateSubmit(e, oldProduct.productId, images, category.name || oldProduct.categoryName);
     onToggle();
   };
 
@@ -81,7 +86,7 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
         onSubmit={handleSubmit}
         className='overflow-y-auto overflow-x-hidden max-h-[600px] bg-white rounded-2xl text-black w-full max-w-lg p-6 shadow-xl animate-slideUp relative'
       >
-        <h2 className='text-xl font-semibold mb-6 text-center'>상품 추가</h2>
+        <h2 className='text-xl font-semibold mb-6 text-center'>상품 수정</h2>
         <button onClick={onToggle} className='absolute top-3 right-3 text-2xl' title='닫기 버튼'>
           <IoCloseCircle />
         </button>
@@ -92,7 +97,7 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
           <Input
             type='text'
             name='name'
-            value={productName}
+            value={oldProduct.name}
             onChange={(e) => setProductName(e.target.value)}
             className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm'
             required
@@ -113,12 +118,15 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
               </button>
             </div>
             <ul className='text-xs text-gray-500 space-y-0.5 pl-2'>
-              <li>원본 가격: {originPrice || '-'}</li>
-              <li>할인 가격: {price || '-'}</li>
-              <li>할인율: {discountRate || '-'}%</li>
+              <li>원본 가격: {originPrice || oldProduct.originPrice || '-'}</li>
+              <li>할인 가격: {price || oldProduct.price || '-'}</li>
+              <li>할인율: {discountRate || oldProduct.discountRate || '-'}%</li>
             </ul>
 
             <SellerProductPriceSelector
+              oldPrice={oldProduct.price}
+              oldOriginPrice={oldProduct.originPrice}
+              oldDiscountRate={oldProduct.discountRate}
               isOpen={isOpenPriceSelector}
               onToggle={onToggledPriceSelector}
               onSave={onSavePrice}
@@ -127,18 +135,37 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
         </div>
 
         {/* 재고 */}
-        <div className=' mb-5'>
-          <div className='flex-1 mt-4 sm:mt-0'>
-            <Label label='재고' className='mb-1 text-sm' />
+        <div className='mb-5'>
+          <Label label='재고(현재 재고, 최소 재고)' className='mb-1 text-sm' />
+          <div className='flex gap-3'>
             <input
               type='number'
               name='stock'
-              value={stock}
-              onChange={(e) => setStock(e.target.value)}
+              defaultValue={oldProduct.stock}
+              placeholder='재고'
+              className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm'
+              required
+            />
+            <input
+              type='number'
+              name='minStock'
+              placeholder='최소 재고'
+              defaultValue={oldProduct.minStock}
               className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm'
               required
             />
           </div>
+        </div>
+
+        {/* 유통기한 */}
+        <div className='mb-5'>
+          <Label label='유통기한 (선택)' className='mb-1 text-sm' />
+          <input
+            type='date'
+            name='expiryDate'
+            defaultValue={oldProduct.expiryDate?.split('T')[0]}
+            className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm'
+          />
         </div>
 
         {/* 카테고리 */}
@@ -149,6 +176,11 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
             className='text-sm text-gray-600 hover:text-gray-800 cursor-pointer pl-1'
           >
             선택된 카테고리: <span className='font-medium'>{category.name || '없음'}</span>
+            <input
+              className='hidden'
+              name='category'
+              value={category.name || oldProduct.categoryName}
+            />
           </p>
           <SellerCategorySelector
             categories={categories}
@@ -163,8 +195,7 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
           <Label label='상품 설명' className='mb-1 text-sm' />
           <textarea
             name='description'
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            defaultValue={oldProduct.description}
             className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm h-24 resize-none'
             required
           />
@@ -182,13 +213,18 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
               onChange={handleImageChange}
               className='absolute inset-0 opacity-0 cursor-pointer'
             />
-            <div className='flex items-center justify-center w-full h-full'>
-              {imagePreview ? (
-                <img
-                  src={imagePreview}
-                  alt='상품 미리보기'
-                  className='h-full max-h-28 object-contain rounded-lg'
-                />
+            <div className='flex items-center justify-center w-full h-full gap-3'>
+              {imagePreviews.length > 0 ? (
+                imagePreviews.map((img) => {
+                  return (
+                    <img
+                      key={img}
+                      src={img}
+                      alt='상품 미리보기'
+                      className='h-full max-h-20 w-20 object-contain rounded-lg border p-1 border-gray-200 bg-gray-100'
+                    />
+                  );
+                })
               ) : (
                 <IoImageOutline className='text-gray-400 text-4xl' />
               )}
@@ -207,4 +243,4 @@ function SellerRegisterForm({ onSubmit, onToggle }) {
   );
 }
 
-export default SellerRegisterForm;
+export default SellerEditForm;

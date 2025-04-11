@@ -30,6 +30,9 @@ export const apiRoutes = {
   // 판매자
   seller: {
     // 상품 관리
+    sellers: {
+      getAll: (page, size) => BASE_URL + `/seller/stores?page=${page}&size=${size}`,
+    },
     products: {
       getAllWithDashboard: (page, size, productName, state) =>
         BASE_URL +
@@ -93,6 +96,7 @@ export const apiRoutes = {
     },
   },
 
+
   // 인증
   auth: {
     signup: () => BASE_URL + `/auth/signup`,
@@ -100,6 +104,7 @@ export const apiRoutes = {
     userInfo: () => BASE_URL + `/auth/user-info`,
     redirect: () => BASE_URL + `/auth/get-redirect-url`,
     emailAuthCode: () => BASE_URL + `/auth/email/send-code`, //  인증 코드 발송
+    emailAuthCode2: () => BASE_URL + `/auth/email/password/send-code`, //  비밀번호 인증 코드 발송
     emailCodeVerify: () => BASE_URL + `/auth/email/code-verify`, // 인증 코드 검증
     findUserEmail: () => BASE_URL + `/auth/find-email`, // 이메일 찾기
     resetPassword: () => BASE_URL + `/auth/reset-password`, // 비밀번호 재설정
