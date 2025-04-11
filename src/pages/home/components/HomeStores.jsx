@@ -50,7 +50,7 @@ export default function HomeStores({ customClassName }) {
         <CenteredSlider>
           {stores?.map((store, index) => (
             <SwiperSlide key={index}>
-              <Link to={`/store/${1}`} className='group block'>
+              <Link to={`/${store.storeName}/shop`} className='group block'>
                 <div className='relative overflow-hidden rounded-lg sm:rounded-xl shadow-sm transition-all duration-300 group-hover:shadow-md'>
                   <div className='w-full min-w-[140px] sm:min-w-[200px] h-[180px] sm:h-[250px] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center'>
                     <svg

@@ -217,6 +217,7 @@ function SellerProductPage() {
             <SellerProductTable
               headers={headers}
               products={products}
+              onCheck={onCheck}
               onToggle={onToggleEditForm}
               onSelect={setSelectedProduct}
               onDelete={onDeleteProduct}
