@@ -1,6 +1,6 @@
 import { IoBuildOutline } from 'react-icons/io5';
 
-export default function SellerProductTable({ products, onToggle, onSelect }) {
+export default function SellerProductTable({ products, onToggle, onSelect, onCheck }) {
   function handleToggleClick(product) {
     onSelect(product); // 수정할 상품 정보 설정
     onToggle(); // 편칩창 오픈
@@ -25,7 +25,6 @@ export default function SellerProductTable({ products, onToggle, onSelect }) {
         <tbody>
           {products.length > 0 ? (
             products.map((product) => {
-              console.log(product)
               return (
                 <tr
                   key={product.productId}
@@ -37,6 +36,7 @@ export default function SellerProductTable({ products, onToggle, onSelect }) {
                       name='productId'
                       value={product.productId}
                       className='accent-blue-500'
+                      onClick={onCheck}
                     />
                   </td>
                   <td className='px-2 py-1 text-sm text-center'>{product.productId}</td>

@@ -65,16 +65,8 @@ export default function ProductDetailPage() {
     try {
       await addToCart({ productId: product.productId, quantity })
 
-      // 장바구니 추가 알림 표시
-      setShowCartNotification(true)
-
-      // 3초 후 알림 숨기기
-      setTimeout(() => {
-        setShowCartNotification(false)
-      }, 3000)
-    } catch (error) {
-      console.error("장바구니 추가 오류:", error)
-      alert("장바구니 추가에 실패했습니다.")
+    } finally {
+      console.debug("장바구니 추가 실행")
     }
   }
 
@@ -202,9 +194,9 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100 w-full">
       {/* 상단 배경 */}
-      <div className="bg-white shadow-sm">
+      <div className="bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <nav className="flex" aria-label="Breadcrumb">
             <ol className="flex items-center space-x-2 text-sm text-gray-500">
@@ -230,7 +222,7 @@ export default function ProductDetailPage() {
 
       {/* 상품 상세 정보 */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl  overflow-hidden">
           <div className="flex flex-col md:flex-row">
             {/* 상품 이미지 */}
             <div className="md:w-1/2 p-6">

@@ -113,7 +113,7 @@ const ProductGrid = ({
             padding: '0 40px',
           }}
         >
-       {getCurrentPageProducts().map((product) => {
+       {getCurrentPageProducts()?.map((product) => {
   console.log("내려받은 상품",product); // 🔍 product 객체 구조 확인용 로그
   console.log("🔥 gimage 원본:", product.gImage);
   console.log("✅ 최종 이미지 URL:", getFirstImageUrl(product.gImage));
