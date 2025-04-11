@@ -1,5 +1,5 @@
 import { TemplateBanner, TemplateHeader, Templategrid, TemplateBlank  ,TemplateText,TemplateHeader2,
-  TemplateImage } from './EditorTemplates';
+  TemplateImage ,  TemplateColorBox, } from './EditorTemplates';
 import React, { useEffect, useState } from 'react'; // useState, useEffect 추가
 
 /**
@@ -48,7 +48,11 @@ export default function EditorPreview({ element }) {
       console.log("🚀 grid properties:", elementWithIndex.properties); // 값 출력
       console.log("🚀 grid element:", elementWithIndex); // 값 출력
       return <Templategrid properties={elementWithIndex.properties} />;
-
+      case 'grid2':
+        console.log("🚀 grid2 properties:", elementWithIndex.properties); // 값 출력
+        console.log("🚀 grid2 element:", elementWithIndex); // 값 출력
+        return <Templategrid properties={elementWithIndex.properties} />;
+  
     case 'blank':
       console.log("🚀 blank properties:", elementWithIndex.properties); // 값 출력
       return <TemplateBlank properties={elementWithIndex.properties} />;
@@ -58,6 +62,9 @@ export default function EditorPreview({ element }) {
       case 'image':
         console.log("🚀 image properties:", elementWithIndex.properties);
         return <TemplateImage properties={elementWithIndex.properties} />;
+      case 'colorbox':
+        console.log("🎨 colorbox properties:", elementWithIndex.properties);
+        return <TemplateColorBox properties={elementWithIndex.properties} />;
     default:
       return <p className="text-gray-400">지원되지 1않는 요소 타입: {elementWithIndex.type}</p>;
   }

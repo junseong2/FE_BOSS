@@ -140,7 +140,7 @@ export default function ProductImageSlider({ imageList }) {
         </div>
       )}
 
-      <style jsx>{`
+      {/* <style jsx>{`
         .thumbs-swiper .swiper-slide-thumb-active {
           border-color: #4a90e2;
           opacity: 1;
@@ -165,7 +165,7 @@ export default function ProductImageSlider({ imageList }) {
           font-weight: bold;
           color: #333;
         }
-      `}</style>
+      `}</style> */}
     </>
   );
 }

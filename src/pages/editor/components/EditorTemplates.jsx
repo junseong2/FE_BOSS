@@ -173,52 +173,44 @@ export function TemplateHeader2({ properties }) {
 
 }
 /**
- * 커스텀 배너
+ * 커스텀 배너 
  * @returns
  */
 export function TemplateBanner({ properties }) {
+  const { title, subtitle, backgroundColor, imageUrl } = properties || {};
 
-  console.log("🚀렌더링파트 베너 image URL: ", properties?.imageUrl);
+  const fullImgUrl = imageUrl ? `http://localhost:5000${imageUrl}` : null;
 
   return (
     <div
-      className='relative max-h-[450px] h-full w-full p-4 flex items-center justify-center cursor-move'
-      style={{ backgroundColor: properties.backgroundColor }}
+      style={{
+        backgroundColor,
+        textAlign: "center",
+        color: "white",
+        padding: "20px",
+      }}
     >
-      <figure>
-        <div className='absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]  w-full flex items-center flex-col'>
-          <h2 className='text-3xl'>{properties.title}</h2>
-          <h3 className='text-xl mt-3'>{properties.subtitle}</h3>
-        </div>
-
-
-
-
-        {properties.imageUrl ? (
-  <img
-    className="w-full h-full"
-    src={`http://localhost:5000${properties.imageUrl}`}  // 절대 경로 사용
-    alt="배너 이미지"
-    width={1024}
-    height={300}
-  />
-) : (
-  <img
-    className="w-full h-full"
-    src="https://placehold.co/736x300"  // 기본 이미지 사용
-    alt="기본 배너 이미지"
-    width={1024}
-    height={300}
-  />
-)}
-
-
-
-
-      </figure>
+      <h2 style={{ fontSize: "28px", color: "#4294F2", fontWeight: "bold" }}>
+        {title}
+      </h2>
+      <p>{subtitle}</p>
+      <img
+        src={fullImgUrl || "https://placehold.co/736x300"}
+        alt="배너 이미지"
+        style={{
+          width: "100%",
+          height: "auto",
+          objectFit: "cover",
+          marginTop: "10px",
+        }}
+      />
     </div>
   );
 }
+
+
+
+
 
 export function Templategrid({ properties }) {
   const {
@@ -256,6 +248,73 @@ export function Templategrid({ properties }) {
     <p>상품이 없습니다.</p>
   )}
 </div>
+    </div>
+  );
+}
+// ✅ 새로운 TemplateGrid2 컴포넌트 (페이지네이션 기반)
+export function TemplateGrid2({ properties }) {
+  const {
+    columns = 3,
+    sortList = ['전체', '일간', '주간', '월간'],
+    title = '인기 상품',
+    products = [],
+    pageSize = 9,
+  } = properties;
+
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const totalPages = Math.ceil(products.length / pageSize);
+  const startIdx = currentPage * pageSize;
+  const paginated = products.slice(startIdx, startIdx + pageSize);
+
+  return (
+    <div className="relative cursor-move py-[50px]">
+      <h2 className="text-[1.8rem] text-center">{title}</h2>
+
+      {/* 정렬 리스트 */}
+      <SortList sortList={sortList} />
+
+      {/* 상품 그리드 */}
+      <div
+        className="grid gap-4 mt-4"
+        style={{
+          gridTemplateColumns: `repeat(${columns}, 1fr)`,
+        }}
+      >
+        {paginated.length > 0 ? (
+          paginated.map((product, index) => (
+            <div
+              key={`${product.title}-${index}`}
+              className="p-4 border rounded-lg bg-gray-50"
+            >
+              <p>{product.title}</p>
+              <p>{product.price}</p>
+            </div>
+          ))
+        ) : (
+          <p>상품이 없습니다.</p>
+        )}
+      </div>
+
+      {/* 페이지네이션 버튼 */}
+      <div className="flex justify-center gap-4 mt-6">
+        {currentPage > 0 && (
+          <button
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+            className="px-4 py-2 border rounded hover:bg-gray-100"
+          >
+            이전
+          </button>
+        )}
+        {currentPage < totalPages - 1 && (
+          <button
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            className="px-4 py-2 border rounded hover:bg-gray-100"
+          >
+            다음
+          </button>
+        )}
+      </div>
     </div>
   );
 }
@@ -310,18 +369,28 @@ export function TemplateImage({ properties }) {
   const {
     imageUrl = 'https://placehold.co/400x200',
     alt = '이미지',
+    borderRadius = '0px', // ✅ 둥근 정도 props로 받을 수 있도록 추가
   } = properties;
 
+  const fullImgUrl = imageUrl?.startsWith('http') ? imageUrl : `http://localhost:5000${imageUrl}`;
+
   return (
-    <div className="w-full h-full flex justify-center items-center p-4 overflow-hidden">
+    <div className="w-full h-full overflow-hidden">
       <img
-        src={`http://localhost:5000${imageUrl}`} // 로컬 이미지 경로일 경우
+        src={fullImgUrl}
         alt={alt}
-        className="w-full h-full object-contain rounded"
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'fill', // ✅ 이미지 비율 유지하지 않고 꽉 채우기
+          display: 'block',
+          borderRadius: borderRadius, // ✅ 둥근 정도 반영
+        }}
       />
     </div>
   );
 }
+
 
 
 // 예시 데이터
@@ -339,3 +408,27 @@ const properties = {
 };
 
 <Templategrid properties={properties} />
+
+// ColorBox 요소
+
+export function TemplateColorBox({ properties }) {
+  const {
+    backgroundColor = '#eeeeee',
+    height = '100vh', // 전체 배경처럼 사용 시
+    borderRadius = '0px',
+  } = properties || {};
+
+  return (
+    <div
+      className="absolute left-0 top-0 w-full"
+      style={{
+        backgroundColor,
+        height,
+        borderRadius,
+        zIndex: 0,
+      }}
+    />
+  );
+}
+
+
