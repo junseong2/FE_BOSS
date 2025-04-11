@@ -16,17 +16,26 @@ import SellerProductTable from './components/pages/SellerProductTable';
 import SellerRegisterForm from './components/form/SellerRegisterForm';
 import Pagination from '../../components/Pagination';
 import TableSkeleton from '../../components/skeleton/TableSkeleton';
+
+import CrawledProductRegisterForm from './components/pages/CrawledProductRegisterForm'; // 🆕 [상품 받아오기 모달 import]
+
 import { toastError } from '../../components/toast/CustomToast';
 import SellerEditForm from './components/form/SellerEditForm';
+
 
 const headers = ['선택', '상품ID', '상품명', '카테고리', '설명', '가격', '재고', '작업'];
 const PAGE_SIZE = 15;
 function SellerProductPage() {
   const { onToggle, isOpen, toggleId } = useToggle();
+
+  const { onToggle: onToggleNewProductForm, isOpen: isOpenNewProductForm } = useToggle();
+  const { onToggle: onToggleCrawledForm, isOpen: isOpenCrawledForm } = useToggle(); // 🆕 [크롤링 모달 토글]
+
   const { onToggle: onToggleRegisterForm, isOpen: isOpenRegisterForm } = useToggle();
   const { onToggle: onToggleEditForm, isOpen: isOpenEditForm } = useToggle();
 
   const [selectedProduct, setSelectedProduct]  = useState([]);
+
   const [productIds, setProductIds] = useState([]);
   const [loadingTrigger, setLoadingTrigger] = useState(false);
   const [page, setPage] = useState(0);
@@ -207,6 +216,12 @@ function SellerProductPage() {
             <SellerActionButton onClick={onToggleRegisterForm}>
               <IoAddCircleOutline />새 상품
             </SellerActionButton>
+
+            {/* 🆕 [상품 받아오기 모달 버튼 - 시작] */}
+            <SellerActionButton onClick={onToggleCrawledForm}>
+              상품 받아오기
+            </SellerActionButton>
+            {/* 🆕 [상품 받아오기 모달 버튼 - 끝] */}
           </div>
         </div>
 
@@ -233,10 +248,26 @@ function SellerProductPage() {
           totalPageCount={Math.ceil(totalCount / PAGE_SIZE)}
         />
       </section>
+
+
+      {isOpenNewProductForm ? (
+        <SellerRegisterForm onToggle={onToggleNewProductForm} onSubmit={onCreateProductSubmit} />
+      ) : null}
+
+      {/* 🆕 [상품 받아오기 모달 렌더링 - 시작] */}
+      {isOpenCrawledForm && (
+        <CrawledProductRegisterForm
+          onClose={onToggleCrawledForm}
+          categories={[]} // 필요 시 카테고리 리스트 전달
+        />
+      )}
+      {/* 🆕 [상품 받아오기 모달 렌더링 - 끝] */}
+
       {isOpenRegisterForm ? (
         <SellerRegisterForm onToggle={onToggleRegisterForm} onSubmit={onCreateProductSubmit} />
       ) : null}
       {isOpenEditForm ? <SellerEditForm onToggle={onToggleEditForm} onUpdateSubmit={onUpdateProductSubmit} oldProduct={selectedProduct} /> : null}
+
     </>
   );
 }
