@@ -123,6 +123,37 @@ export const elementTemplates = {
     },
     layout: { top: 500, column: 1, columnSpan: 8 },
   },
+
+  colorbox: {
+    id: 'template-colorbox',
+    type: 'colorbox',
+    name: '컬러 박스',
+    properties: {
+      backgroundColor: '#FACC15', // 노란색
+      height: '150px',
+      borderRadius: '12px',
+      size: {
+        web: { width: '100%', height: '150px' },
+      },
+    },
+    layout: { top: 600, column: 1, columnSpan: 8 },
+  },
+  grid2: {
+    id: 'template-product-grid2',
+    type: 'grid2',
+    name: '상품 그리드2',
+    version: 1,
+    properties: {
+      sortList: ['전체', '일간', '주간', '월간'],
+      title: '인기 상품',
+      columns: 3,
+      size: {
+        web: { width: '100%', height: 'auto' },
+      },
+    },
+    layout: { top: 250, column: 1, columnSpan: 8 },
+  },
+  
 };
 
 
@@ -234,6 +265,32 @@ export const initialElements = [
     },
     layout: { top: 500, column: 1, columnSpan: 8 },
   },
+
+  {
+    id: 'el-8',
+    type: 'colorbox',
+    name: '컬러 박스',
+    properties: {
+      backgroundColor: '#FACC15',
+      height: '150px',
+      borderRadius: '12px',
+      size: { web: { width: '100%', height: '150px' } },
+    },
+    layout: { top: 600, column: 1, columnSpan: 8 },
+  },
+  {
+    id: 'el-9',
+    type: 'grid2',
+    name: '상품 그리드2',
+    properties: {
+      sortList: ['전체', '일간', '주간', '월간'],
+      title: '인기 상품',
+      columns: 3,
+      size: { web: { width: '100%', height: 'auto' } },
+    },
+    layout: { top: 250, column: 1, columnSpan: 8 },
+  },
+  
 ];
 
 // 📦 모바일용 템플릿
@@ -364,6 +421,27 @@ export const mobileelementTemplates = {
       columnSpan: 4,
     },
   },
+
+  colorbox: {
+    id: 'template-mobile-colorbox',
+    type: 'mobilecolorbox',
+    name: '컬러 박스',
+    properties: {
+      backgroundColor: '#FACC15',
+      height: '100px',
+      borderRadius: '8px',
+      size: {
+        mobile: { width: '100%', height: '100px' },
+      },
+    },
+    layout: {
+      row: 5,
+      column: 1,
+      rowSpan: 1,
+      columnSpan: 4,
+    },
+  },
+  
   
 };
 

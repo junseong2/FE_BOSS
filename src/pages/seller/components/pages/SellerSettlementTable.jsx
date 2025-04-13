@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { formatLocalDate } from '../../../../utils/formatter';
 
 /** 정산상태 컬러 라벨링 */
@@ -47,7 +46,7 @@ export default function SellerSettlementTable({ settlements }) {
         </thead>
         <tbody className='divide-y divide-gray-200'>
           
-          { settlements.length>0 ?
+          { settlements?.length>0 ?
           
           settlements?.map((settlement) => (
             <tr key={settlement.settlementId} className='hover:bg-gray-50'>

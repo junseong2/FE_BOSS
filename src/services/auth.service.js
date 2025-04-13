@@ -59,17 +59,38 @@ export const sendEmailAuthCode = async (email) => {
     return null;
   }
 };
+/** 비밀번호 찾기용 이메일 인증 코드 발송 */
+export const passsendEmailAuthCode = async (email) => {
+  const url = apiRoutes.auth.emailAuthCode2();
+  try {
+    await instance.post(url, { email });
+    alert('인증코드가 발송되었습니다. 이메일을 확인해주세요.');
+    return true;
+  } catch (error) {
+    return null;
+  }
+};
 
 /** 이메일 인증 코드 검증 */
 export const verifyEmailAuthCode = async (code, email) => {
   const url = apiRoutes.auth.emailCodeVerify();
+
   try {
     const response = await instance.post(url, { code, email });
-    return response.status < 400;
+
+    // 204 No Content → 인증 성공
+    if (response.status === 204) return true;
+
+    // 200 OK + "success" → 인증 실패임 (⚠️ 이름만 success...)
+    if (response.data === "success") return false;
+
+    return false;
   } catch (error) {
+    console.error("이메일 인증 에러:", error);
     return false;
   }
 };
+
 
 /** 아이디 찾기 */
 export const findUserEmail = async ({ email }) => {

@@ -10,6 +10,9 @@ import SellerCardSkeleton from './components/common/SellerCardSkeleton';
 import SellerDateFilter from './components/common/SellerDateFilter';
 import SellerMonthlyGraph from './components/pages/SellerMonthlyGraph';
 import SellerSalesCategoryGraph from './components/pages/SellerSalesCategoryGraph';
+import SellerActionButton from './components/common/SellerActionButton';
+import { IoCalendar } from 'react-icons/io5';
+import DateRangePicker from '../../components/DateRangeSelector';
 
 function SellerPaymentPage() {
   // 검색할 날짜 범위 상태 저장
@@ -26,6 +29,9 @@ function SellerPaymentPage() {
     canceledTotalPrice: 0,
   });
 
+  // 날짜 선택기 폼 토글
+  const [openDateRangeForm, setOpenDateRangeForm] = useState(false);
+
   const [categoryStatistics, setCategoryStatistics] = useState([]);
   const [monthStatistics, setMonthStatistics] = useState([]);
 
@@ -35,6 +41,11 @@ function SellerPaymentPage() {
     month: false,
     category: false,
   });
+
+  // 날짜 범위 선택 폼 토글
+  function onToggleDateRangeForm() {
+    setOpenDateRangeForm((prev) => !prev);
+  }
 
   // 날짜 필터
   const handleDateRange = (e) => {
@@ -115,7 +126,12 @@ function SellerPaymentPage() {
   return (
     <section className='bg-[#f3f4f6] min-h-screen h-auto p-3 border border-gray-200 rounded-[5px]'>
       {/* 날짜 필터 */}
-      <SellerDateFilter onChange={handleDateRange} />
+      <div className='flex items-center gap-3 mb-8'>
+        <SellerDateFilter onChange={handleDateRange} />
+        <SellerActionButton onClick={onToggleDateRangeForm}>
+          <IoCalendar /> 날짜선택
+        </SellerActionButton>
+      </div>
 
       {/* 신규주문, 배송중, 배송완료, 취소/반품 통계 */}
       <div>
@@ -131,22 +147,22 @@ function SellerPaymentPage() {
           ) : (
             <>
               <SellerCard
-                bgColor='bg-white'
+                bgColor='bg-white rounded-md'
                 amount={'￦' + (summaryStatistics.totalPrice?.toLocaleString() || 0)}
                 title='총 매출'
               />
               <SellerCard
-                bgColor='bg-white'
+                bgColor='bg-white rounded-md'
                 amount={summaryStatistics.totalOrderCount || 0}
                 title='총 주문 건수'
               />
               <SellerCard
-                bgColor='bg-white'
+                bgColor='bg-white rounded-md'
                 amount={summaryStatistics.paidOrderCount || 0}
                 title='결제 완료 주문'
               />
               <SellerCard
-                bgColor='bg-white'
+                bgColor='bg-white rounded-md'
                 amount={'￦' + (summaryStatistics.canceledTotalPrice?.toLocaleString() || 0)}
                 title='취소/환불 금액'
               />
@@ -160,7 +176,7 @@ function SellerPaymentPage() {
         <h2 className='text-2xl font-bold pt-10 '>매출분석</h2>
         <div className='flex gap-5 lg:flex-row flex-col '>
           {/* 월별 매출 */}
-          <div className='bg-white mt-5 border border-gray-200 p-3 pb-5 w-full h-full min-h-[450px]  lg:max-h-1/2'>
+          <div className='bg-white mt-5 border  rounded-md border-gray-200 p-3 pb-5 w-full h-full min-h-[450px]  lg:max-h-1/2'>
             <h3 className='font-bold py-5'>월별 매출</h3>
             {loadingState.month ? (
               <p className='text-gray-500 w-full h-[150px] flex items-center justify-center animate-pulse'>
@@ -172,7 +188,7 @@ function SellerPaymentPage() {
           </div>
 
           {/* 카테고리별 매출 */}
-          <div className='bg-white lg:mt-5 mt-0 border border-gray-200 p-3 pb-5 w-full h-full min-h-[450px]  lg:max-h-1/2'>
+          <div className='bg-white lg:mt-5  rounded-md mt-0 border border-gray-200 p-3 pb-5 w-full h-full min-h-[450px]  lg:max-h-1/2'>
             <h3 className='font-bold py-5'>카테고리별 매출</h3>
             {loadingState.category ? (
               <p className='text-gray-500 w-full h-[150px] flex items-center justify-center  animate-pulse'>
@@ -184,6 +200,9 @@ function SellerPaymentPage() {
           </div>
         </div>
       </div>
+      {openDateRangeForm ? (
+        <DateRangePicker onClose={onToggleDateRangeForm} setDateRange={setDateRange} />
+      ) : null}
     </section>
   );
 }
