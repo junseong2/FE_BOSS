@@ -89,6 +89,7 @@ export default function Top() {
           <>
             <IconBtn icon={<MdDashboard />} label="에디터" onClick={() => navigate("/editor")} />
             <IconBtn icon={<MdStorefront />} label="판매자" onClick={() => navigate("/seller")} />
+            <IconBtn icon={<IoCartOutline />} label="장바구니" onClick={() => navigate("/cart")} badge={cartItems.length}/>
           </>
         )
       case "ADMIN":
@@ -102,12 +103,7 @@ export default function Top() {
         return (
           <>
             <IconBtn icon={<MdStorefront />} label="판매업 등록" onClick={() => setIsSellerModalOpen(true)} />
-            <IconBtn
-              icon={<IoCartOutline />}
-              label="장바구니"
-              onClick={() => navigate("/cart")}
-              badge={cartItems.length}
-            />
+            <IconBtn icon={<IoCartOutline />} label="장바구니" onClick={() => navigate("/cart")} badge={cartItems.length}/>
           </>
         )
     }
@@ -187,7 +183,7 @@ export default function Top() {
       </header>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-55">
           <div className="bg-white rounded-lg shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
             <SignIn
               onClose={() => setIsModalOpen(false)}

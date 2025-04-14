@@ -1,18 +1,48 @@
-import { NavLink , useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
-  IoLogOutOutline,
-  IoBarChartOutline,
-  IoBriefcaseOutline,
-  IoCartOutline,
-  IoCarOutline,
-  IoPersonOutline,
-  IoCardOutline,
-  IoGridOutline,
-  IoStorefront,
+  IoLogOutOutline, IoBarChartOutline, IoBriefcaseOutline, IoCartOutline,
+  IoCarOutline, IoPersonOutline, IoCardOutline, IoGridOutline, IoStorefront
 } from 'react-icons/io5';
 
 function SellerSideBar() {
   const navigate = useNavigate();
+  const [userId, setUserId] = useState(null); // 로그인한 유저 ID
+  const [representativeName, setRepresentativeName] = useState('');
+  const [storename, setStorename] = useState('');
+
+  useEffect(() => {
+    fetch('http://localhost:5000/auth/user-info', {
+      credentials: 'include',
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.userId) {
+          setUserId(data.userId);
+        }
+      })
+      .catch(err => console.error('유저 정보 가져오기 실패', err));
+  }, []);
+
+  useEffect(() => {
+    async function fetchSellerInfo() {
+      try {
+        const res = await fetch(`http://localhost:5000/seller/seller-info-byuserid/${userId}`, {
+          credentials: 'include',
+        });
+        const data = await res.json();
+        console.log('✅ 판매자 정보:', data);
+
+        setRepresentativeName(data.representativeName); // ✅ 여기 정확히 들어가야 함
+        setStorename(data.storename);
+      } catch (err) {
+        console.error('❌ 판매자 정보 가져오기 실패', err);
+      }
+    }
+
+    if (userId) fetchSellerInfo();
+  }, [userId]);
+
   return (
     <>
       <div className='transition lg:max-w-[200px] min-w-[60px] max-w-[60px] h-full w-full'></div>
@@ -90,8 +120,8 @@ function SellerSideBar() {
         <div className='mt-auto flex items-center justify-center lg:flex-row flex-col'>
           <IoPersonOutline className='lg:w-7 lg:h-7 w-5 h-5 group' />
           <div className='ml-2 lg:flex flex-col hidden'>
-            <p className=' m-0 text-sm'>홍길동 사장님</p>
-            <span className='text-xs text-gray-400'>BOSS&샵</span>
+            <p className='m-0 text-sm'>{representativeName || '---'} 사장님</p>
+            <span className='text-xs text-gray-400'>{storename + "샵" || '스토어명 없음'}</span>
           </div>
 
           <button
