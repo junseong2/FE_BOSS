@@ -1,12 +1,15 @@
-function SellerActionButton({ children, onClick }) {
+function SellerActionButton({ children, onClick, disabled = false }) {
   return (
     <button
+      className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 ${
+        disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+      }`}
       onClick={onClick}
-      className='py-2 flex items-center justify-center gap-1.5 border-none bg-[#1A2B3E] text-white font-normal text-sm px-2 py-1 rounded-md w-25 hover:bg-[#1a2b3ee1] cursor-pointer'
+      disabled={disabled}
     >
       {children}
     </button>
-  );
+  )
 }
 
-export default SellerActionButton;
+export default SellerActionButton
