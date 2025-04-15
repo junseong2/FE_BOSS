@@ -28,6 +28,7 @@ const ProductGrid = ({
 
   const fetchedMapRef = useRef({});
 
+
   const fetchPopularProducts = async (type) => {
     try {
       let url;
@@ -45,6 +46,7 @@ const ProductGrid = ({
     }
   };
   
+
   // ✅ sortType이 바뀌었을 때만 fetch (한 번만)
   useEffect(() => {
     if (!fetchedMapRef.current[sortType]) {
