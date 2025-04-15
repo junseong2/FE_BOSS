@@ -56,7 +56,7 @@ export default function EditorHeader({ elements,  editedElement, sellerId , onUp
 const handleMobileSaveChanges = async () => {
   try {
 
-    console.log("🔍 EditorHeader에서 받은 elements: by EditorHeader", elements);
+    console.log("🔍 @@@@@@@@@@@@@@@@EditorHeader에서 받은 elements: by EditorHeader", elements);
 
     if (!sellerId) {
       console.error("❌ 판매자 ID를 찾을 수 없습니다.");
@@ -244,8 +244,8 @@ const mobilesettingsToSave = elements.map(element => {
     const response = await updateSellerMobileSettings(sellerId,mobilesettingsToSave);
 
     if (response && response.message) {
-      console.log("✅ 설정이 성공적으로 저장되었습니다:", response);
-      console.log("✅ 설정이 성공적으로 저장되었습니다2:", mobilesettingsToSave);
+      console.log("@@ 설정이 성공적으로 저장되었습니다:", response);
+      console.log("모바일 설정이 성공적으로 저장되었습니다2:", mobilesettingsToSave);
       alert("설정이 성공적으로 저장되었습니다!");
     } else {
       console.error("❌ 서버 응답 오류:", response);

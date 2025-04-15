@@ -59,7 +59,7 @@ export function TemplateHeader({ properties }) {
       </div>
 
       {/* 네비게이션 */}
-      <div className='flex items-center max-w-[300px] w-full h-[50px]'>
+      <div className='flex items-center max-w-[400px] w-full h-[50px]'>
       <ul className='flex gap-[15px] m-0'>
   {properties?.menuItems.map((menu, index) => {
     const label = typeof menu === "string" ? menu : menu.title;
