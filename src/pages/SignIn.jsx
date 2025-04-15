@@ -90,7 +90,7 @@ function SignIn({ onClose, onLoginSuccess }) {
 
         if (onLoginSuccess) onLoginSuccess(); // ✅ Top.jsx에 로그인 성공 알림
         onClose();
-        navigate('/');
+        // navigate('/');
       } else {
         alert('로그인 실패: ' + result.error);
       }

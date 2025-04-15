@@ -20,7 +20,6 @@ export default function SellerReviewPage() {
 
   // 별점 필터링
   const handleRatingFiltering = (rating) => {
-    console.log(rating);
     setSelectedRating(rating);
   };
 

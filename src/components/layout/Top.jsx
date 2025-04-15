@@ -88,7 +88,7 @@ export default function Top() {
         return (
           <>
             <IconBtn icon={<MdDashboard />} label="에디터" onClick={() => navigate("/editor")} />
-            <IconBtn icon={<MdStorefront />} label="판매자" onClick={() => navigate("/seller")} />
+            <IconBtn icon={<MdStorefront />} label="판매자" onClick={() => navigate("/seller/dashboard")} />
           </>
         )
       case "ADMIN":
