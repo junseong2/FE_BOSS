@@ -28,19 +28,24 @@ const ProductGrid = ({
 
   const fetchedMapRef = useRef({});
 
-  const fetchPopularProducts = async (type) => {
-    try {
-      let url;
-      if (sellerId) {
-        url = `${import.meta.env.VITE_BACKEND_URL}/seller/products/popular?sellerId=${sellerId}&sortBy=${type}`;
+const fetchPopularProducts = async (type) => {
+  try {
+    let url;
 
-      const res = await axios.get(url);
-      setProducts(res.data);
-      setCurrentPage(0); // 페이지도 초기화
-    } catch (err) {
-      console.error('🔥 인기 상품 불러오기 실패:', err);
+    if (sellerId) {
+      url = `${import.meta.env.VITE_BACKEND_URL}/seller/products/popular?sellerId=${sellerId}&sortBy=${type}`;
+    } else {
+      url = `${import.meta.env.VITE_BACKEND_URL}/products/popular?sortBy=${type}`;
     }
-  };
+
+    const res = await axios.get(url);
+    setProducts(res.data);
+    setCurrentPage(0); // 페이지도 초기화
+  } catch (err) {
+    console.error('🔥 인기 상품 불러오기 실패:', err);
+  }
+};
+
 
   // ✅ sortType이 바뀌었을 때만 fetch (한 번만)
   useEffect(() => {
