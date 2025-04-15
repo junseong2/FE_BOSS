@@ -34,13 +34,15 @@ export default function SellerProductPriceSelector({
   }, [originalPrice, discountedPrice]);
 
   // 할인률 적용
-  const applyDiscountRate = (rate) => {
-    setDiscountRate(rate);
-    if (originalPrice || (oldOriginPrice && Number(originalPrice || oldOriginPrice) > 0)) {
-      const calculatedPrice = Number(originalPrice) || oldOriginPrice * (1 - rate / 100);
-      setDiscountedPrice(Math.floor(calculatedPrice).toString());
-    }
-  };
+const applyDiscountRate = (rate) => {
+  setDiscountRate(rate);
+  const original = Number(originalPrice) || Number(oldOriginPrice);
+  if (original > 0) {
+    const discounted = original * (1 - rate / 100);
+    setDiscountedPrice(Math.floor(discounted));
+  }
+};
+
 
   // 모달 닫기
   const handleClose = () => {

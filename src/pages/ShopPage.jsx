@@ -169,9 +169,14 @@ function ShopPage() {
       setProducts([]);
       setCurrentPage(0);
       setHasMore(true);
-      fetchProducts();
+      // ✅ 이 안에서 fetchProducts()를 직접 호출하지 말고,
+      // 페이지 바뀌었을 때만 아래쪽 useEffect로 fetch하도록 하자
     }
-  }, [sellerId, sortOrder, fetchProducts]);
+  }, [sellerId, sortOrder]);
+  
+  useEffect(() => {
+    fetchProducts();
+  }, [currentPage]); // ✅ 페이지 변경될 때만 호출
 
   // 모바일 여부에 따라 selectedSettings 업데이트
   useEffect(() => {
@@ -208,109 +213,140 @@ function ShopPage() {
         className="relative w-full"
         style={{ minHeight: `${Math.max(canvasHeight + 300, 600)}px` }}
       >
-        <div
-          ref={containerRef}
-          style={{
-            position: 'relative',
-            display: 'grid',
-            gridTemplateColumns: `repeat(${gridColumns}, 1fr)`,
-            gap: `${gridGap}px`,
-            padding: '1rem',
-            paddingBottom: isMobile ? '70px' : '0px',
-          }}
-        >
-          {/* 1. ColorBox – 배경용 */}
-          {selectedSettings
-            .filter((component) => component.type === 'colorbox' && component.layout)
-            .map((component, index) => {
-              const Component = componentsMap[component.type];
-              const { top, column, columnSpan } = component.layout;
-              const height = component.properties?.size?.web?.height || 'auto';
-              return (
-                <div
-                  key={component.id || `colorbox-${index}`}
-                  style={{
-                    position: 'absolute',
-                    zIndex: 0,
-                    top: `${top}px`,
-                    left: `${((column - 1) / gridColumns) * 100}%`,
-                    width: `${(columnSpan / gridColumns) * 100}%`,
-                    height,
-                  }}
-                >
-                  <Component {...component.properties} />
-                </div>
-              );
-            })}
+     <div
+  ref={containerRef}
+  style={
+    isMobile
+      ? {
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem',
+          padding: '1rem',
+          paddingBottom: '70px',
+        }
+      : {
+          position: 'relative',
+          display: 'grid',
+          gridTemplateColumns: `repeat(${gridColumns}, 1fr)`,
+          gap: `${gridGap}px`,
+          padding: '1rem',
+          paddingBottom: '0px',
+        }
+  }
+>
+  {/* 모바일: 순차 렌더링 */}
+  {isMobile
+    ? selectedSettings.map((component, index) => {
+        const Component = componentsMap[component.type];
+        if (!Component) return null;
+        return (
+          <div key={component.id || `${component.type}-${index}`} className="w-full">
+            <Component {...component.properties} sellerId={sellerId} />
+          </div>
+        );
+      })
+    : (
+      <>
+        {/* 1. ColorBox – 배경용 */}
+        {selectedSettings
+          .filter((component) => component.type === 'colorbox' && component.layout)
+          .map((component, index) => {
+            const Component = componentsMap[component.type];
+            const { top, column, columnSpan } = component.layout;
+            const height = component.properties?.size?.web?.height || 'auto';
+            console.log(`🧩 렌더링됨1: ${component.type} (id=${component.id})`);
 
-          {/* 2. 헤더류 요소 – 제일 위에 */}
-          {selectedSettings
-            .filter(
-              (component) =>
-                ['header', 'header2', 'mobileheader'].includes(component.type) &&
-                component.layout
-            )
-            .map((component, index) => {
-              const Component = componentsMap[component.type];
-              const { top, column, columnSpan } = component.layout;
-              const height = component.properties?.size?.web?.height || 'auto';
-              return (
-                <div
-                  key={component.id || `header-${index}`}
-                  style={{
-                    position: 'absolute',
-                    zIndex: 10,
-                    top: `${top}px`,
-                    left: `${((column - 1) / gridColumns) * 100}%`,
-                    width: `${(columnSpan / gridColumns) * 100}%`,
-                    height,
-                  }}
-                >
-                  <Component {...component.properties} sellerId={sellerId} top={top} />
-                </div>
-              );
-            })}
+            return (
+              <div
+                key={component.id || `colorbox-${index}`}
+                style={{
+                  position: 'absolute',
+                  zIndex: 0,
+                  top: `${top}px`,
+                  left: `${((column - 1) / gridColumns) * 100}%`,
+                  width: `${(columnSpan / gridColumns) * 100}%`,
+                  height,
+                }}
+              >
+                <Component {...component.properties} />
+              </div>
+            );
+          })}
 
-          {/* 3. 일반 요소 – 기본 */}
-          {selectedSettings
-            .filter(
-              (component) =>
-                !['colorbox', 'header', 'header2', 'mobileheader'].includes(component.type) &&
-                component.layout
-            )
-            .map((component, index) => {
-              const Component = componentsMap[component.type];
-              const { top, column, columnSpan } = component.layout;
-              const height = component.properties?.size?.web?.height || 'auto';
-              // Component가 없거나 layout이 없다면 렌더링하지 않음
-              if (!Component) return null;
-              return (
-                <div
-                  key={component.id || `${component.type}-${index}`}
-                  style={{
-                    position: 'absolute',
-                    zIndex: 1,
-                    top: `${top}px`,
-                    left: `${((column - 1) / gridColumns) * 100}%`,
-                    width: `${(columnSpan / gridColumns) * 100}%`,
-                    height,
-                  }}
-                >
-                  <Component {...component.properties} sellerId={sellerId} top={top} />
-                </div>
-              );
-            })}
+        {/* 2. 헤더류 요소 – 제일 위에 */}
+        {selectedSettings
+          .filter(
+            (component) =>
+              ['header', 'header2', 'mobileheader'].includes(component.type) &&
+              component.layout
+          )
+          .map((component, index) => {
+            const Component = componentsMap[component.type];
+            const { top, column, columnSpan } = component.layout;
+            const height = component.properties?.size?.web?.height || 'auto';
+            console.log(`🧩 렌더링됨2: ${component.type} (id=${component.id})`);
 
-          {/* 모바일 하단 네비게이션바 */}
-          {isMobile && mobileBottomNav && mobileBottomNav.layout && (
-            <div className="fixed bottom-0 left-0 w-full z-50">
-              <MobileBottomNavigationBar
-                backgroundColor={mobileBottomNav.properties.backgroundColor}
-                items={mobileBottomNav.properties.items || []}
-              />
-            </div>
-          )}
-        </div>
+            return (
+              <div
+                key={component.id || `header-${index}`}
+                style={{
+                  position: 'absolute',
+                  zIndex: 10,
+                  top: `${top}px`,
+                  left: `${((column - 1) / gridColumns) * 100}%`,
+                  width: `${(columnSpan / gridColumns) * 100}%`,
+                  height,
+                }}
+              >
+                <Component {...component.properties} sellerId={sellerId} top={top} />
+              </div>
+            );
+          })}
+
+        {/* 3. 일반 요소 – 기본 */}
+        {selectedSettings
+          .filter(
+            (component) =>
+              !['colorbox', 'header', 'header2', 'mobileheader'].includes(component.type) &&
+              component.layout
+          )
+          .map((component, index) => {
+            const Component = componentsMap[component.type];
+            const { top, column, columnSpan } = component.layout;
+            const height = component.properties?.size?.web?.height || 'auto';
+            console.log(`🧩 렌더링됨3: ${component.type} (id=${component.id})`);
+
+            if (!Component) return null;
+            return (
+              <div
+                key={component.id || `${component.type}-${index}`}
+                style={{
+                  position: 'absolute',
+                  zIndex: 1,
+                  top: `${top}px`,
+                  left: `${((column - 1) / gridColumns) * 100}%`,
+                  width: `${(columnSpan / gridColumns) * 100}%`,
+                  height,
+                }}
+              >
+                <Component {...component.properties} sellerId={sellerId} top={top} />
+              </div>
+            );
+          })}
+      </>
+    )}
+
+  {/* 모바일 하단 네비게이션바 */}
+  {isMobile && mobileBottomNav && mobileBottomNav.layout && (
+    <div className="fixed bottom-0 left-0 w-full z-50">
+      <MobileBottomNavigationBar
+        backgroundColor={mobileBottomNav.properties.backgroundColor}
+        items={mobileBottomNav.properties.items || []}
+      />
+    </div>
+  )}
+</div>
+
       </div>
 
       {/* Footer (필요시 추가) */}

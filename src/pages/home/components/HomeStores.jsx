@@ -48,35 +48,41 @@ export default function HomeStores({ customClassName }) {
 
       <div className='mt-3 sm:mt-5'>
         <CenteredSlider>
-          {stores?.map((store, index) => (
-            <SwiperSlide key={index}>
-              <Link to={`/store/${1}`} className='group block'>
-                <div className='relative overflow-hidden rounded-lg sm:rounded-xl shadow-sm transition-all duration-300 group-hover:shadow-md'>
-                  <div className='w-full min-w-[140px] sm:min-w-[200px] h-[180px] sm:h-[250px] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center'>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      className='h-12 w-12 sm:h-16 sm:w-16 text-gray-300'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      stroke='currentColor'
-                    >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth={1}
-                        d='M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'
-                      />
-                    </svg>
-                  </div>
-                  <div className='absolute inset-0 bg-black opacity-0 transition-opacity duration-300 group-hover:opacity-10'></div>
-                </div>
-                <strong className='mt-2 sm:mt-3 text-center group-hover:text-gray-800 font-medium text-sm sm:text-base transition-colors line-clamp-1'>
-                  {store.storeName}
-                </strong>
-                <p className='text-center text-xs sm:text-sm text-gray-500'>{store.description}</p>
-              </Link>
-            </SwiperSlide>
-          ))}
+
+
+          
+        {stores?.map((store, index) => {
+  console.log('스토어 정보:', store); // ✅ 여기서 출력 가능
+
+  return (
+    <SwiperSlide key={index}>
+      <Link to={`/${store.storeName}/shop`} className='group block'>
+        <div className='relative overflow-hidden rounded-lg sm:rounded-xl shadow-sm transition-all duration-300 group-hover:shadow-md'>
+          <div className='w-full min-w-[140px] sm:min-w-[200px] h-[180px] sm:h-[250px] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center'>
+            <img
+              src={`http://localhost:5000/uploads/${store['sellerId']}_el-1.jpg`}
+              alt='썸네일'
+              className='w-full h-full object-cover'
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = '/default-thumbnail.jpg';
+              }}
+            />
+          </div>
+          <div className='absolute inset-0 bg-red opacity-0 transition-opacity duration-300 group-hover:opacity-10'></div>
+        </div>
+        <strong className='mt-2 sm:mt-3 text-center group-hover:text-red-800 font-medium text-sm sm:text-base transition-colors line-clamp-1'>
+          {store.storeName}
+        </strong>
+        <p className='text-center text-xs sm:text-sm text-red-500'>{store.description}</p>
+      </Link>
+    </SwiperSlide>
+  );
+})}
+
+
+
+
         </CenteredSlider>
       </div>
     </div>

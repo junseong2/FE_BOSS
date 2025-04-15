@@ -33,9 +33,7 @@ const ProductGrid = ({
       let url;
       if (sellerId) {
         url = `${import.meta.env.VITE_BACKEND_URL}/seller/products/popular?sellerId=${sellerId}&sortBy=${type}`;
-      } else {
-        url = `${import.meta.env.VITE_BACKEND_URL}/products/popular?sortBy=${type}`;
-      }
+      } 
       const res = await axios.get(url);
       setProducts(res.data);
       setCurrentPage(0); // 페이지도 초기화
