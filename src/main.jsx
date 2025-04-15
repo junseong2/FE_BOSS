@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom'; // ✅ 여기만 사용!
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import './index.css';
-import './menubar.css';
+
 import './animations.css';
 import React from "react";
 
