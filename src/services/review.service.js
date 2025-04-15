@@ -33,6 +33,36 @@ export const createSellerReviewAnswer = async (reviewId, formData) => {
   }
 };
 
+/** 판매자 답글 수정 */
+export const updateSellerReviewAnswer = async (reviewId, answerId, formData) => {
+  const url = apiRoutes.seller.reviews.update(reviewId, answerId);
+  try {
+    const response = await instance.patch(url, formData);
+
+    if (response.status > 399) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+/** 판매자 답글 삭제 */
+export const deleteSellerReviewAnswer = async (reviewId, answerId) => {
+  const url = apiRoutes.seller.reviews.delete(reviewId, answerId);
+  try {
+    const response = await instance.delete(url);
+
+    if (response.status > 399) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 // 고객
 /** 리뷰 조회 */
 export const getReviews = async ({ sortby, page, size, productId }) => {

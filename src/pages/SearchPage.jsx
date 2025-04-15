@@ -1,5 +1,3 @@
-"use client"
-
 import { useLocation, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import axios from "axios"
@@ -16,24 +14,34 @@ function SearchPage() {
   const location = useLocation()
   const navigate = useNavigate()
   const query = new URLSearchParams(location.search).get("query") // 쿼리 파라미터 가져오기
+  const [minPrice, setMinPrice] = useState('')
+  const [maxPrice, setMaxPrice] = useState('')
 
-  useEffect(() => {
-    const fetchSearchResults = async () => {
-      setLoading(true)
-      try {
-        const response = await axios.get(`http://localhost:5000/products/search?query=${query}`)
-        setSearchResults(response.data)
-      } catch (error) {
-        console.error("검색 결과를 불러오는 데 실패했습니다.", error)
-      } finally {
-        setLoading(false)
-      }
+
+  const fetchSearchResults = async () => {
+    setLoading(true)
+    try {
+      const response = await axios.get(`http://localhost:5000/products/search?query=${query}`)
+      let filtered = response.data
+
+      // 가격 필터 적용
+      const min = minPrice !== '' ? parseInt(minPrice) : 0
+      const max = maxPrice !== '' ? parseInt(maxPrice) : Infinity
+      filtered = filtered.filter((product) => product.price >= min && product.price <= max)
+
+      setSearchResults(filtered)
+    } catch (error) {
+      console.error("검색 결과를 불러오는 데 실패했습니다.", error)
+    } finally {
+      setLoading(false)
     }
-
+  }
+  useEffect(() => {
     if (query) {
       fetchSearchResults()
     }
-  }, [query])
+  }, [query, minPrice, maxPrice])
+
 
   // 사용자 정보 요청 (로그인 상태 확인)
   useEffect(() => {
@@ -111,6 +119,9 @@ function SearchPage() {
     setIsFilterOpen(!isFilterOpen)
   }
 
+
+
+
   return (
     <div className="min-h-screen bg-gray-100"> {/* 배경을 연하게 조정 */}
       {/* 헤더 섹션 */}
@@ -156,17 +167,15 @@ function SearchPage() {
           <div className="flex space-x-2">
             <button
               onClick={() => sortProducts("asc")}
-              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
-                sortOrder === "asc" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${sortOrder === "asc" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
             >
               가격 낮은순
             </button>
             <button
               onClick={() => sortProducts("desc")}
-              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
-                sortOrder === "desc" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${sortOrder === "desc" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
             >
               가격 높은순
             </button>
@@ -197,21 +206,48 @@ function SearchPage() {
           </div>
 
           {/* 필터 내용 - 실제 구현은 백엔드 연동에 따라 달라질 수 있음 */}
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">가격 범위</label>
-              <div className="flex items-center space-x-2">
-                <input type="range" className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer" />
+          <div className="bg-white p-5 rounded-xl shadow-lg border border-gray-200 space-y-5">
+            <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">가격 필터</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label htmlFor="minPrice" className="text-sm font-medium text-gray-600 mb-1 block">
+                  최소 가격
+                </label>
+                <input
+                  id="minPrice"
+                  type="number"
+                  placeholder="₩0"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                />
+              </div>
+              <div>
+                <label htmlFor="maxPrice" className="text-sm font-medium text-gray-600 mb-1 block">
+                  최대 가격
+                </label>
+                <input
+                  id="maxPrice"
+                  type="number"
+                  placeholder="₩999,999"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                />
               </div>
             </div>
 
             <button
-              onClick={toggleFilter}
-              className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              onClick={() => {
+                toggleFilter()
+                fetchProducts()
+              }}
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2.5 rounded-md font-semibold hover:from-blue-600 hover:to-blue-700 transition-all"
             >
-              적용하기
+              가격 적용하기
             </button>
           </div>
+
         </div>
       </div>
 

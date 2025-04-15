@@ -5,8 +5,10 @@ import { getUserInfo } from '../services/auth.service';
 import { getToken } from '../utils/storage';
 import { useUser } from '../context/UserContext'; // ✅ Context import
 
+
 function SignIn({ onClose, onLoginSuccess }) {
   const { setUserId, setUserName, setRecommendedProducts, setRole } = useUser();
+
   const navigate = useNavigate();
   const location = useLocation();
 

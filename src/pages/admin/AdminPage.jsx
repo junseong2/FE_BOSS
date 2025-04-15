@@ -1,16 +1,14 @@
 import AdminContent from './components/common/AdminContent';
 import AdminSideBar from './components/layout/AdminSideBar';
 
-function AdminPage() {
+export default function AdminPage() {
   return (
-    <section className='absolute left-0 top-0 flex text-left w-full h-screen'>
+    <section className="flex h-screen w-full overflow-hidden bg-gray-50">
       <AdminSideBar />
-
-      <div className='w-full'>
+      <div className="flex-1 overflow-auto">
         <AdminContent />
       </div>
     </section>
   );
 }
 
-export default AdminPage;

@@ -1,5 +1,4 @@
 import useToggle from '../../hooks/useToggle';
-
 import { useEffect, useState } from 'react';
 import { getAllSellerInventories, updateSellerInventories } from '../../services/inventory.service';
 import SellerTitle from './components/common/SellerTitle';
@@ -92,23 +91,27 @@ function SellerInventoryPage({ mode }) {
   }, [page, productName, selectedTab]);
 
   return (
-    <section className='bg-[#f3f4f6] min-h-screen h-auto p-3 border border-gray-200 rounded-[5px] w-full'>
+    <section className='bg-[#f3f4f6] min-h-screen h-auto p-5 border border-gray-200 rounded-lg shadow-sm'>
       {/* 헤더 */}
-      <SellerContentHeader>
-        <SellerTitle type={'main'}>재고관리</SellerTitle>
-      </SellerContentHeader>
+      <div className="mb-6">
+        <SellerContentHeader>
+          <SellerTitle type={'main'}>재고관리</SellerTitle>
+        </SellerContentHeader>
+      </div>
 
       {/* 탭(메뉴) */}
-      <SellerTabs
-        tabList={sortList}
-        selectedTab={selectedTab}
-        onTabChange={(e) => setSelectedTab(e.currentTarget.dataset.tabId)}
-      />
+      <div className="mb-5">
+        <SellerTabs
+          tabList={sortList}
+          selectedTab={selectedTab}
+          onTabChange={(e) => setSelectedTab(e.currentTarget.dataset.tabId)}
+        />
+      </div>
 
       {/*  컨텐츠 */}
-      <div className='bg-white mt-5 border border-gray-200 p-3 py-0 min-h-[512px]'>
+      <div className='bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden'>
         {/* 검색창 */}
-        <div className='py-3'>
+        <div className='p-4 border-b border-gray-100'>
           <SellerSearch
             placeholder={'상품명을 입력하세요.'}
             onSearch={(e) => {
@@ -121,26 +124,34 @@ function SellerInventoryPage({ mode }) {
         </div>
 
         {/* 테이블 */}
-        {loading ? (
-          <TableSkeleton />
-        ) : (
-          <SellerInventoryTable
-            inventories={inventories}
-            actionButtonName={'수정'}
-            onCheck={onCheck}
-            onToggle={onToggle}
-            isToggle={isOpen}
-            toggleId={toggleId}
-            onUpdate={onUpdateInventories}
-          />
-        )}
+        <div className="min-h-[512px]">
+          {loading ? (
+            <div className="p-4">
+              <TableSkeleton />
+            </div>
+          ) : (
+            <SellerInventoryTable
+              inventories={inventories}
+              actionButtonName={'수정'}
+              onCheck={onCheck}
+              onToggle={onToggle}
+              isToggle={isOpen}
+              toggleId={toggleId}
+              onUpdate={onUpdateInventories}
+            />
+          )}
+        </div>
       </div>
-      <Pagination
-        totalPageCount={Math.max(totalCount / PAGE_SIZE)}
-        handlePageClick={({ selected }) => {
-          setPage(selected);
-        }}
-      />
+      
+      {/* 페이지네이션 */}
+      <div className="mt-6 flex justify-center">
+        <Pagination
+          totalPageCount={Math.max(totalCount / PAGE_SIZE)}
+          handlePageClick={({ selected }) => {
+            setPage(selected);
+          }}
+        />
+      </div>
     </section>
   );
 }

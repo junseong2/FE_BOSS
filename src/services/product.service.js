@@ -69,3 +69,8 @@ export const getAllProducts = async (page, size) => {
   const response = await instance.get(url);
   return response.data;
 };
+/** 상품 상세 페이지 seller storename 조회 */
+export const getProductDetail2 = async (productId) => {
+  const res = await instance.get(`/products/detail/${productId}`);
+  return res.data;
+};

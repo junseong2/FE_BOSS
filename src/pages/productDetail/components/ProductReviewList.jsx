@@ -33,8 +33,6 @@ export default function ProductReviewList({ reviews }) {
 
   return (
     <div className="mt-8 border-t pt-6 border-gray-200">
-      <h3 className="text-xl font-bold mb-6">고객 리뷰</h3>
-      
       {reviews?.length > 0 ? (
         <div className="space-y-6">
           {reviews.map((review) => (

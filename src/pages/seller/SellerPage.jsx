@@ -1,12 +1,23 @@
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import SellerContent from './components/common/SellerContent';
 import SellerHeader from './components/layout/SellerHeader';
 import SellerSideBar from './components/layout/SellerSideBar';
+import { useEffect } from 'react';
 
 function SellerPage() {
   const location = useLocation();
 
+  const navigate = useNavigate();
+
   const title = mappingSellerPageTitle(location.pathname);
+
+
+  useEffect(()=>{
+    if(location.pathname.endsWith("seller")){
+      navigate("/seller/dashboard")
+      return 
+    }
+  },[location.pathname, navigate])
   return (
     <section className='absolute left-0 top-0 flex text-left w-full h-screen'>
       <SellerSideBar />
