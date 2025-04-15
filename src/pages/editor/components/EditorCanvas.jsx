@@ -160,17 +160,6 @@ export default function EditorCanvas({
 
 
 
-      <div className="flex gap-2 m-2 items-center">
-        <label className="flex items-center gap-2 text-gray-700 font-medium">
-          열 수:
-          <input
-            type="number"
-            value={gridColumns}
-            onChange={(e) => setGridColumns(Number(e.target.value))}
-            className="border border-gray-300 rounded-md p-1.5 w-16 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </label>
-      </div>
 
       {/* 캔버스 */}
       <div
