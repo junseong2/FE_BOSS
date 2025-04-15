@@ -6,6 +6,7 @@ import { IoTrashOutline } from "react-icons/io5"
 import { Rnd } from "react-rnd"
 import { createPortal } from "react-dom"
 import { Link } from "react-router-dom"
+import { MdDesktopWindows, MdPhoneIphone, MdVisibility } from 'react-icons/md';
 
 // Import your component previews and actual components
 import EditorPreview from "./EditorPreview"
@@ -129,25 +130,35 @@ export default function EditorCanvas({
     <div className="w-full">
       {/* 상단 탭 + 미리보기 */}
       <div className="m-2 border border-gray-200 rounded-lg shadow-sm max-w-[360px] flex gap-2 p-2 bg-white">
-        <Link
-          to="/editor"
-          className="flex-1 text-center py-2 px-3 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors font-medium"
-        >
-          웹 편집
-        </Link>
-        <Link
-          to="/mobileeditor"
-          className="flex-1 text-center py-2 px-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors font-medium"
-        >
-          모바일<br/>편집
-        </Link>
-        <button
-          onClick={() => setIsPreviewOpen(true)}
-          className="flex-1 text-center py-2 px-3 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors font-medium"
-        >
-          미리보기
-        </button>
-      </div>
+  <Link
+    to="/editor"
+    className="flex-1 flex flex-col items-center justify-center py-2 px-3 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors font-medium"
+  >
+    <MdDesktopWindows size={24} />
+    <span className="text-sm mt-1">웹 편집</span>
+  </Link>
+
+  <Link
+    to="/mobileeditor"
+    className="flex-1 flex flex-col items-center justify-center py-2 px-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors font-medium"
+  >
+    <MdPhoneIphone size={24} />
+    <span className="text-sm mt-1">모바일</span>
+  </Link>
+
+  <button
+    onClick={() => setIsPreviewOpen(true)}
+    className="flex-1 flex flex-col items-center justify-center py-2 px-3 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors font-medium"
+  >
+    <MdVisibility size={24} />
+    <span className="text-sm mt-1">미리보기</span>
+  </button>
+</div>
+
+
+
+
+
 
       <div className="flex gap-2 m-2 items-center">
         <label className="flex items-center gap-2 text-gray-700 font-medium">

@@ -28,7 +28,7 @@ export default function ElementEditor({ element, onUpdate, sellerId, categories,
 
   console.log("✅ `sellerId`가 정의되었습니다.");
   
-  console.log("element", element); 
+
   // ✅ 헤더와 배너의 배경색 상태를 분리
   const [headerBackgroundColor, setHeaderBackgroundColor] = useState(
     element.type === "header" ? element.properties.backgroundColor || "#ffffff" : "#ffffff"
@@ -48,7 +48,7 @@ export default function ElementEditor({ element, onUpdate, sellerId, categories,
 
 
   // ✅ `useEffect`에서 헤더와 배너의 색상을 분리해서 로드
-  console.log("📥 test elementaleditor:");
+  console.log("📥 test elementaleditor:",element);
 
 
 
@@ -152,7 +152,8 @@ export default function ElementEditor({ element, onUpdate, sellerId, categories,
       if (!/^#([0-9A-F]{3}){1,2}$/i.test(value)) return;
   
       setMobileHeaderBackgroundColor(value);
-  
+      console.log("🎨 모바일 헤더 배경색 변경됨:", value);
+
       if (element.type === "mobileheader") {
         const updatedElement = {
           ...element,
@@ -370,100 +371,53 @@ const handleSaveInOrder = async () => {
     console.error("❌ 설정 저장 오류:", error);
   }
 };
+const handleSave = async () => {
+  console.log("💾 저장 실행: 현재 elements 상태", elements);
 
-  // ✅ 저장 핸들러 (헤더 & 배너 분리 저장)
-  const handleSave = async (uploadedLogoUrl = null, uploadedBannerUrl = null) => {
-    console.log("💾 저장 실행: 현재 elements 상태", elements);
-  
-    // ✅ elements가 배열인지 확인 후 변환
-    const elementsArray = Array.isArray(elements) ? elements : Object.values(elements);
-    console.log("🔍 elements 데이터 유형:", typeof elements);
-    console.log("🔍 elements는 배열인가?", Array.isArray(elements));
-  
-    // ✅ header와 banner 데이터 찾기
-    const headerElement = elementsArray.find((el) => el.type === "header");
-    const bannerElement = elementsArray.find((el) => el.type === "banner");
-    const gridElement = elementsArray.find((el) => el.type === "grid");
+  const elementsArray = Array.isArray(elements) ? elements : Object.values(elements);
 
-    console.log("🔍 찾은 headerElement:", headerElement);
-    console.log("🔍 찾은 bannerElement:", bannerElement);
-    console.log("🔍 찾은 gridElement:", gridElement);
+  let webSettings = {};
+  let mobileSettings = {};
 
+  elementsArray.forEach((el) => {
+    const { type, properties } = el;
 
-    
-    // ✅ 데이터가 없으면 빈 객체가 아니라 `null` 할당
-    let updatedSettings = {};
+    const baseData = {
+      ...properties,
+    };
 
-
-
-    if (headerElement) {
-      updatedSettings.header = {
-        ...headerElement.properties,
-        logoUrl: `http://localhost:5000/uploads/${sellerId}_headerlogo.png`, // ✅ 로고 URL 설정
-      };
-    } else {
-      updatedSettings.header = null;
-    }
-    
-    if (bannerElement) {
-      updatedSettings.banner = {
-        ...bannerElement.properties,
-        logoUrl: `http://localhost:5000/uploads/${sellerId}_banner.png`, // ✅ 배너 이미지 저장
-      };
-    } else {
-      updatedSettings.banner = null;
-    }
-
-    if (gridElement) {
-      updatedSettings.grid = {
-        ...gridElement.properties,
-
-        columns: gridElement.properties.columns || 3, // 기본값은 3으로 설정
-        sortList: gridElement.properties.sortList || [], // sortList 기본값은 빈 배열
-        title: gridElement.properties.title || "추천 상품", // 기본값은 "추천 상품"
-      };
-    }else {
-      updatedSettings.grid = null;
-    }
-    
-  
-    console.log("📤 최종 요청 데이터 by ElementEditor.jsx (settings):", JSON.stringify(updatedSettings, null, 2));
-  
-    if (!updatedSettings ) {
-      console.error("❌ 저장할 설정 데이터가 없습니다.");
-      return;
-    }
-  
-
-
-    try {
-      const elements = []; 
-      await updateSellerSettings(sellerId, updatedSettings); // ✅ elements 전달    
-       alert("🎉 설정이 성공적으로 저장되었습니다!");
-  
-      // ✅ 저장 후 최신 데이터를 다시 불러와 UI 업데이트
-      const newSettings = await fetchSellerSettings(sellerId);
-   if (newSettings) {
-      if (newSettings.header) {
-        setHeaderBackgroundColor(newSettings.header.backgroundColor);
-        setHeaderLogoUrl(newSettings.header.logoUrl); // ✅ 저장 후 UI 업데이트
+    // URL 덮어씌우기 (옵션)
+    if (type === 'header') {
+      baseData.logoUrl = `http://localhost:5000/uploads/${sellerId}_headerlogo.png`;
+      webSettings[type] = baseData;
+    } else if (type === 'banner') {
+      baseData.imageUrl = `http://localhost:5000/uploads/${sellerId}_banner.png`;
+      webSettings[type] = baseData;
+    } else if (type.startsWith("mobile")) {
+      if (type === "mobileheader") {
+        baseData.logoUrl = `http://localhost:5000/uploads/${sellerId}_mobileheaderlogo.png`;
+      } else if (type === "mobilebanner") {
+        baseData.imageUrl = `http://localhost:5000/uploads/${sellerId}_mobilebanner.png`;
       }
-      if (newSettings.banner) {
-        setBannerBackgroundColor(newSettings.banner.backgroundColor);
-        setBannerUrl(newSettings.banner.imageUrl); // ✅ 배너 이미지 업데이트
-    }   
-    if (newSettings.grid) {
-  }   
-  
-  
-  }
-    } catch (error) {
-      alert("❌ 설정 저장 실패! 다시 시도해주세요.");
-      console.error("❌ 설정 저장 오류:", error);
+      mobileSettings[type] = baseData;
+    } else {
+      webSettings[type] = baseData;
     }
-  };
-  
+  });
 
+  console.log("📤 웹용 settings:", webSettings);
+  console.log("📤 모바일용 settings:", mobileSettings);
+
+  try {
+    await updateSellerSettings(sellerId, webSettings);
+    await updateSellerMobileSettings(sellerId, mobileSettings);
+
+    alert("🎉 설정이 성공적으로 저장되었습니다!");
+  } catch (error) {
+    console.error("❌ 저장 오류:", error);
+    alert("❌ 저장 실패. 다시 시도해주세요.");
+  }
+};
 
   const handleMenuItemChange = (index, field, value) => {
     const updatedMenuItems = [...element.properties.menuItems];
@@ -522,6 +476,8 @@ const handleSaveInOrder = async () => {
 
 
       case 'header':
+        case 'header2':
+         
         return (
           <>
             <div className='space-y-2'>
@@ -691,12 +647,12 @@ const handleSaveInOrder = async () => {
               {/* 배너 이미지 설정 */}
               <div className='space-y-2'>
                 <Label label={'배너 이미지 설정'} />
-                <SingleImageUploader 
-                  sellerId={sellerId} 
-                  elementType="banner"  // ✅ 배너 업로드일 경우
-
-                  onUpload={handleBannerUpload}  // ✅ 배너 이미지 업로드
-                />
+                <SingleProductImageUploader
+  sellerId={sellerId} 
+  elementType="banner"  // ✅ 배너 업로드일 경우
+  elementId={element.id} // ✅ 요소 ID 넘겨주기 (일관성 유지)
+  onUpload={handleBannerUpload}  // ✅ 배너 이미지 업로드 핸들러
+/>
                 {bannerUrl && (
                   <img src={bannerUrl} alt="배너 이미지 미리보기" className="w-full h-32 object-cover rounded-lg mt-2" />
                 )}
@@ -1030,84 +986,196 @@ const handleSaveInOrder = async () => {
                     );
                   
 
-          case 'mobileheader':
-            return (
-              <>
-                <div className='space-y-2'>
-                  <Label label={'로고 설정'} />
-                  <SingleImageUploader 
-                    elementType="mobileheader"  // ✅ 헤더 업로드일 경우
-    
-        sellerId={sellerId} 
-        onUpdateImage={(imgUrl) => console.log("미리보기:", imgUrl)}
-        onUpload={handleLogoUpload}  // ✅ 로고 업로드
-        />            </div>
-    
-                <div className='space-y-2 mb-4'>
-                  <Label htmlFor={'mobileheaderBackgroundColor'} label={'모바일 헤더 배경 색상'} />
-                  <div className='flex gap-2 items-center'>
-                    <Input
-                      id='mobileheaderBackgroundColor'
-                      type='color'
-                      className='w-12 h-10 p-1'
-                      value={MobileheaderBackgroundColor}
-                      onChange={(e) => handleMobileHeaderColorChange(e.target.value)}
-                    />
-                    <Input
-                      type="text"
-                      value={MobileheaderBackgroundColor}
-                      onChange={(e) => handleMobileHeaderColorChange(e.target.value)}
-                    />
-                  </div>
-                </div>
 
-                <div className="mb-4">
-  <label className="block text-sm font-medium text-gray-700">넓이 (width)</label>
-  <input
-    type="text"
-    value={currentSize.width || ''}
-    onChange={(e) => handleSizeChange('width', e.target.value)}
-    className="w-full border border-gray-300 rounded px-2 py-1"
-    placeholder="예: 100%, 300px"
-  />
-</div>
 
-<div className="mb-4">
-  <label className="block text-sm font-medium text-gray-700">높이 (height)</label>
-  <input
-    type="text"
-    value={currentSize.height || ''}
-    onChange={(e) => handleSizeChange('height', e.target.value)}
-    className="w-full border border-gray-300 rounded px-2 py-1"
-    placeholder="예: auto, 200px"
-  />
-</div>
 
-              </>
-            );
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    case 'mobileheader':
+                      return (
+                        <>
+                          <div className='space-y-2'>
+                            <Label label={'로고 설정'} />
+                            <SingleProductImageUploader 
+                              elementType="header"
+                              sellerId={sellerId} 
+                              elementId={element.id} 
+                              onUpdateImage={(imgUrl) => console.log("미리보기:", imgUrl)}
+                              onUpload={handleLogoUpload}
+                            />          
+                          </div>
+                    
+                          <div className="space-y-2 mb-4">
+                            <Label label="메뉴 항목 설정" />
+                            {element.properties.menuItems.map((item, idx) => (
+                              <div key={idx} className="border p-2 rounded-md space-y-1 bg-gray-50">
+                                <div className="space-y-2">
+                                  <input
+                                    type="text"
+                                    value={item.title}
+                                    onChange={(e) => handleMenuItemChange(idx, 'title', e.target.value)}
+                                    placeholder="메뉴 제목 (예: NEW)"
+                                    className="flex-1 border rounded px-2 py-1"
+                                  />
+                                  <input
+                                    type="text"
+                                    value={item.url}
+                                    onChange={(e) => handleMenuItemChange(idx, 'url', e.target.value)}
+                                    placeholder="링크 주소 (예: /new)"
+                                    className="flex-1 border rounded px-2 py-1"
+                                  />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={item.highlight}
+                                    onChange={(e) => handleMenuItemChange(idx, 'highlight', e.target.checked)}
+                                  />
+                                  <span className="text-sm text-gray-700">강조 표시</span>
+                                  <button
+                                    onClick={() => handleRemoveMenuItem(idx)}
+                                    className="ml-auto text-red-500 text-sm"
+                                  >
+                                    삭제
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                            <button
+                              onClick={handleAddMenuItem}
+                              className="mt-2 text-sm text-blue-600 hover:underline"
+                            >
+                              + 메뉴 항목 추가
+                            </button>
+                          </div>
+                    
+                          {/* ✅ 모바일 헤더 배경 색상 설정 */}
+                          <div className='space-y-2 mb-4'>
+                            <Label htmlFor={'MobileheaderBackgroundColor'} label={'모바일 헤더 배경 색상'} />
+                            <div className='flex gap-2 items-center'>
+                              <Input
+                                id='MobileheaderBackgroundColor'
+                                type='color'
+                                className='w-12 h-10 p-1'
+                                value={MobileheaderBackgroundColor}
+                                onChange={(e) => handleMobileHeaderColorChange(e.target.value)} // ✅ 수정됨
+                              />
+                              <Input
+                                type="text"
+                                value={MobileheaderBackgroundColor}
+                                onChange={(e) => handleMobileHeaderColorChange(e.target.value)} // ✅ 수정됨
+                              />
+                            </div>
+                          </div>
+                    
+                          {/* 크기, 폰트 설정 */}
+                          <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-700">넓이 (width)</label>
+                            <input
+                              type="text"
+                              value={currentSize.width || ''}
+                              onChange={(e) => handleSizeChange('width', e.target.value)}
+                              className="w-full border border-gray-300 rounded px-2 py-1"
+                              placeholder="예: 100%, 300px"
+                            />
+                          </div>
+                    
+                          <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-700">높이 (height)</label>
+                            <input
+                              type="text"
+                              value={currentSize.height || ''}
+                              onChange={(e) => handleSizeChange('height', e.target.value)}
+                              className="w-full border border-gray-300 rounded px-2 py-1"
+                              placeholder="예: auto, 200px"
+                            />
+                          </div>
+                    
+                          <input
+                            type="text"
+                            value={element.properties.fontSize || ''}
+                            onChange={(e) =>
+                              onUpdate({
+                                ...element,
+                                properties: {
+                                  ...element.properties,
+                                  fontSize: e.target.value,
+                                },
+                              })
+                            }
+                          />
+                    
+                          <select
+                            value={element.properties.fontWeight || ''}
+                            onChange={(e) =>
+                              onUpdate({
+                                ...element,
+                                properties: {
+                                  ...element.properties,
+                                  fontWeight: e.target.value,
+                                },
+                              })
+                            }
+                          >
+                            <option value="400">보통 (Normal)</option>
+                            <option value="500">중간 (Medium)</option>
+                            <option value="600">약간 굵게 (Semi-bold)</option>
+                            <option value="700">굵게 (Bold)</option>
+                            <option value="800">매우 굵게 (Extra-bold)</option>
+                          </select>
+                    
+                          <select
+                            value={element.properties.fontFamily}
+                            onChange={(e) => handleChangeFont(e.target.value)}
+                          >
+                            <option value="Nanum Gothic">나눔고딕</option>
+                            <option value="Arial">Arial</option>
+                            <option value="Noto Sans KR">Noto Sans KR</option>
+                            ...
+                          </select>
+                        </>
+                      );
+                    
+              
+              
+              
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              
             case 'mobilebanner':
               return (
                 <>
@@ -1116,9 +1184,9 @@ const handleSaveInOrder = async () => {
                     <Label label={'배너 이미지 설정'} />
                     <SingleImageUploader 
                       sellerId={sellerId} 
-                      elementType="mobilebanner"  // ✅ 배너 업로드일 경우
+                      elementType="mobilebanner"  // 배너 업로드일 경우
     
-                      onUpload={handleBannerUpload}  // ✅ 배너 이미지 업로드
+                      onUpload={handleBannerUpload}  //배너 이미지 업로드
                     />
                     {bannerUrl && (
                       <img src={bannerUrl} alt="배너 이미지 미리보기" className="w-full h-32 object-cover rounded-lg mt-2" />
