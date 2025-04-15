@@ -11,7 +11,6 @@ import {
 
 // 토스트 유틸리티 함수 (다른 컴포넌트에서 import해서 사용)
 export const toastSuccess = (message) => {
-  console.log(t)
   toast.custom((t) => (
     <div
       className={`${

@@ -1,75 +1,118 @@
-import { IoBuildOutline } from 'react-icons/io5';
+import { Edit, Trash2, Eye } from "lucide-react"
 
-export default function SellerProductTable({ products, onToggle, onSelect }) {
-  function handleToggleClick(product) {
-    onSelect(product); // 수정할 상품 정보 설정
-    onToggle(); // 편칩창 오픈
+function SellerProductTable({ headers, products, onCheck, onToggle, onSelect, onDelete }) {
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat("ko-KR", { style: "currency", currency: "KRW" }).format(price)
+  }
+
+  const truncateText = (text, maxLength = 50) => {
+    if (!text) return ""
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text
   }
 
   return (
-    <div className='mt-2 w-full overflow-x-auto'>
-      <table className='w-full table-auto min-w-[768px] '>
-        <thead>
-          <tr className='bg-[#F3F4F6] text-gray-600 text-sm'>
-            <th className='py-3 px-4 text-center font-medium'>선택</th>
-            <th className='py-3 px-4 text-center font-medium'>상품ID</th>
-            <th className='py-3 px-4 text-center font-medium'>상품명</th>
-            <th className='py-3 px-4 text-center font-medium'>분류</th>
-            <th className='py-3 px-4 text-center font-medium'>설명</th>
-            <th className='py-3 px-4 text-center font-medium'>가격</th>
-            <th className='py-3 px-4 text-center font-medium'>재고</th>
-            <th className='py-3 px-4 text-center font-medium'>작업</th>
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm text-left text-gray-700">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+          <tr>
+            {headers.map((header, index) => (
+              <th key={index} scope="col" className="px-4 py-3">
+                {header}
+              </th>
+            ))}
           </tr>
         </thead>
-
         <tbody>
-          {products.length > 0 ? (
-            products.map((product) => {
-              console.log(product)
-              return (
-                <tr
-                  key={product.productId}
-                  className='transition-colors duration-200 hover:bg-gray-50 '
-                >
-                  <td className='px-2 py-1 text-sm'>
-                    <input
-                      type='checkbox'
-                      name='productId'
-                      value={product.productId}
-                      className='accent-blue-500'
-                    />
-                  </td>
-                  <td className='px-2 py-1 text-sm text-center'>{product.productId}</td>
-                  <td className='px-2 py-1 text-sm flex items-center gap-2'>
-                    <img className='w-10 h-10 border  rounded-sm border-gray-200 p-1' src={product.gimages?.length>0 ? 'http://localhost:5000/uploads/'+product.gimages[0]: 'https://picsum.photos/50/50'} alt={product.name+" 상품 이미지"}/>
-                    {product.name}
-                    </td>
-                  <td className='px-2 py-1 text-sm'>{product.categoryName}</td>
-                  <td className='px-2 py-1 text-sm'>{product.description}</td>
-                  <td className='px-2 py-1 text-sm'>
-                    <span className='flex'>
-                      ￦
-                      <span>{product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</span>
-                    </span>
-                  </td>
-                  <td className='px-2 py-1 text-sm text-center'>{product.stock || 0}</td>
-                  <td className='px-2 py-1 text-sm'>
-                    <button
-                      onClick={() => handleToggleClick(product)}
-                      title='수정'
-                      className='bg-[#1a2b3e] text-white p-1 px-2 rounded-sm hover:opacity-70 cursor-pointer'
-                    >
-                      <IoBuildOutline />
-                    </button>
-                  </td>
-                </tr>
-              );
-            })
+          {products.length === 0 ? (
+            <tr className="bg-white border-b hover:bg-gray-50">
+              <td colSpan={headers.length} className="px-4 py-16 text-center text-gray-500">
+                등록된 상품이 없습니다.
+              </td>
+            </tr>
           ) : (
-            <p className='text-gray-500 p-3 mt-3'>조회할 상품목록이 없습니다.</p>
+            products.map((product) => (
+              <tr key={product.id} className="bg-white border-b hover:bg-gray-50 transition-colors">
+                <td className="px-4 py-3">
+                  <input
+                    type="checkbox"
+                    value={product.id}
+                    onChange={onCheck}
+                    className="w-4 h-4 text-gray-600 bg-gray-100 border-gray-300 rounded focus:ring-gray-500"
+                  />
+                </td>
+                <td className="px-4 py-3 font-medium">{product.id}</td>
+                <td className="px-4 py-3 font-medium text-gray-900">
+                  <div className="flex items-center">
+                    {product.gImage && product.gImage[0] && (
+                      <img
+                        src={product.gImage[0] || "/placeholder.svg"}
+                        alt={product.name}
+                        className="w-10 h-10 mr-3 rounded-md object-cover border border-gray-200"
+                      />
+                    )}
+                    <span className="line-clamp-1">{product.name}</span>
+                  </div>
+                </td>
+                <td className="px-4 py-3">
+                  <span className="px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-full">
+                    {product.categoryName}
+                  </span>
+                </td>
+                <td className="px-4 py-3">{truncateText(product.description, 30)}</td>
+                <td className="px-4 py-3 font-medium">
+                  <div className="flex flex-col">
+                    <span className="text-gray-900">{formatPrice(product.price)}</span>
+                    {product.originPrice > product.price && (
+                      <span className="text-xs text-gray-500 line-through">{formatPrice(product.originPrice)}</span>
+                    )}
+                  </div>
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex flex-col">
+                  <td className='px-2 py-1 text-sm text-center'>{product.stock || 0}</td>
+                  </div>
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => {
+                        onSelect(product)
+                        onToggle()
+                      }}
+                      className="p-1.5 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+                      title="수정"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (confirm(`${product.name} 상품을 삭제하시겠습니까?`)) {
+                          onDelete([product.id])
+                        }
+                      }}
+                      className="p-1.5 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+                      title="삭제"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                    <a
+                      href={`/product/${product.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+                      title="상품 보기"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            ))
           )}
         </tbody>
       </table>
     </div>
-  );
+  )
 }
+
+export default SellerProductTable

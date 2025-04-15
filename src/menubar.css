@@ -97,7 +97,7 @@
   border-radius: 50%;
   font-size: 24px;
   cursor: pointer;
-  z-index: 1100;
+  z-index: 40;
   transition: transform 0.3s ease-in-out;
 }
 

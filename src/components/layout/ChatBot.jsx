@@ -11,10 +11,7 @@ function ChatBot() {
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    setMessages((prev) => [
-      ...prev,
-      { class: 0, sender: "user", text: input }
-    ]);
+    setMessages((prev) => [...prev, { class: 0, sender: "user", text: input }]);
     setInput("");
 
     try {
@@ -29,14 +26,15 @@ function ChatBot() {
       const data = await res.json();
 
       if (data.class === 1 && Array.isArray(data.recommendation)) {
-        const botMessage = {
-          class: 1,
-          sender: "bot",
-          text: data.text || "이 상품들을 추천드려요!",
-          recommendation: data.recommendation // 배열 그대로 저장
-        };
-
-        setMessages((prev) => [...prev, botMessage]);
+        setMessages((prev) => [
+          ...prev,
+          {
+            class: 1,
+            sender: "bot",
+            text: data.text || "이 상품들을 추천드려요!",
+            recommendation: data.recommendation,
+          },
+        ]);
       } else {
         setMessages((prev) => [
           ...prev,
@@ -51,84 +49,85 @@ function ChatBot() {
       console.error("서버 오류:", error);
       setMessages((prev) => [
         ...prev,
-        {
-          class: 0,
-          sender: "bot",
-          text: "서버 오류가 발생했습니다.",
-        },
+        { class: 0, sender: "bot", text: "서버 오류가 발생했습니다." },
       ]);
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") sendMessage();
+  };
+
   return (
     <div>
-<div
-  className="fixed bottom-4 right-4 w-14 h-14 bg-blue-500 text-white rounded-full flex items-center justify-center text-2xl z-[9999] cursor-pointer shadow-lg"
-  onClick={toggleChat}
->
-        💬
+      <div
+        className="fixed bottom-4 right-4 w-16 h-16 z-[40] cursor-pointer shadow-xl rounded-full bg-white border border-gray-200 flex items-center justify-center hover:scale-105 transition-all"
+        onClick={toggleChat}
+      >
+        <img src="http://localhost:5000/uploads/image.jpg" alt="Chat Icon" className="w-10 h-10" />
       </div>
 
       {isOpen && (
-  <div className="fixed bottom-20 right-4 w-80 h-[500px] bg-white shadow-xl border rounded-lg flex flex-col z-[9999]">
-    {/* 헤더 */}
-    <div className="flex items-center justify-between p-3 bg-blue-500 text-white">
-      <h4 className="text-lg font-semibold">🎉 상품 추천 챗봇</h4>
-      <button onClick={toggleChat} className="text-xl">✖</button>
-    </div>
+        <div className="fixed bottom-24 right-4 w-96 max-w-[95vw] h-[550px] bg-white shadow-2xl border rounded-3xl flex flex-col z-[9999] overflow-hidden animate-fadeInUp">
+          <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-500 to-sky-400 text-white">
+            <h4 className="text-base font-bold">🛍️ BOSS 챗봇</h4>
+            <button onClick={toggleChat} className="text-xl hover:text-blue-100">✖</button>
+          </div>
 
-    {/* 메시지 영역 */}
-    <div className="flex-1 overflow-y-auto p-3 space-y-2">
-      {messages.map((msg, index) => (
-        <div
-          key={index}
-          className={`p-2 rounded-md ${
-            msg.sender === "user" ? "bg-blue-100 text-right" : "bg-gray-100"
-          }`}
-        >
-          <p className="text-sm">{msg.text}</p>
+          <div className="relative flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-white">
 
-          {/* 추천 카드일 경우 */}
-          {msg.class === 1 && Array.isArray(msg.recommendation) && (
-            msg.recommendation.map((item, idx) => (
-              <ProductRecommendationCard
-                key={idx}
-                productId={item.productId}
-                reason={item.reason}
-              />
-            ))
-          )}
+            <img
+              src="http://localhost:5000/uploads/image.jpg"
+              alt="Chat Background"
+              className="absolute top-1/2 left-1/2 w-32 h-32  -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-0"
+            />
+
+            <div className="relative z-10">
+              {messages.map((msg, index) => (
+                <div
+                  key={index}
+                  className={`rounded-xl px-3 py-2 text-sm max-w-[80%] break-words ${msg.sender === "user"
+                      ? "bg-blue-100 ml-auto text-right"
+                      : "bg-white border border-gray-200"
+                    }`}
+                >
+                  <p>{msg.text}</p>
+                  {msg.class === 1 &&
+                    Array.isArray(msg.recommendation) &&
+                    msg.recommendation.map((item, idx) => (
+                      <ProductRecommendationCard
+                        key={idx}
+                        productId={item.productId}
+                        reason={item.reason}
+                      />
+                    ))}
+                </div>
+              ))}
+            </div>
+          </div>
+
+
+          <div className="flex px-3 py-2 border-t bg-white">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className="flex-1 px-3 py-2 text-sm border rounded-l-xl focus:outline-none"
+              placeholder="추천받고 싶은 상품을 입력하세요"
+            />
+            <button
+              onClick={sendMessage}
+              className="bg-blue-500 text-white px-4 rounded-r-xl hover:bg-blue-600 text-sm"
+            >
+              전송
+            </button>
+          </div>
         </div>
-      ))}
-    </div>
-
-    {/* 입력창 */}
-    <div className="p-2 border-t flex">
-      <input
-        type="text"
-        className="flex-1 border rounded-l px-3 py-1 text-sm focus:outline-none"
-        placeholder="추천받고 싶은 상품을 입력하세요!"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      />
-      <button
-        onClick={sendMessage}
-        className="bg-blue-500 text-white px-4 py-1 rounded-r text-sm hover:bg-blue-600"
-      >
-        전송
-      </button>
-    </div>
-  </div>
-)}
-
-
-
-   
+      )}
     </div>
   );
 }
-
-
 
 function ProductRecommendationCard({ productId, reason }) {
   const [product, setProduct] = useState(null);
@@ -136,46 +135,39 @@ function ProductRecommendationCard({ productId, reason }) {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        // 실제 API 연결 시 아래 주석 해제
-        // const res = await fetch(`http://localhost:5000/products/${productId}`);
-        // const data = await res.json();
-
-        // 임시 더미 데이터 (응답 형식 예측 기반)
         const data = {
           productId,
-          name: "더미 사진",
-          description: "사진입니다.",
-          gImage: ["http://localhost:5000/uploads/sample.jpg"]
+          name: "더미 상품",
+          description: "설명입니다.",
+          gImage: ["http://localhost:5000/uploads/sample.jpg"],
         };
-
         setProduct(data);
       } catch (error) {
-        console.error("상품 정보 가져오기 실패:", error);
+        console.error("상품 정보 실패:", error);
       }
     };
-
     fetchProduct();
   }, [productId]);
 
   if (!product) return null;
 
   return (
-    <div className="chatbot-product" style={{ marginBottom: "1rem" }}>
+    <div className="mt-2 border border-gray-200 rounded-xl overflow-hidden">
       <a
         href={`http://localhost:5173/product/${productId}`}
         target="_blank"
         rel="noopener noreferrer"
-        style={{ textDecoration: "none", color: "inherit" }}
+        className="block hover:bg-gray-50"
       >
-        <p><strong>{product.name}</strong></p>
-        {product.gImage?.[0] && (
-          <img
-            src={product.gImage[0]}
-            alt={product.name}
-            style={{ width: "100%", maxWidth: "200px", borderRadius: "8px" }}
-          />
-        )}
-        <p style={{ marginTop: "0.5rem", fontStyle: "italic" }}>{reason}</p>
+        <img
+          src={product.gImage[0]}
+          alt={product.name}
+          className="w-full h-28 object-cover"
+        />
+        <div className="p-2">
+          <p className="text-sm font-medium text-gray-700">{product.name}</p>
+          <p className="text-xs text-gray-500 mt-1 italic">{reason}</p>
+        </div>
       </a>
     </div>
   );

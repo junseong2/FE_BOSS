@@ -50,6 +50,7 @@ export default function HomeStores({ customClassName }) {
         <CenteredSlider>
 
 
+
           
         {stores?.map((store, index) => {
   console.log('스토어 정보:', store); // ✅ 여기서 출력 가능

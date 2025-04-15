@@ -68,13 +68,32 @@ function PaymentPage() {
         const data = await response.json()
         setUserId(data.userId)
         setUserName(data.userName)
-        setEmail(data.email || "")
-        setAddress(data.address || "주소 없음")
+        setEmail(data.userEmail || "")
+        const addressRes = await fetch(`http://localhost:5000/address/user/${data.userId}`, {
+          method: "GET",
+          credentials: "include",
+        });
+    
+        if (addressRes.ok) {
+          const addressData = await addressRes.json();
+    
+          // ✅ 기본 주소가 있는 경우만 설정
+          const defaultAddress = addressData.find((addr) => addr.isDefault);
+          setAddress(defaultAddress?.address1 || "주소 없음");
+        } else {
+          console.warn("주소 데이터를 불러오지 못했습니다.");
+          setAddress("주소 없음");
+        }
+    
+        // ✅ 전화번호 조합
+        const phone = [data.userPhone1, data.userPhone2, data.userPhone3].filter(Boolean).join("-");
+        setPhoneNumber(phone || "010-0000-0000");
+    
       } catch (error) {
-        console.error("❌ 사용자 정보 조회 오류:", error.message)
-        setErrorMessage("사용자 정보를 불러오는 중 오류 발생.")
+        console.error("❌ 사용자 정보 조회 오류:", error.message);
+        setErrorMessage("사용자 정보를 불러오는 중 오류 발생.");
       }
-    }
+    };
 
     fetchUserInfo()
   }, [navigate])
