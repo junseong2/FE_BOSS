@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import BounceLoader from 'react-spinners/BounceLoader';
 import './ChatBot.css';
+import bossLogo from '../../assets/boss_logo.png';
+import defaultImage from '../../assets/no-image.jpg'
 
 function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -74,73 +76,83 @@ function ChatBot() {
   return (
     <div>
       <div
-        className='fixed bottom-4 right-4 w-16 h-16 z-[40] cursor-pointer shadow-xl rounded-full bg-white border border-gray-200 flex items-center justify-center hover:scale-105 transition-all'
+        className='fixed bottom-4 right-4 w-16 h-16 z-[40] cursor-pointer shadow-xl rounded-full bg-white border border-gray-200 flex items-center justify-center hover:scale-105'
         onClick={toggleChat}
       >
-        <img src='' alt='Chat Icon' className='w-10 h-10' />
+        <img src={bossLogo} alt='Chat Icon' className='w-24 h-20' />
       </div>
 
-      {isOpen && (
-        <div className='fixed bottom-24 right-4 w-96 max-w-[95vw] h-[550px] bg-white shadow-2xl border border-gray-200 rounded-3xl flex flex-col z-[9999] overflow-hidden animate-fadeInUp'>
-          <div className='flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-500 to-sky-400 text-white'>
-            <h4 className='text-base font-bold'>🛍️ BOSS 챗봇</h4>
-            <button onClick={toggleChat} className='text-xl hover:text-blue-100'>
-              ✖
-            </button>
-          </div>
-
-          <div className='relative flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-white'>
+      {/* 챗봇 */}
+      <div
+        className={`${isOpen ? 'visible opacity-90' : 'invisible opacity-0'} backdrop-blur-lg transition-all fixed bottom-24 right-4 w-96 max-w-[95vw] h-[550px] bg-white shadow-2xl border border-gray-200 rounded-3xl flex flex-col z-[9999] overflow-hidden animate-fadeInUp`}
+      >
+        <div className='flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-500 to-sky-400 text-white'>
+          <h4 className='text-base font-bold flex items-center'>
+            {' '}
             <img
-              src='http://localhost:5000/uploads/image.jpg'
+              src={bossLogo}
               alt='Chat Background'
-              className='absolute top-1/2 left-1/2 w-32 h-32  -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-0'
-            />
+              className=' w-8 h-8  pointer-events-none select-none z-0'
+            />{' '}
+            BOSS 챗봇
+          </h4>
+          <button onClick={toggleChat} className='text-xl hover:text-blue-100'>
+            ✖
+          </button>
+        </div>
 
-            <div className='relative z-10' ref={divRef}>
-              {messages.map((msg, index) => (
-                <div
-                  key={index}
-                  className={`rounded-xl px-3 py-2 my-4 text-sm max-w-[80%] break-words ${
-                    msg.sender === 'user'
-                      ? 'bg-blue-100 ml-auto text-right'
-                      : 'bg-white border border-gray-200'
-                  }`}
-                >
-                  <p>{msg.text}</p>
-                  {msg.class === 1 &&
-                    Array.isArray(msg.recommendation) &&
-                    msg.recommendation.map((item, idx) => (
-                      <ProductRecommendationCard
-                        key={idx}
-                        productId={item.productId}
-                        reason={item.reason}
-                      />
-                    ))}
-                </div>
-              ))}
-              {/* 로딩 스피너 */}
-              {loading ? <BounceLoader color='#1b94ff' className='mx-auto mt-8 w-7 h-7' /> : null}
-            </div>
-          </div>
+        <div className='relative flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-white'>
+          <img
+            src={bossLogo}
+            alt='Chat Background'
+            className='absolute top-1/2 left-1/2 w-32 h-32  -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-0'
+          />
 
-          <div className='flex px-3 py-2 border-t bg-white border-gray-200'>
-            <input
-              type='text'
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className=' border-gray-200 flex-1 px-3 py-2 text-sm border rounded-l-xl focus:outline-none'
-              placeholder='추천받고 싶은 상품을 입력하세요'
-            />
-            <button
-              onClick={sendMessage}
-              className='bg-blue-500 text-white px-4 rounded-r-xl hover:bg-blue-600 text-sm'
-            >
-              전송
-            </button>
+          <div className='relative z-10'>
+            {messages.map((msg, index) => (
+              <div
+                key={index}
+                ref={divRef}
+                className={`rounded-xl px-3 py-2 my-4 text-sm max-w-[80%] break-words transition-all opacity-90 ${
+                  msg.sender === 'user'
+                    ? 'bg-blue-100 ml-auto text-right'
+                    : 'bg-white border border-gray-200'
+                }`}
+              >
+                <p>{msg.text}</p>
+                {msg.class === 1 &&
+                  Array.isArray(msg.recommendation) &&
+                  msg.recommendation.map((item, idx) => (
+                    <ProductRecommendationCard
+                      key={idx}
+                      productId={item.productId}
+                      reason={item.reason}
+                    />
+                  ))}
+              </div>
+            ))}
+            {/* 로딩 스피너 */}
+            {loading ? <BounceLoader color='#1b94ff' className='mx-auto mt-8 w-5 h-5' /> : null}
           </div>
         </div>
-      )}
+
+        <div className='flex px-3 py-2 border-t bg-white border-gray-200'>
+          <input
+            type='text'
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className=' border-gray-200 flex-1 px-3 py-2 text-sm border rounded-l-xl focus:outline-none'
+            placeholder='추천받고 싶은 상품을 입력하세요'
+          />
+          <button
+            onClick={sendMessage}
+            className='bg-blue-500 text-white px-4 rounded-r-xl hover:bg-blue-600 text-sm'
+          >
+            전송
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -175,7 +187,9 @@ function ProductRecommendationCard({ productId, reason }) {
         rel='noopener noreferrer'
         className='block hover:bg-gray-50'
       >
-        <img src={product.gImage[0]} alt={product.name} className='w-full h-28 object-cover' />
+        <img src={product.gImage[0]} alt={product.name} className='w-full h-28 object-cover' onError={(e)=>{
+          e.currentTarget.src= defaultImage
+        }} /> 
         <div className='p-2'>
           <p className='text-sm font-medium text-gray-700'>{product.name}</p>
           <p className='text-xs text-gray-500 mt-1 italic'>{reason}</p>
