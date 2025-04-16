@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { IoDesktopOutline, IoPhonePortraitOutline, IoCheckmarkCircle } from "react-icons/io5"
 import { updateSellerSettings, updateSellerMobileSettings } from "../../../../utils/usercustomui"

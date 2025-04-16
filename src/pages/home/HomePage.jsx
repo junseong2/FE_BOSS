@@ -6,11 +6,26 @@ import HomeCategories from './components/HomeCategories';
 import HomeProducts from './components/HomeProducts';
 import RecommendHomeProducts from './components/RecommendHomeProducts'; // ✅ 추천 전용 컴포넌트
 import HomeStores from './components/HomeStores';
-
+import axios from 'axios';
 export default function HomePage() {
   const { recommendedProducts } = useUser();
   const [recommendedProductList, setRecommendedProductList] = useState([]);
+  const [products, setProducts] = useState([]);
 
+  useEffect(() => {
+    const fetchPopularProducts = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/products/popular', {
+          params: { sortBy: 'daily' },
+        });
+        setProducts(response.data);
+      } catch (error) {
+        console.error('인기 상품 조회 실패:', error);
+      }
+    };
+
+    fetchPopularProducts();
+  }, []);
   // 추천 상품 정보 fetch
   useEffect(() => {
     const fetchRecommendedProductDetails = async () => {
@@ -46,7 +61,9 @@ export default function HomePage() {
             title={'2030이 많이 찾는 상품'}
             customClassName={'bg-[rgba(0,0,0,0.025)]'}
           />
-          <HomeProducts products={mockProductList} title={'준성이사가 추천하는 TOP10'} />
+          <HomeProducts 
+          products={products} 
+          title={'BOSS가 추천하는 TOP10'} />
           <HomeProducts
             products={mockProductList}
             title={'건강이 걱정인 당신을 위한 추천 상품'}

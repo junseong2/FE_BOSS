@@ -12,8 +12,6 @@ export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false); // 전송 로딩 상태
 
 
-  console.log(isSendCode, isAuthEmail)
-
   // 폼 데이터 메시지
   const [formData, setFormData] = useState({
     username: '',
@@ -92,8 +90,6 @@ export default function SignUpPage() {
   // 사용자 입력값 처리
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    console.log(name, value);
 
     setFormData({
       ...formData,
@@ -184,6 +180,7 @@ export default function SignUpPage() {
         }
       ]
     };
+
   
     const isLogin = await registerUser(userPayload);
     if (isLogin) {

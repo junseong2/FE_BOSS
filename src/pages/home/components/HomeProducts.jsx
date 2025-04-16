@@ -1,6 +1,7 @@
-import { SwiperSlide } from "swiper/react"
-import CenteredSlider from "../../../components/slide/CenteredSlider"
-import { Link } from "react-router"
+import { SwiperSlide } from "swiper/react";
+import CenteredSlider from "../../../components/slide/CenteredSlider";
+import { Link } from "react-router-dom"; // ✅ 수정: react-router-dom으로 변경
+import React, { useState, useEffect } from 'react';
 
 export default function HomeProducts({ title, products, customClassName }) {
   return (
@@ -33,20 +34,28 @@ export default function HomeProducts({ title, products, customClassName }) {
               <Link to={`/product/${product.productId}`} className="group block">
                 <div className="relative overflow-hidden rounded-lg sm:rounded-xl shadow-sm transition-all duration-300 group-hover:shadow-md">
                   <div className="w-full min-w-[140px] sm:min-w-[200px] h-[180px] sm:h-[250px] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-12 w-12 sm:h-16 sm:w-16 text-gray-300"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1}
-                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    {product.gimage ? (
+                      <img
+                        src={`http://localhost:5000/uploads/${product.gimage}`}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
                       />
-                    </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-12 w-12 sm:h-16 sm:w-16 text-gray-300"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1}
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    )}
                   </div>
                   <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-300 group-hover:opacity-10"></div>
                 </div>
@@ -54,7 +63,7 @@ export default function HomeProducts({ title, products, customClassName }) {
                   {product.name}
                 </div>
                 <div className="text-center text-xs sm:text-sm text-gray-500">
-                  {product.price ? `${product.price.toLocaleString()}원` : ""}
+                  {product.price ? `${Number(product.price).toLocaleString()}원` : "가격 정보 없음"}
                 </div>
               </Link>
             </SwiperSlide>
@@ -62,6 +71,5 @@ export default function HomeProducts({ title, products, customClassName }) {
         </CenteredSlider>
       </div>
     </div>
-  )
+  );
 }
-

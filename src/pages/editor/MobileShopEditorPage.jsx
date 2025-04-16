@@ -195,27 +195,20 @@ export default function MobileShopEditorPage() {
     setElements(elements.filter((el) => el.id !== id));
   };
 
-const handleMoveElement = (dragIndex, hoverIndex) => {
-  const newElements = [...elements];
-  const draggedElement = newElements[dragIndex];
-
-  // 드래그된 요소를 배열에서 제거
-  newElements.splice(dragIndex, 1);
-
-  // 드래그된 요소를 새로운 위치에 삽입
-  newElements.splice(hoverIndex, 0, draggedElement);
-
-  // 새로운 배열에서 각 요소의 index 값을 업데이트
-  newElements.forEach((element, index) => {
-    element.index = index;  // 각 요소의 index를 새 위치로 업데이트
-  });
-
-  // 요소 순서 변경 후 상태 업데이트
-  setElements(newElements);
-
-  // 상태 업데이트 후 상위 컴포넌트로 새로운 배열 전달 (onElementMove)
-  onElementMove(newElements);  // 상위 컴포넌트로 새로운 요소 배열 전달
-};
+  const handleMoveElement = (dragIndex, hoverIndex) => {
+    const newElements = [...elements];
+    const draggedElement = newElements[dragIndex];
+  
+    newElements.splice(dragIndex, 1);
+    newElements.splice(hoverIndex, 0, draggedElement);
+  
+    newElements.forEach((element, index) => {
+      element.index = index;
+    });
+  
+    setElements(newElements);
+  };
+  
 
 
   // ✅ 카테고리 조회
@@ -228,22 +221,33 @@ const handleMoveElement = (dragIndex, hoverIndex) => {
     fetchCategories();
   }, []);
 
-  // ✅ 저장 버튼 클릭 시
   const handleSave = async () => {
     console.log("💾 저장 실행: 현재 elements 상태 by ShopEditorPage", elements);
-    console.log("🔍 elements 데이터 유형:", typeof elements);
-console.log("🔍 elements는 배열인가?", Array.isArray(elements));
-
-
-
-
-    alert('쇼핑몰 구성이 성공적으로 저장되었습니다!');
-
-
-    
-    // 서버 API로 저장하는 로직 추가 가능
+  
+    if (!sellerId) {
+      alert('판매자 정보가 없습니다.');
+      return;
+    }
+  
+    try {
+      const response = await axios.put(`http://localhost:5000/seller/${sellerId}/updateMobileSettings`, 
+        JSON.stringify(elements), // ✅ List<Map<String,Object>> 형식으로
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        }
+      );
+  
+      alert(' 모바일 쇼핑몰 구성이 성공적으로 저장되었습니다!');
+      console.log("서버 응답:", response.data);
+    } catch (error) {
+      console.error('xxxxxx저장 실패:', error);
+      alert('xxxxxxxxxxxxxx 저장 중 오류가 발생했습니다. 콘솔 로그를 확인해주세요.');
+    }
   };
-
+  
 
 
   

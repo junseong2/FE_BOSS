@@ -3,7 +3,7 @@ import { useDrag, useDrop } from 'react-dnd';
 import { IoTrashOutline } from 'react-icons/io5';
 import MobileEditorPreview from './MobileEditorPreview';
 import { Link } from 'react-router-dom';
-
+import { MdDesktopWindows, MdPhoneIphone, MdVisibility } from 'react-icons/md';
 export default function MobileEditorCanvas({
   editorTab,
   elements,
@@ -18,19 +18,33 @@ export default function MobileEditorCanvas({
   return (
     <div className='w-full '>
 
-<div className="m-1 border border-gray-200 rounded max-w-[240px] flex gap-2 p-2">
+<div className="m-2 border border-gray-200 rounded-lg shadow-sm max-w-[360px] flex gap-2 p-2 bg-white">
   <Link
     to="/editor"
-    className="flex-1 text-center py-1 px-3 bg-gray-500 hover:bg-gray-600 text-white rounded transition-colors"
+    className="flex-1 flex flex-col items-center justify-center py-2 px-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors font-medium"
+
+  
   >
-    웹 편집
+    <MdDesktopWindows size={24} />
+    <span className="text-sm mt-1">웹 편집</span>
   </Link>
+
   <Link
     to="/mobileeditor"
-    className="flex-1 text-center py-1 px-3 bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors"
-  >
-    모바일 편집
+    className="flex-1 flex flex-col items-center justify-center py-2 px-3 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors font-medium"
+
+    >
+    <MdPhoneIphone size={24} />
+    <span className="text-sm mt-1">모바일</span>
   </Link>
+
+  <button
+    onClick={() => setIsPreviewOpen(true)}
+    className="flex-1 flex flex-col items-center justify-center py-2 px-3 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors font-medium"
+  >
+    <MdVisibility size={24} />
+    <span className="text-sm mt-1">미리보기</span>
+  </button>
 </div>      <div className='border-8 border-black overflow-y-auto overflow-x-hidden max-h-[915px] h-full w-[800px] m-2 rounded-lg'>
         {/* 편집기 와이어프레임 뷰 */}
         <div className='p-2'>

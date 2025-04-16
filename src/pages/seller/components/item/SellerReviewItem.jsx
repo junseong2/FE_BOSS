@@ -105,10 +105,12 @@ export default function SellerReviewItem({
                   handleSubmit={(e) => {
                     e.preventDefault();
                     if (review.answerText) {
+
                       console.log(review.reviewId)
                       onUpdateSubmit(e, review.reviewId, review.answerId);
                     } else {
                       onCreateSubmit(e, review.reviewId);
+
                     }
                   }}
                   review={review}

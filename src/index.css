@@ -8,6 +8,13 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'GmarketSansMedium';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 
 /* ✅ 레이아웃이 꼬이지 않도록 높이 설정 */
 html,
@@ -15,6 +22,7 @@ body,
 #root {
   height: auto;
   min-height: 100%;
+  font-family: 'Pretendard-Regular';
 }
 
 
