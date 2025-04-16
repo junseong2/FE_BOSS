@@ -48,42 +48,35 @@ export default function HomeStores({ customClassName }) {
 
       <div className='mt-3 sm:mt-5'>
         <CenteredSlider>
+          {stores?.map((store, index) => {
+            console.log('스토어 정보:', store); // 여기서 출력 가능
 
-
-
-          
-        {stores?.map((store, index) => {
-  console.log('스토어 정보:', store); // ✅ 여기서 출력 가능
-
-  return (
-    <SwiperSlide key={index}>
-      <Link to={`/${store.storeName}/shop`} className='group block'>
-        <div className='relative overflow-hidden rounded-lg sm:rounded-xl shadow-sm transition-all duration-300 group-hover:shadow-md'>
-          <div className='w-full min-w-[140px] sm:min-w-[200px] h-[180px] sm:h-[250px] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center'>
-            <img
-              src={`http://localhost:5000/uploads/${store['sellerId']}_el-1.jpg`}
-              alt='썸네일'
-              className='w-full h-full object-cover'
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = '/default-thumbnail.jpg';
-              }}
-            />
-          </div>
-          <div className='absolute inset-0 bg-red opacity-0 transition-opacity duration-300 group-hover:opacity-10'></div>
-        </div>
-        <strong className='mt-2 sm:mt-3 text-center group-hover:text-red-800 font-medium text-sm sm:text-base transition-colors line-clamp-1'>
-          {store.storeName}
-        </strong>
-        <p className='text-center text-xs sm:text-sm text-red-500'>{store.description}</p>
-      </Link>
-    </SwiperSlide>
-  );
-})}
-
-
-
-
+            return (
+              <SwiperSlide key={store.storeName}>
+                <Link to={`/${store.storeName}/shop`} className='group block'>
+                  <div className='relative overflow-hidden rounded-lg sm:rounded-xl shadow-sm transition-all duration-300 group-hover:shadow-md'>
+                    <div className='w-full min-w-[140px] sm:min-w-[200px] h-[180px] sm:h-[250px] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center'>
+                      <img
+                        src={`http://localhost:5000/uploads/${store['sellerId']}_el-1.jpg`}
+                        alt='썸네일'
+                        className='w-full h-full object-cover'
+                        onError={(e) => {
+                          // e.target.onerror = null;
+                          console.log(1)
+                          // e.target.src = '/default-thumbnail.jpg';
+                        }}
+                      />
+                    </div>
+                    <div className='absolute inset-0 bg-red opacity-0 transition-opacity duration-300 group-hover:opacity-10'></div>
+                  </div>
+                  <strong className='mt-2 sm:mt-3 text-center group-hover:text-red-800 font-medium text-sm sm:text-base transition-colors line-clamp-1'>
+                    {store.storeName}
+                  </strong>
+                  <p className='text-center text-xs sm:text-sm text-red-500'>{store.description}</p>
+                </Link>
+              </SwiperSlide>
+            );
+          })}
         </CenteredSlider>
       </div>
     </div>
