@@ -99,12 +99,12 @@ export default function ElementEditor({
 
         if (data) {
           if (data.header && element.type === "mobileheader") {
-            setMobileHeaderBackgroundColor(data.header.backgroundColor)
+            setMobileHeaderBackgroundColor(data.mobileheader.backgroundColor)
             console.log("ElementEditor-headerData=", data)
             setHeaderLogoUrl(data.mobileheader.logoUrl || `/uploads/${sellerId}_mobileheaderlogo.png`) // ✅ headerLogoUrl 설정
           }
           if (data.banner && element.type === "mobilebanner") {
-            setMobileBannerBackgroundColor(data.banner.backgroundColor)
+            setMobileBannerBackgroundColor(data.mobilebanner.backgroundColor);
             console.log("ElementEditor-mobilebannerData=", data)
           }
         }
@@ -510,12 +510,16 @@ export default function ElementEditor({
                   onUpdateImage={(imgUrl) => console.log("미리보기:", imgUrl)}
                   onUpload={handleLogoUpload}
                 />
+
+{/*
                 {headerLogoUrl && (
                   <div className="mt-3 p-2 bg-white rounded border border-gray-200">
                     <p className="text-xs text-gray-500 mb-1">현재 로고:</p>
                     <img src={headerLogoUrl || "/placeholder.svg"} alt="로고 미리보기" className="max-h-12 mx-auto" />
                   </div>
                 )}
+
+                */}
               </div>
             </div>
 
@@ -669,13 +673,22 @@ export default function ElementEditor({
                 <div className="col-span-2">
                   <label className="block text-xs text-gray-500 mb-1">글꼴 종류</label>
                   <select
-                    value={element.properties.fontFamily}
-                    onChange={(e) => handleChangeFont(e.target.value)}
-                    className="w-full border border-gray-300 rounded px-3 py-2 bg-white"
-                  >
-                    <option value="Nanum Gothic">나눔고딕</option>
-                    <option value="Arial">Arial</option>
-                    <option value="Noto Sans KR">Noto Sans KR</option>
+                      value={element.properties.fontFamily}
+                      onChange={(e) => handleChangeFont(e.target.value)}
+                      className="w-full border border-gray-300 rounded px-3 py-2 bg-white"
+                    >
+                      <option value="Spoqa Han Sans Neo">Spoqa Han Sans Neo</option>
+                      <option value="SUIT">SUIT</option>
+                      <option value="Gmarket Sans">Gmarket Sans</option>
+                      <option value="Apple SD Gothic Neo">Apple SD Gothic Neo</option>
+                      <option value="IBM Plex Sans KR">IBM Plex Sans KR</option>
+                      <option value="Nanum Gothic">나눔고딕</option>
+                      <option value="Noto Sans KR">Noto Sans KR</option>
+                      <option value="Arial">Arial</option>
+                      <option value="Roboto">Roboto</option>
+                      <option value="Pretendard">Pretendard</option>
+        
+          
                   </select>
                 </div>
               </div>
@@ -1126,11 +1139,34 @@ export default function ElementEditor({
             <div className="space-y-3 mb-5">
               <Label label={"로고 설정"} className="font-medium text-gray-700" />
               <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <SingleImageUploader
-                  elementType="mobileheader" // ✅ 헤더 업로드일 경우
+              <SingleProductImageUploader
+  sellerId={sellerId}
+  elementType={element.type}
+  elementId={element.id}
+  onUpload={(url) =>
+    onUpdate({
+      ...element,
+      properties: {
+        ...element.properties,
+        imageUrl: url,
+      },
+    })
+  }
+/>
+
+                  <SingleProductImageUploader
+                  elementType={element.type}
+                  elementId={element.id}
                   sellerId={sellerId}
-                  onUpdateImage={(imgUrl) => console.log("미리보기:", imgUrl)}
-                  onUpload={handleLogoUpload} // ✅ 로고 업로드
+                  onUpload={(url) =>
+                    onUpdate({
+                      ...element,
+                      properties: {
+                        ...element.properties,
+                        imageUrl: url,
+                      },
+                    })
+                  }
                 />
                 {headerLogoUrl && (
                   <div className="mt-3 p-2 bg-white rounded border border-gray-200">
@@ -1204,11 +1240,21 @@ export default function ElementEditor({
             <div className="space-y-3 mb-5">
               <Label label={"배너 이미지 설정"} className="font-medium text-gray-700" />
               <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <SingleImageUploader
-                  sellerId={sellerId}
-                  elementType="mobilebanner" // ✅ 배너 업로드일 경우
-                  onUpload={handleBannerUpload} // ✅ 배너 이미지 업로드
-                />
+              <SingleProductImageUploader
+  sellerId={sellerId}
+  elementType={element.type}
+  elementId={element.id}
+  onUpload={(url) =>
+    onUpdate({
+      ...element,
+      properties: {
+        ...element.properties,
+        imageUrl: url,
+      },
+    })
+  }
+/>
+
                 {bannerUrl && (
                   <div className="mt-3 p-2 bg-white rounded border border-gray-200">
                     <p className="text-xs text-gray-500 mb-1">현재 배너:</p>

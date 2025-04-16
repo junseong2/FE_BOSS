@@ -211,7 +211,13 @@ function ShopPage() {
       {/* 콘텐츠 영역 */}
       <div
         className="relative w-full"
-        style={{ minHeight: `${Math.max(canvasHeight + 300, 600)}px` }}
+        style={{ minHeight: `${Math.max(canvasHeight + 300, 200
+
+          
+        )}px`
+      
+      
+      }}
       >
      <div
   ref={containerRef}
@@ -348,9 +354,10 @@ function ShopPage() {
 </div>
 
       </div>
-
+      <div style={{ height: `${canvasHeight }px` }} />
+    
       {/* Footer (필요시 추가) */}
-      {/* <Footer /> */}
+       <Footer /> 
     </div>
   );
 }

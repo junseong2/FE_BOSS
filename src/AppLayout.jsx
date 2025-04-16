@@ -55,7 +55,7 @@ function AppLayout({
       </main>
       
       {/* Footer */}
-      <Footer />
+       {/* <Footer />*/}
     </div>
   );
 }

@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react"
-import { IoDesktopOutline, IoPhonePortraitOutline, IoCheckmarkCircle } from "react-icons/io5"
-import { updateSellerSettings, updateSellerMobileSettings } from "../../../../utils/usercustomui"
+import { IoDesktopOutline, IoPhonePortraitOutline, IoCheckmarkCircle ,IoHomeOutline } from "react-icons/io5"
 
+import { updateSellerSettings, updateSellerMobileSettings } from "../../../../utils/usercustomui"
+import { useLocation } from 'react-router-dom'; 
 export default function EditorHeader({ elements, editedElement, sellerId, onUpdate, onSave }) {
   const [isSaving, setIsSaving] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
   const [saveType, setSaveType] = useState("")
-
+  const location = useLocation();
+  const isMobileEditor = location.pathname.includes('/mobileeditor'); 
   // Reset success message after 3 seconds
   useEffect(() => {
     let timer
@@ -252,75 +254,69 @@ export default function EditorHeader({ elements, editedElement, sellerId, onUpda
             </div>
           )}
 
-          <button
-            onClick={handleSaveChanges}
-            disabled={isSaving && saveType === "desktop"}
-            className={`relative overflow-hidden group px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-all duration-200 mr-2 ${isSaving && saveType === "desktop"
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-white text-blue-600 hover:bg-blue-50 shadow-md hover:shadow-lg"
-              }`}
-          >
-            {isSaving && saveType === "desktop" ? (
-              <div className="flex items-center">
-                <svg
-                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-600"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                저장 중...
-              </div>
-            ) : (
-              <>
-                <IoDesktopOutline className="text-blue-600 group-hover:scale-110 transition-transform" />
-                <span>데스크톱 저장</span>
-              </>
-            )}
-            <span className="absolute inset-0 bg-blue-100 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-200 -z-10"></span>
-          </button>
+<div className="flex items-center gap-4">
+<button
+  onClick={() => {
+    if (window.confirm("홈으로 이동하시겠습니까? 저장하지 않은 변경사항은 사라질 수 있습니다.")) {
+      window.location.href = "/";
+    }
+  }}
+  className={`relative overflow-hidden group px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-all duration-200 ${
+    isSaving
+      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+      : "bg-white text-blue-600 hover:bg-blue-50 shadow-md hover:shadow-lg"
+  }`}
+>
+  <IoHomeOutline className="text-blue-600 group-hover:scale-110 transition-transform" />
+  <span>홈으로 나가기</span>
+  <span className="absolute inset-0 bg-blue-100 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-200 -z-10"></span>
+</button>
 
-          <button
-            onClick={handleMobileSaveChanges}
-            disabled={isSaving && saveType === "mobile"}
-            className={`relative overflow-hidden group px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-all duration-200 ${isSaving && saveType === "mobile"
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-white text-blue-600 hover:bg-blue-50 shadow-md hover:shadow-lg"
-              }`}
-          >
-            {isSaving && saveType === "mobile" ? (
-              <div className="flex items-center">
-                <svg
-                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-600"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                저장 중...
-              </div>
-            ) : (
-              <>
-                <IoPhonePortraitOutline className="text-blue-600 group-hover:scale-110 transition-transform" />
-                <span>모바일 저장</span>
-              </>
-            )}
-            <span className="absolute inset-0 bg-blue-100 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-200 -z-10"></span>
-          </button>
+<button
+  onClick={isMobileEditor ? handleMobileSaveChanges : handleSaveChanges}
+  disabled={isSaving}
+  className={`relative overflow-hidden group px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-all duration-200 ${
+    isSaving
+      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+      : "bg-white text-blue-600 hover:bg-blue-50 shadow-md hover:shadow-lg"
+  }`}
+>
+  {isSaving ? (
+    <div className="flex items-center">
+      <svg
+        className="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-600"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+      저장 중...
+    </div>
+  ) : (
+    <>
+      {isMobileEditor ? (
+        <IoPhonePortraitOutline className="text-blue-600 group-hover:scale-110 transition-transform" />
+      ) : (
+        <IoDesktopOutline className="text-blue-600 group-hover:scale-110 transition-transform" />
+      )}
+      <span>{isMobileEditor ? "모바일 저장" : "데스크톱 저장"}</span>
+    </>
+  )}
+  <span className="absolute inset-0 bg-blue-100 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-200 -z-10"></span>
+</button>
+
         </div>
       </div>
+      </div>
+
+
+
     </div>
   )
 }
