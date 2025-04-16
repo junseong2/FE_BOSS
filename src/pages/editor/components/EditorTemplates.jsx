@@ -5,18 +5,25 @@ import SortList from '../../../components/SortList';
  * 커스텀 헤더
  * @returns
  */
+
+
 export function TemplateHeader({ properties }) {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-  console.log("🚀렌더링파트 헤더 Logo URL: ", properties?.logoUrl);
+  const {
+    backgroundColor = '#fff1ff',
+    size = { web: { width: '100%', height: '80px' } },
+    logoUrl,
+    menuItems = [],
+  } = properties || {};
+  const { width = '100%', height = '80px' } = size.web || {};
 
   return (
     <div
-      className='relative w-full flex items-center justify-between border-b border-[#E4E4E7] p-2'
-      style={{ backgroundColor: properties?.backgroundColor || '#fff1ff' }}
+      className='relative flex items-center justify-between border-b border-[#E4E4E7] p-2'
+      style={{ backgroundColor, width, height }} // ✅ 사이즈 반영
     >
-      {/* 왼쪽 영역: 카테고리 + 네비게이션 */}
+      {/* 왼쪽 영역 */}
       <div className="flex items-center gap-4 flex-1">
-        {/* 카테고리 버튼 */}
         <button
           className='z-20 p-2 bg-gray-100 rounded-md'
           onClick={() => setIsCategoryOpen(!isCategoryOpen)}
@@ -24,9 +31,8 @@ export function TemplateHeader({ properties }) {
           ☰
         </button>
 
-        {/* 네비게이션 */}
         <ul className='flex gap-4'>
-          {properties?.menuItems?.map((menu, index) => {
+          {menuItems.map((menu, index) => {
             const label = typeof menu === "string" ? menu : menu.title;
             return (
               <li key={`${label}-${index}`} className="cursor-pointer hover:underline">
@@ -37,27 +43,17 @@ export function TemplateHeader({ properties }) {
         </ul>
       </div>
 
-      {/* 가운데 영역: 로고 */}
+      {/* 로고 */}
       <div className='w-[60px] h-[55px] text-center relative'>
-        {properties.logoUrl ? (
-          <img
-            className='w-full h-full object-contain'
-            src={`http://localhost:5000${properties.logoUrl}`}
-            alt='로고 이미지'
-          />
-        ) : (
-          <img
-            className="w-full h-full object-contain"
-            src="https://placehold.co/50x50"
-            alt="기본 로고 이미지"
-          />
-        )}
+        <img
+          className='w-full h-full object-contain'
+          src={logoUrl ? `http://localhost:5000${logoUrl}` : "https://placehold.co/50x50"}
+          alt='로고 이미지'
+        />
       </div>
 
-      {/* 오른쪽 여유 영역 (비워둬도 됨) */}
-      <div className="flex-1"></div>
+      <div className="flex-1" />
 
-      {/* 오버레이 */}
       {isCategoryOpen && (
         <div
           className='fixed inset-0 bg-black opacity-30 z-30'
@@ -67,18 +63,25 @@ export function TemplateHeader({ properties }) {
     </div>
   );
 }
+
 /**
  * 커스텀 헤더2
  * @returns
- */
-export function TemplateHeader2({ properties }) {
+ */export function TemplateHeader2({ properties }) {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-  console.log("🚀렌더링파트 헤더 Logo URL: ", properties?.logoUrl);
+  const {
+    backgroundColor = '#fff1ff',
+    size = { web: { width: '100%', height: '80px' } },
+    logoUrl,
+    menuItems = [],
+    categories = [],
+  } = properties || {};
+  const { width = '100%', height = '80px' } = size.web || {};
 
   return (
-    <div 
-      className='relative w-full flex justify-between items-center gap-2 border-b border-[#E4E4E7] p-2'
-      style={{ backgroundColor: properties?.backgroundColor || '#fff1ff' }} // ✅ 배경색 적용
+    <div
+      className='relative flex justify-between items-center gap-2 border-b border-[#E4E4E7] p-2'
+      style={{ backgroundColor, width, height }} // ✅ 사이즈 반영
     >
       {/* 카테고리 버튼 */}
       <button
@@ -88,54 +91,36 @@ export function TemplateHeader2({ properties }) {
         ☰
       </button>
 
-      {/* 카테고리 바 */}
-     
-  
-        <ul className='p-4'>
-          {properties?.categories?.map((category) => (
+      {/* 카테고리 목록 */}
+      {isCategoryOpen && (
+        <ul className='p-4 absolute top-full left-0 bg-white z-40 shadow-lg'>
+          {categories.map((category) => (
             <li key={category} className='p-2 border-b cursor-pointer hover:bg-gray-100'>
               {category}
             </li>
           ))}
         </ul>
-    
+      )}
 
       {/* 로고 */}
       <div className='w-[60px] h-[55px] text-center relative'>
-        {properties.logoUrl ? (
-          <img
-            className='w-full h-full'
-            src={`http://localhost:5000${properties.logoUrl}`}  // 절대 경로 사용
-            width={50}
-            height={50}
-            alt='로고 이미지'
-          />
-
-        ) : (
-          <img
-            className="w-full h-full"
-            src="https://placehold.co/50x50"  // 기본 이미지 사용
-            alt="기본 로고 이미지"
-            width={50}
-            height={50}
-          />
-        )}
+        <img
+          className='w-full h-full'
+          src={logoUrl ? `http://localhost:5000${logoUrl}` : "https://placehold.co/50x50"}
+          alt='로고 이미지'
+        />
       </div>
 
-      {/* 네비게이션 */}
+      {/* 메뉴 */}
       <div className='flex items-center max-w-[300px] w-full h-[50px]'>
-      <ul className='flex gap-[15px] m-0'>
-  {properties?.menuItems.map((menu, index) => {
-    const label = typeof menu === "string" ? menu : menu.title;
-    return <li key={`${label}-${index}`}>{label}</li>;
-  })}
-</ul>
-
-
-
+        <ul className='flex gap-[15px] m-0'>
+          {menuItems.map((menu, index) => {
+            const label = typeof menu === "string" ? menu : menu.title;
+            return <li key={`${label}-${index}`}>{label}</li>;
+          })}
+        </ul>
       </div>
 
-      {/* 오버레이 (카테고리 열렸을 때 클릭 시 닫힘) */}
       {isCategoryOpen && (
         <div
           className='fixed inset-0 bg-black opacity-30 z-30'
@@ -144,14 +129,8 @@ export function TemplateHeader2({ properties }) {
       )}
     </div>
   );
-
-
-
-
-
-
-
 }
+
 /**
  * 커스텀 배너 
  * @returns
@@ -394,21 +373,25 @@ const properties = {
 export function TemplateColorBox({ properties }) {
   const {
     backgroundColor = '#eeeeee',
-    height = '100vh', // 전체 배경처럼 사용 시
     borderRadius = '0px',
+    size = { web: { width: '100%', height: '100vh' } }, // ✅ size.web에서 height 가져오기
   } = properties || {};
+
+  const { width = '100%', height = '100vh' } = size.web || {};
 
   return (
     <div
-      className="absolute left-0 top-0 w-full"
+      className="absolute left-0 top-0"
       style={{
         backgroundColor,
-        height,
+        width,       // ✅ width 반영
+        height,      // ✅ height도 여기서
         borderRadius,
         zIndex: 0,
       }}
     />
   );
 }
+
 
 
