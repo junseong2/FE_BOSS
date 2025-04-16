@@ -1,4 +1,4 @@
-
+"use client"
 
 import { useRef, useState, useEffect } from "react"
 import { useDrag, useDrop } from "react-dnd"
@@ -139,7 +139,9 @@ export default function EditorCanvas({
           to="/mobileeditor"
           className="flex-1 text-center py-2 px-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors font-medium"
         >
-          모바일<br/>편집
+          모바일
+          <br />
+          편집
         </Link>
         <button
           onClick={() => setIsPreviewOpen(true)}
