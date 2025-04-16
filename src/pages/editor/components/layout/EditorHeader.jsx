@@ -1,8 +1,9 @@
 import { IoSaveOutline } from 'react-icons/io5';
 import { updateSellerSettings ,updateSellerMobileSettings} from '../../../../utils/usercustomui'; 
-
+import { useLocation } from 'react-router-dom'; 
 export default function EditorHeader({ elements,  editedElement, sellerId , onUpdate , onSave}) {
-
+  const location = useLocation();
+  const isMobileEditor = location.pathname.includes('/mobileeditor'); 
 
   const handleSaveChanges = async () => {
     try {
@@ -260,25 +261,28 @@ const mobilesettingsToSave = elements.map(element => {
   return (
 <div className='w-full flex justify-between md:justify-end items-center p-2 md:p-4 bg-blue-500 text-white border-b border-gray-200'>
   <h2 className='text-lg font-semibold'>Editor</h2>
-
   <div className='flex gap-2 ml-auto'>
-    <button
-      onClick={handleSaveChanges} 
-      className='bg-white px-4 h-[35px] rounded-[3px] flex items-center gap-2 text-[12.5px] font-medium shadow z-10 cursor-pointer'
-    >
-      <IoSaveOutline color='#4294F2' />
-      <span className='text-[#4294F2]'>변경사항 저장</span>
-    </button>
+        {!isMobileEditor && (
+          <button
+            onClick={handleSaveChanges}
+            className='bg-white px-4 h-[35px] rounded-[3px] flex items-center gap-2 text-[12.5px] font-medium shadow z-10 cursor-pointer'
+          >
+            <IoSaveOutline color='#4294F2' />
+            <span className='text-[#4294F2]'>변경사항 저장</span>
+          </button>
+        )}
 
-    <button
-      onClick={handleMobileSaveChanges} 
-      className='bg-white px-4 h-[35px] rounded-[3px] flex items-center gap-2 text-[12.5px] font-medium shadow z-10 cursor-pointer'
-    >
-      <IoSaveOutline color='#4294F2' />
-      <span className='text-[#4294F2]'>모바일 변경사항 저장</span>
-    </button>
-  </div>
-</div>
+        {isMobileEditor && (
+          <button
+            onClick={handleMobileSaveChanges}
+            className='bg-white px-4 h-[35px] rounded-[3px] flex items-center gap-2 text-[12.5px] font-medium shadow z-10 cursor-pointer'
+          >
+            <IoSaveOutline color='#4294F2' />
+            <span className='text-[#4294F2]'>모바일 변경사항 저장</span>
+          </button>
+        )}
+      </div>
+    </div>
 
   );
 }

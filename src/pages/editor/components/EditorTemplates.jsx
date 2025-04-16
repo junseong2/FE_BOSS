@@ -10,82 +10,62 @@ export function TemplateHeader({ properties }) {
   console.log("🚀렌더링파트 헤더 Logo URL: ", properties?.logoUrl);
 
   return (
-    <div 
-      className='relative w-full flex justify-between items-center gap-2 border-b border-[#E4E4E7] p-2'
-      style={{ backgroundColor: properties?.backgroundColor || '#fff1ff' }} // ✅ 배경색 적용
+    <div
+      className='relative w-full flex items-center justify-between border-b border-[#E4E4E7] p-2'
+      style={{ backgroundColor: properties?.backgroundColor || '#fff1ff' }}
     >
-      {/* 카테고리 버튼 */}
-      <button
-        className='z-20 p-2 bg-gray-100 rounded-md'
-        onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-      >
-        ☰
-      </button>
+      {/* 왼쪽 영역: 카테고리 + 네비게이션 */}
+      <div className="flex items-center gap-4 flex-1">
+        {/* 카테고리 버튼 */}
+        <button
+          className='z-20 p-2 bg-gray-100 rounded-md'
+          onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+        >
+          ☰
+        </button>
 
-      {/* 카테고리 바 */}
-     
-      <ul className='p-4'>
-  {properties?.categories?.map((category, index) => {
-    const label = typeof category === "string" ? category : category.title;
-    return (
-      <li key={`${label}-${index}`} className='p-2 border-b cursor-pointer hover:bg-gray-100'>
-        {label}
-      </li>
-    );
-  })}
-</ul>
-    
+        {/* 네비게이션 */}
+        <ul className='flex gap-4'>
+          {properties?.menuItems?.map((menu, index) => {
+            const label = typeof menu === "string" ? menu : menu.title;
+            return (
+              <li key={`${label}-${index}`} className="cursor-pointer hover:underline">
+                {label}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
 
-      {/* 로고 */}
+      {/* 가운데 영역: 로고 */}
       <div className='w-[60px] h-[55px] text-center relative'>
         {properties.logoUrl ? (
           <img
-            className='w-full h-full'
-            src={`http://localhost:5000${properties.logoUrl}`}  // 절대 경로 사용
-            width={50}
-            height={50}
+            className='w-full h-full object-contain'
+            src={`http://localhost:5000${properties.logoUrl}`}
             alt='로고 이미지'
           />
-
         ) : (
           <img
-            className="w-full h-full"
-            src="https://placehold.co/50x50"  // 기본 이미지 사용
+            className="w-full h-full object-contain"
+            src="https://placehold.co/50x50"
             alt="기본 로고 이미지"
-            width={50}
-            height={50}
           />
         )}
       </div>
 
-      {/* 네비게이션 */}
-      <div className='flex items-center max-w-[400px] w-full h-[50px]'>
-      <ul className='flex gap-[15px] m-0'>
-  {properties?.menuItems.map((menu, index) => {
-    const label = typeof menu === "string" ? menu : menu.title;
-    return <li key={`${label}-${index}`}>{label}</li>;
-  })}
-</ul>
+      {/* 오른쪽 여유 영역 (비워둬도 됨) */}
+      <div className="flex-1"></div>
 
-
-      </div>
-
-      {/* 오버레이 (카테고리 열렸을 때 클릭 시 닫힘) */}
+      {/* 오버레이 */}
       {isCategoryOpen && (
         <div
           className='fixed inset-0 bg-black opacity-30 z-30'
           onClick={() => setIsCategoryOpen(false)}
-        ></div>
+        />
       )}
     </div>
   );
-
-
-
-
-
-
-
 }
 /**
  * 커스텀 헤더2

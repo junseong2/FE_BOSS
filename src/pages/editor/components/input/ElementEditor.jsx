@@ -1176,17 +1176,18 @@ const handleSave = async () => {
 
 
               
+              
             case 'mobilebanner':
               return (
                 <>
                   {/* 배너 이미지 설정 */}
                   <div className='space-y-2'>
                     <Label label={'배너 이미지 설정'} />
-                    <SingleImageUploader 
+                    <SingleProductImageUploader 
                       sellerId={sellerId} 
                       elementType="mobilebanner"  // 배너 업로드일 경우
-    
-                      onUpload={handleBannerUpload}  //배너 이미지 업로드
+                       elementId={element.id}
+                      onUpload={handleMobileBannerUpload} //배너 이미지 업로드
                     />
                     {bannerUrl && (
                       <img src={bannerUrl} alt="배너 이미지 미리보기" className="w-full h-32 object-cover rounded-lg mt-2" />
