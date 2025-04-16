@@ -392,7 +392,7 @@ function DraggableElement({
       <div
         ref={divRef}
         className={`relative p-2 border cursor-pointer h-full w-full transition-all ${
-          isSelected ? "ring-2 ring-blue-500 ring-offset-1" : "hover:shadow-md hover:border-gray-300"
+          isSelected ? "ring-2 ring-blue-500 ring-offset-1" : "hover:shadow-md hover:border-gray-600"
         }`}
         onClick={onClick}
       >
