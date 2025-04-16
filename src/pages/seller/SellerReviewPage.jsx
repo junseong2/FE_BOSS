@@ -92,7 +92,7 @@ export default function SellerReviewPage() {
       answerText: answer,
     };
 
-
+try{
 
       const isSuccess = await updateSellerReviewAnswer(reviewId, answerId, data);
       if (isSuccess) {
