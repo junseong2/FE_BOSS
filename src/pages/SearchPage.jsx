@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { IoFilterOutline, IoGridOutline, IoListOutline, IoCartOutline, IoSearchOutline } from "react-icons/io5"
+import noimage from '../assets/noimage.jpg';
 
 function SearchPage() {
   const [searchResults, setSearchResults] = useState([])
@@ -273,12 +274,15 @@ function SearchPage() {
                       <img
                         src={
                           Array.isArray(product.gimage)
-                            ? product.gimage[0] || "/default-product.jpg"
-                            : product.gimage || "/default-product.jpg"
+                            ? product.gimage[0] || noimage
+                            : product.gimage || noimage
                         }
                         alt={product.name}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => (e.target.src = "http://localhost:5173/src/assets/default-product.jpg")}
+                        onError={(e) => {
+                          e.target.onerror = null // 무한 루프 방지
+                          e.target.src = noimage
+                        }}
                       />
                     </div>
                     <button
@@ -320,12 +324,15 @@ function SearchPage() {
                       <img
                         src={
                           Array.isArray(product.gimage)
-                            ? product.gimage[0] || "/default-product.jpg"
-                            : product.gimage || "/default-product.jpg"
+                            ? product.gimage[0] || noimage
+                            : product.gimage || noimage
                         }
                         alt={product.name}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => (e.target.src = "http://localhost:5173/src/assets/default-product.jpg")}
+                        onError={(e) => {
+                          e.target.onerror = null // 무한 루프 방지
+                          e.target.src = noimage
+                        }}
                       />
                     </div>
                   </div>

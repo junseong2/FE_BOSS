@@ -1,6 +1,9 @@
+
 import { useState, useEffect, useRef } from 'react';
 import BounceLoader from 'react-spinners/BounceLoader';
+import bossLogo from '../../assets/boss_logo.jpg';
 import './ChatBot.css';
+
 
 function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -77,7 +80,9 @@ function ChatBot() {
         className='fixed bottom-4 right-4 w-16 h-16 z-[40] cursor-pointer shadow-xl rounded-full bg-white border border-gray-200 flex items-center justify-center hover:scale-105 transition-all'
         onClick={toggleChat}
       >
-        <img src='' alt='Chat Icon' className='w-10 h-10' />
+
+        <img src={bossLogo} alt="Chat Icon" className="w-10 h-10" />
+
       </div>
 
       {isOpen && (
@@ -89,22 +94,26 @@ function ChatBot() {
             </button>
           </div>
 
-          <div className='relative flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-white'>
+
+          <div className="relative flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-white">
             <img
-              src='http://localhost:5000/uploads/image.jpg'
-              alt='Chat Background'
-              className='absolute top-1/2 left-1/2 w-32 h-32  -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-0'
+              src={bossLogo}
+              alt="Chat Background"
+              className="absolute top-1/2 left-1/2 w-32 h-32 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-0"
+
             />
 
             <div className='relative z-10' ref={divRef}>
               {messages.map((msg, index) => (
                 <div
                   key={index}
+
                   className={`rounded-xl px-3 py-2 my-4 text-sm max-w-[80%] break-words ${
                     msg.sender === 'user'
                       ? 'bg-blue-100 ml-auto text-right'
                       : 'bg-white border border-gray-200'
                   }`}
+
                 >
                   <p>{msg.text}</p>
                   {msg.class === 1 &&
@@ -123,7 +132,9 @@ function ChatBot() {
             </div>
           </div>
 
+
           <div className='flex px-3 py-2 border-t bg-white border-gray-200'>
+
             <input
               type='text'
               value={input}
@@ -151,12 +162,10 @@ function ProductRecommendationCard({ productId, reason }) {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const data = {
-          productId,
-          name: '더미 상품',
-          description: '설명입니다.',
-          gImage: ['http://localhost:5000/uploads/sample.jpg'],
-        };
+
+        const res = await fetch(`http://localhost:5000/products/${productId}`);
+        const data = await res.json();
+
         setProduct(data);
       } catch (error) {
         console.error('상품 정보 실패:', error);
@@ -167,6 +176,8 @@ function ProductRecommendationCard({ productId, reason }) {
 
   if (!product) return null;
 
+  const imageUrl = product.gImage?.split(',')[0] || "/default-product.jpg";
+
   return (
     <div className='mt-2 border border-gray-200 rounded-xl overflow-hidden'>
       <a
@@ -175,10 +186,17 @@ function ProductRecommendationCard({ productId, reason }) {
         rel='noopener noreferrer'
         className='block hover:bg-gray-50'
       >
-        <img src={product.gImage[0]} alt={product.name} className='w-full h-28 object-cover' />
-        <div className='p-2'>
-          <p className='text-sm font-medium text-gray-700'>{product.name}</p>
-          <p className='text-xs text-gray-500 mt-1 italic'>{reason}</p>
+
+        <img
+          src={`http://localhost:5000/uploads/${imageUrl}`}
+          alt={product.name}
+          className="w-full h-28 object-cover"
+        />
+        <div className="p-2">
+          <p className="text-sm font-medium text-gray-700">{product.name}</p>
+          <p className="text-xs text-gray-500 mt-1 italic">{reason}</p>
+          <p className="text-sm font-bold text-blue-600 mt-1">{product.price?.toLocaleString()}원</p>
+
         </div>
       </a>
     </div>
