@@ -57,12 +57,14 @@ export default function SellerReviewPage() {
     setAnswerLoading(true);
     e.preventDefault();
 
+
     const formData = new FormData(e.currentTarget);
     const answer = formData.get('answer').toString() || '';
 
     const data = {
       answerText: answer,
     };
+
 
     try {
       const isSuccess = await createSellerReviewAnswer(reviewId, data);
@@ -75,6 +77,7 @@ export default function SellerReviewPage() {
       setAnswerLoading(false);
     }
   };
+
 
   // 리뷰 답변 수정
   const handleUpdateSubmit = async (e, reviewId, answerId) => {
@@ -94,10 +97,13 @@ export default function SellerReviewPage() {
         setSelectedReviewId(null) // 폼 닫기
       }
       setRenderTrigger((prev) => !prev);
+
+
     } finally {
       setAnswerLoading(false);
     }
   };
+
 
   // 리뷰 답변 삭제
   const handleDeleteAnswer = async (reviewId, answerId) => {
@@ -111,6 +117,7 @@ export default function SellerReviewPage() {
       setAnswerLoading(false);
     }
   };
+
 
   useEffect(() => {
     getReviewsFetch();
@@ -156,7 +163,9 @@ export default function SellerReviewPage() {
                     key={review.reviewId}
                     onCreateSubmit={handleSubmit}
                     onUpdateSubmit={handleUpdateSubmit}
+
                     onDelete={() => handleDeleteAnswer(review.reviewId, review.answerId)}
+
                     review={review}
                     selectedReviewId={selectedReviewId}
                     setSelectedReviewId={setSelectedReviewId}

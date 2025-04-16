@@ -50,7 +50,7 @@ export default function ProductImageSlider({ imageList }) {
                   alt={`Product image ${index + 1}`}
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = 'http://localhost:5173/src/assets/default-product.jpg';
+                    e.target.src = 'http://localhost:5173/src/assets/noimage.jpg';
                   }}
                 />
               </div>
@@ -90,7 +90,7 @@ export default function ProductImageSlider({ imageList }) {
                 alt={`Thumbnail ${index + 1}`}
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = 'http://localhost:5173/src/assets/default-product.jpg';
+                  e.target.src = 'http://localhost:5173/src/assets/noimage.jpg';
                 }}
               />
             </div>
