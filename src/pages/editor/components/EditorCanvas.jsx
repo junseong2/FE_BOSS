@@ -1,11 +1,10 @@
-"use client"
-
 import { useRef, useState, useEffect } from "react"
 import { useDrag, useDrop } from "react-dnd"
 import { IoTrashOutline } from "react-icons/io5"
 import { Rnd } from "react-rnd"
 import { createPortal } from "react-dom"
 import { Link } from "react-router-dom"
+import { MdDesktopWindows, MdPhoneIphone, MdVisibility } from 'react-icons/md';
 
 // Import your component previews and actual components
 import EditorPreview from "./EditorPreview"
@@ -151,17 +150,6 @@ export default function EditorCanvas({
         </button>
       </div>
 
-      <div className="flex gap-2 m-2 items-center">
-        <label className="flex items-center gap-2 text-gray-700 font-medium">
-          열 수:
-          <input
-            type="number"
-            value={gridColumns}
-            onChange={(e) => setGridColumns(Number(e.target.value))}
-            className="border border-gray-300 rounded-md p-1.5 w-16 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </label>
-      </div>
 
       {/* 캔버스 */}
       <div

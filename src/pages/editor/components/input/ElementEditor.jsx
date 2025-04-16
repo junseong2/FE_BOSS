@@ -166,7 +166,7 @@ export default function ElementEditor({
 
     setBannerBackgroundColor(value)
 
-    if (element.type === "banner") {
+    if (element.type === "mobileheader") {
       const updatedElement = {
         ...element,
         properties: {
@@ -497,6 +497,14 @@ export default function ElementEditor({
   // ✅ 편집기 렌더링
   const renderEditor = () => {
     switch (element.type) {
+
+
+
+
+
+      case 'header':
+        case 'header2':
+         
       case "header":
         return (
           <>
