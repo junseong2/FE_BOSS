@@ -7,6 +7,7 @@ import fetchUserInfo from "../../utils/api.js"
 import { useUser } from "../../context/UserContext"
 import SignIn from "../../pages/SignIn"
 import SellerRegistrationPage from "../../pages/sellerSignup/SellerRegistrationPage.jsx"
+import bossLogo from '../../assets/boss_logo.jpg';
 
 export default function Top() {
   const { userId, setUserId, userName, setUserName, role, setRole, storeName, setStoreName } = useUser()
@@ -176,8 +177,9 @@ export default function Top() {
       <div className="h-20"></div>
       <header className="fixed top-0 left-0 w-full h-20 bg-white border-b border-gray-200 flex items-center justify-between px-4 z-50 shadow-sm">
         <div className="flex items-center">
-        <img
-  src="/assets/boss_logo.png"
+
+          <img
+            src={bossLogo}
 
             className="w-16 h-auto ml-8 cursor-pointer transition-transform hover:scale-105"
             onClick={() => navigate("/")}

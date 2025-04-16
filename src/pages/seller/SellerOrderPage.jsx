@@ -100,7 +100,7 @@ function SellerOrderPage() {
         {/* 검색창 */}
         <div className="p-4 border-b border-gray-100">
           <SellerSearch
-            placeholder={"ORD-를 생략한 주문번호"}
+            placeholder={"고객명을 입력하세요."}
             onSearch={(e) => {
               e.preventDefault()
               const formData = new FormData(e.currentTarget)

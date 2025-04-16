@@ -1,10 +1,9 @@
-"use client"
-
 import { useParams, useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useState, useEffect } from "react"
 import { addToCart } from "../services/cart.service"
 import { IoFilterOutline, IoGridOutline, IoListOutline, IoCartOutline } from "react-icons/io5"
+import noimage from '../assets/noimage.jpg';
 
 function CategoryPage() {
   const { categoryId } = useParams() // URL에서 categoryId 가져오기
@@ -92,7 +91,7 @@ function CategoryPage() {
     }
 
     fetchProducts()
-  }, [categoryId])
+  }, [categoryId, minPrice, maxPrice, sortOrder])
 
   // 가격 정렬 함수
   const sortProducts = (order) => {
@@ -277,11 +276,19 @@ function CategoryPage() {
                   <div className="relative">
                     <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-100">
                       <img
-                        src={product.gimage?.[0] || "/default-product.jpg"}
+                        src={
+                          Array.isArray(product.gimage)
+                            ? product.gimage[0] || noimage
+                            : product.gimage || noimage
+                        }
                         alt={product.name}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => (e.target.src = "http://localhost:5173/src/assets/default-product.jpg")}
+                        onError={(e) => {
+                          e.target.onerror = null // 무한 루프 방지
+                          e.target.src = noimage
+                        }}
                       />
+
                     </div>
                     <button
                       onClick={(e) => handleAddToCart(e, product.productId)}
@@ -320,10 +327,17 @@ function CategoryPage() {
                   <div className="sm:w-1/4 relative">
                     <div className="aspect-w-16 aspect-h-9 sm:aspect-w-1 sm:aspect-h-1 w-full overflow-hidden bg-gray-100">
                       <img
-                        src={product.gimage?.[0] || "/default-product.jpg"}
+                        src={
+                          Array.isArray(product.gimage)
+                            ? product.gimage[0] || noimage
+                            : product.gimage || noimage
+                        }
                         alt={product.name}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => (e.target.src = "http://localhost:5173/src/assets/default-product.jpg")}
+                        onError={(e) => {
+                          e.target.onerror = null // 무한 루프 방지
+                          e.target.src = noimage
+                        }}
                       />
                     </div>
                   </div>
@@ -347,7 +361,7 @@ function CategoryPage() {
                         )}
                         <button
                           onClick={(e) => handleAddToCart(e, product.productId)}
-                          className="px-3 py-1.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center text-sm"
+                          className="px-3 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center text-sm"
                         >
                           <IoCartOutline className="mr-1" /> 장바구니
                         </button>
