@@ -12,6 +12,7 @@ function SellerEditForm({ onUpdateSubmit, onToggle, oldProduct }) {
   const { onToggle: onToggleCategorySelector, isOpen: isOpenCategorySelector } = useToggle()
   const { onToggle: onToggledPriceSelector, isOpen: isOpenPriceSelector } = useToggle()
 
+
   const [category, setCategory] = useState({ id: 0, name: oldProduct.categoryName })
   const [categories, setCategories] = useState([])
   const [price, setPrice] = useState(0)

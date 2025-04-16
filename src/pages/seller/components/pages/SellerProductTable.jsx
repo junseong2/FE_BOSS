@@ -31,16 +31,16 @@ function SellerProductTable({ headers, products, onCheck, onToggle, onSelect, on
             </tr>
           ) : (
             products.map((product) => (
-              <tr key={product.id} className="bg-white border-b hover:bg-gray-50 transition-colors">
+              <tr key={product.productId} className="bg-white border-b hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3">
                   <input
                     type="checkbox"
-                    value={product.id}
+                    value={product.productId}
                     onChange={onCheck}
                     className="w-4 h-4 text-gray-600 bg-gray-100 border-gray-300 rounded focus:ring-gray-500"
                   />
                 </td>
-                <td className="px-4 py-3 font-medium">{product.id}</td>
+                <td className="px-4 py-3 font-medium">{product.productId}</td>
                 <td className="px-4 py-3 font-medium text-gray-900">
                   <div className="flex items-center">
                     {product.gImage && product.gImage[0] && (
@@ -87,7 +87,7 @@ function SellerProductTable({ headers, products, onCheck, onToggle, onSelect, on
                     <button
                       onClick={() => {
                         if (confirm(`${product.name} 상품을 삭제하시겠습니까?`)) {
-                          onDelete([product.id])
+                          onDelete([product.productId])
                         }
                       }}
                       className="p-1.5 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
@@ -96,7 +96,7 @@ function SellerProductTable({ headers, products, onCheck, onToggle, onSelect, on
                       <Trash2 className="w-4 h-4" />
                     </button>
                     <a
-                      href={`/product/${product.id}`}
+                      href={`/product/${product.productId}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-1.5 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"

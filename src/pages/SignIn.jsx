@@ -4,6 +4,8 @@ import fetchUserInfo from '../utils/api';
 import { getUserInfo } from '../services/auth.service';
 import { getToken } from '../utils/storage';
 import { useUser } from '../context/UserContext'; // ✅ Context import
+import kakao from '../assets/kakao_login_logo.png'
+import naver from '../assets/naver_login_logo.png'
 
 
 function SignIn({ onClose, onLoginSuccess }) {
@@ -92,7 +94,7 @@ function SignIn({ onClose, onLoginSuccess }) {
 
         if (onLoginSuccess) onLoginSuccess(); // ✅ Top.jsx에 로그인 성공 알림
         onClose();
-        navigate('/');
+        // navigate('/');
       } else {
         alert('로그인 실패: ' + result.error);
       }
@@ -169,13 +171,13 @@ function SignIn({ onClose, onLoginSuccess }) {
 
         <div className="flex justify-center gap-4 mt-3">
           <img
-            src={`${BASE_URL}/uploads/kakao_login_logo.png`}
+            src={kakao}
             alt="Kakao 로그인"
             className="cursor-pointer w-12 h-12 rounded-full bg-gray-200"
             onClick={() => (window.location.href = `${BASE_URL}/auth/kakao`)}
           />
           <img
-            src={`${BASE_URL}/uploads/naver_login_logo.png`}
+            src={naver}
             alt="Naver 로그인"
             className="cursor-pointer w-12 h-12 rounded-full bg-gray-200"
             onClick={() =>

@@ -21,7 +21,6 @@ const headers = ["선택", "상품ID", "상품명", "카테고리", "설명", "�
 const PAGE_SIZE = 15
 
 function SellerProductPage() {
-  const { onToggle, isOpen, toggleId } = useToggle()
 
   const { onToggle: onToggleNewProductForm, isOpen: isOpenNewProductForm } = useToggle()
   const { onToggle: onToggleCrawledForm, isOpen: isOpenCrawledForm } = useToggle()
@@ -43,6 +42,8 @@ function SellerProductPage() {
   async function onCheck(e) {
     const isChecked = e.currentTarget.checked
     const id = Number(e.currentTarget.value)
+
+    console.log("productId:", id)
 
     if (isChecked) {
       setProductIds((prev) => [...prev, id])
