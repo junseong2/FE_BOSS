@@ -1,11 +1,12 @@
 import { SwiperSlide } from "swiper/react";
 import CenteredSlider from "../../../components/slide/CenteredSlider";
 import { Link } from "react-router-dom"; // ✅ 수정: react-router-dom으로 변경
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import defaultImage from '../../../assets/no-image.jpg'
 
 export default function HomeProducts({ title, products, customClassName }) {
   return (
-    <div className={`${customClassName} w-full mb-8 sm:mb-12 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm`}>
+    <div className={`${customClassName} w-full mb-8 sm:mb-12 rounded-sm sm:rounded-2xl p-4 sm:p-6 `}>
       <div className="flex items-center justify-between mb-4 sm:mb-6">
         <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
           {title}
@@ -32,16 +33,19 @@ export default function HomeProducts({ title, products, customClassName }) {
           {products?.map((product) => (
             <SwiperSlide key={product.productId}>
               <Link to={`/product/${product.productId}`} className="group block">
-                <div className="relative overflow-hidden rounded-lg sm:rounded-xl shadow-sm transition-all duration-300 group-hover:shadow-md">
-                <div className="w-full min-w-[140px] sm:min-w-[200px] h-[180px] sm:h-[250px] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-  {
-    typeof product.gimage === 'string' && product.gimage.length > 0 ? (
-      <img
-        src={`http://localhost:5000/uploads/${product.gimage.split(',')[0]}`}
-        alt={product.name}
-        className="w-full h-full object-cover"
-      />
-    ) : (
+     <div className="relative overflow-hidden rounded-lg sm:rounded-xl shadow-sm transition-all duration-300 group-hover:shadow-md">
+                  <div className="w-full min-w-[140px] sm:min-w-[200px] h-[180px] sm:h-[250px] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+                    {typeof product.gimage === 'string' && product.gimage.length > 0 ? (
+                      <img
+                        src={`http://localhost:5000/uploads/${product.gimage.split(',')[0]}`}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = defaultImage;
+                        }}
+                      />
+                    ) : (
+
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-12 w-12 sm:h-16 sm:w-16 text-gray-300"

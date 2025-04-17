@@ -74,7 +74,7 @@ export default function HomePage() {
             <RecommendHomeProducts
               products={recommendedProductList}
               title={'회원님을 위한 맞춤 추천'}
-              customClassName={'bg-[rgba(0,0,0,0.025)]'}
+      
             />
           )}
         </div>
