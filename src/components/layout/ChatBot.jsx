@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import BounceLoader from 'react-spinners/BounceLoader';
 import bossLogo from '../../assets/boss_logo.jpg';
 import './ChatBot.css';
-import bossLogo from '../../assets/boss_logo.png';
+
 
 
 function ChatBot() {
