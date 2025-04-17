@@ -26,6 +26,17 @@ export default function Top() {
 
   const [trigger, setTrigger] = useState(false);
 
+  const handleAddToCart = async (productId) => {
+    await fetch(`http://localhost:5000/cart/add`, {
+      method: "POST",
+      body: JSON.stringify({ productId }),
+      headers: { "Content-Type": "application/json" },
+      credentials: "include"
+    });
+  
+    // ✅ 장바구니 새로고침
+    loadCart();
+  };
   useEffect(() => {
     const getUserInfo = async () => {
       await fetchUserInfo(setUserId, setUserName, setEmails, setPhones, setAddresses, (role) => {

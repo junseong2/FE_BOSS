@@ -1,4 +1,3 @@
-"use client"
 
 import { useState, useEffect } from "react"
 import axios from "axios"
@@ -72,7 +71,7 @@ const ProductGrid2 = ({ sellerId = null, title = "인기 상품", onAddToCart = 
                 key={type}
                 onClick={() => setSortType(type)}
                 className={`py-2 px-4 text-sm font-medium rounded-md transition-colors ${
-                  sortType === type ? "bg-orange-500 text-white" : "bg-transparent hover:bg-gray-200"
+                  sortType === type ? "bg-GRAY-500 text-white" : "bg-transparent hover:bg-gray-200"
                 }`}
               >
                 {getSortLabel(type)}

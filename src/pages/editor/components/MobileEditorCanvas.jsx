@@ -45,7 +45,12 @@ export default function MobileEditorCanvas({
     <MdVisibility size={24} />
     <span className="text-sm mt-1">미리보기</span>
   </button>
-</div>      <div className='border-8 border-black overflow-y-auto overflow-x-hidden max-h-[915px] h-full w-[800px] m-2 rounded-lg'>
+</div>
+
+
+
+<div className='flex justify-center items-center h-screen'>
+  <div className='border-8 border-black overflow-y-auto overflow-x-hidden max-h-[915px] h-full w-[800px] m-2 rounded-lg'>
         {/* 편집기 와이어프레임 뷰 */}
         <div className='p-2'>
           {elements.length === 0 ? (
@@ -69,6 +74,7 @@ export default function MobileEditorCanvas({
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 }
