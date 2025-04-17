@@ -5,11 +5,9 @@ import { Link } from "react-router-dom"
 export default function RecommendHomeProducts({ title, products, customClassName }) {
   return (
     <div
-      className={`${customClassName} w-full mb-8 sm:mb-12 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm relative overflow-hidden`}
+      className={`${customClassName} w-full mb-8 sm:mb-12 rounded-xl sm:rounded-2xl p-4 sm:p-6  relative overflow-hidden`}
     >
       {/* Decorative elements - hidden on smallest screens */}
-      <div className="hidden sm:block absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-pink-200 to-transparent rounded-full -mr-20 -mt-20 opacity-50"></div>
-      <div className="hidden sm:block absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-purple-200 to-transparent rounded-full -ml-20 -mb-20 opacity-50"></div>
 
       <div className="relative z-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6">
