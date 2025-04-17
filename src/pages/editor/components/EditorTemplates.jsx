@@ -134,8 +134,7 @@ export function TemplateHeader({ properties }) {
 /**
  * 커스텀 배너 
  * @returns
- */
-export function TemplateBanner({ properties }) {
+ */export function TemplateBanner({ properties }) {
   const { title, subtitle, backgroundColor, imageUrl } = properties || {};
 
   const fullImgUrl = imageUrl ? `http://localhost:5000${imageUrl}` : null;
@@ -147,25 +146,37 @@ export function TemplateBanner({ properties }) {
         textAlign: "center",
         color: "white",
         padding: "20px",
+        overflow: "hidden", // ✅ 이미지가 삐져나오지 않게
+        boxSizing: "border-box",
       }}
     >
       <h2 style={{ fontSize: "28px", color: "#4294F2", fontWeight: "bold" }}>
         {title}
       </h2>
       <p>{subtitle}</p>
-      <img
-        src={fullImgUrl || "https://placehold.co/736x300"}
-        alt="배너 이미지"
+      <div
         style={{
           width: "100%",
-          height: "auto",
-          objectFit: "cover",
-          marginTop: "10px",
+          maxWidth: "100%",
+          overflow: "hidden", // ✅ 부모 박스 기준 넘치지 않게
         }}
-      />
+      >
+        <img
+          src={fullImgUrl || "https://placehold.co/736x300"}
+          alt="배너 이미지"
+          style={{
+            width: "100%",
+            height: "auto",
+            objectFit: "cover", // ✅ 비율 유지 + 꽉 채우기
+            display: "block",
+            borderRadius: "8px", // ✅ 선택적으로 모서리도 둥글게
+          }}
+        />
+      </div>
     </div>
   );
 }
+
 
 
 

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
 function Header({
   backgroundColor,
   logoUrl,
@@ -8,7 +7,8 @@ function Header({
   fontFamily = "inherit",
   fontSize = "16px",
   fontWeight = "normal",
-  top = 100
+  top = 100,
+  height = "100px", // ✅ height prop 추가
 }) {
   const navigate = useNavigate();
   const { storename } = useParams();
@@ -34,22 +34,22 @@ function Header({
       className={`w-full shadow-md z-50 transition-all duration-300 ${
         isSticky ? "fixed left-0 right-0 top-[80px]" : "relative"
       }`}
-      style={{ backgroundColor }}
+      style={{ backgroundColor, height }} // ✅ height 적용
     >
       <div
         className="w-full flex items-center justify-between px-6 py-4 relative"
-        style={{ minHeight: "100px" }} // 헤더 높이 확보
+        style={{ height }} // ✅ 내부 컨테이너도 높이 통일
       >
         {/* 왼쪽 메뉴 */}
         <div className="flex gap-6">
-        {menuItems.map((item, idx) => {
-  const label = typeof item === "string" ? item : item.title;
-  const url = typeof item === "string" ? `/${item.toLowerCase()}` : item.url;
+          {menuItems.map((item, idx) => {
+            const label = typeof item === "string" ? item : item.title;
+            const url = typeof item === "string" ? `/${item.toLowerCase()}` : item.url;
 
             return (
               <button
-              key={`${label}-${idx}`}
-              onClick={() =>
+                key={`${label}-${idx}`}
+                onClick={() =>
                   url.startsWith("http")
                     ? (window.location.href = url)
                     : navigate(`/${storename}${url}`)
@@ -76,7 +76,7 @@ function Header({
               style={{
                 width: "100%",
                 height: "auto",
-                maxHeight: "70px", // 튀어나오지 않게 조절
+                maxHeight: "70px",
               }}
             />
           </a>
@@ -88,5 +88,6 @@ function Header({
     </div>
   );
 }
+
 
 export default Header;

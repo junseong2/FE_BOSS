@@ -304,7 +304,7 @@ function ShopPage() {
                   height,
                 }}
               >
-                <Component {...component.properties} sellerId={sellerId} top={top} />
+                <Component {...component.properties} sellerId={sellerId} top={top} height={height} />
               </div>
             );
           })}

@@ -160,7 +160,7 @@ const ProductGrid = ({
                 style={{
                   padding: '8px 12px',
                   borderRadius: 4,
-                  background: '#000000',
+                  background: '#5e5e5e',
                   color: '#fff',
                   border: 'none',
                 }}

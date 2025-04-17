@@ -1,4 +1,4 @@
-"use client"
+
 
 function Reply({ reply, onDelete }) {
   // Format date

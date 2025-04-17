@@ -33,14 +33,15 @@ export default function HomeProducts({ title, products, customClassName }) {
             <SwiperSlide key={product.productId}>
               <Link to={`/product/${product.productId}`} className="group block">
                 <div className="relative overflow-hidden rounded-lg sm:rounded-xl shadow-sm transition-all duration-300 group-hover:shadow-md">
-                  <div className="w-full min-w-[140px] sm:min-w-[200px] h-[180px] sm:h-[250px] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-                    {product.gimage ? (
-                      <img
-                        src={`http://localhost:5000/uploads/${product.gimage}`}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
+                <div className="w-full min-w-[140px] sm:min-w-[200px] h-[180px] sm:h-[250px] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+  {
+    typeof product.gimage === 'string' && product.gimage.length > 0 ? (
+      <img
+        src={`http://localhost:5000/uploads/${product.gimage.split(',')[0]}`}
+        alt={product.name}
+        className="w-full h-full object-cover"
+      />
+    ) : (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-12 w-12 sm:h-16 sm:w-16 text-gray-300"

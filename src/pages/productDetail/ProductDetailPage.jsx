@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom"
 import { useEffect, useState } from "react"
+import { useCart } from "../../context/CartContext" 
 import ProductImageSlider from "./components/ProductImageSlider"
 import {
   IoCartOutline,
@@ -36,6 +37,7 @@ const myStyles = {
 }
 
 export default function ProductDetailPage() {
+  const { loadCart } = useCart()
   const { productId } = useParams()
   const [loadingState, setLoadingState] = useState({
     productDetail: true,
@@ -72,7 +74,7 @@ export default function ProductDetailPage() {
 
       // 장바구니 추가 알림 표시
       setShowCartNotification(true)
-
+      loadCart()
       // 3초 후 알림 숨기기
       setTimeout(() => {
         setShowCartNotification(false)
@@ -254,7 +256,7 @@ export default function ProductDetailPage() {
                         </div>
                       </div>
                       <Link
-                        to={`/store/${storeInfo.storename}`}
+                        to={`/${storeInfo.storename}/shop`}
                         className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg transition-colors flex items-center"
                       >
                         스토어 방문

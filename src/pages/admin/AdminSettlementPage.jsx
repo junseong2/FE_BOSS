@@ -1,4 +1,3 @@
-"use client"
 
 import { useState, useEffect } from "react"
 import AdminContentHeader from "./components/common/AdminContentHeader"

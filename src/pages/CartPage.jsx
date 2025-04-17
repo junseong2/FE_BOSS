@@ -1,9 +1,10 @@
-"use client"
+
 
 import { Trash2, ShoppingCart, Home, CreditCard, Minus, Plus, RefreshCw, ArrowLeft, Package, Tag, AlertCircle, Check } from 'lucide-react'
 import { cva } from "class-variance-authority"
 import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { useCart } from "../context/CartContext";
 
 // Define the cn utility function
 function cn(...inputs) {
@@ -99,9 +100,11 @@ const Separator = React.forwardRef(({ className, orientation = "horizontal", ...
 Separator.displayName = "Separator"
 
 export default function CartPage() {
+  const { cartItems, setCartItems, loadCart, removeItemFromCart, updateQuantity } = useCart();
+
   const [userId, setUserId] = useState(null)
   const [userName, setUserName] = useState(null)
-  const [cartItems, setCartItems] = useState([])
+
   const [isLoading, setIsLoading] = useState(true)
   const [showConfirmClear, setShowConfirmClear] = useState(false)
   const [showNotification, setShowNotification] = useState(false)
@@ -136,23 +139,7 @@ export default function CartPage() {
     }
   }
 
-  const loadCart = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/cart", {
-        method: "GET",
-        credentials: "include",
-      })
 
-      if (!response.ok) {
-        throw new Error("장바구니 조회 실패")
-      }
-
-      const data = await response.json()
-      setCartItems(data.cartItems ?? []) // null일 경우 빈 배열로 설정
-    } catch (error) {
-      console.error("장바구니 조회 오류:", error)
-    }
-  }
 
   const clearCart = async () => {
     try {
@@ -177,59 +164,6 @@ export default function CartPage() {
     }
   }
 
-  const removeItemFromCart = async (productId) => {
-    try {
-      const response = await fetch(`http://localhost:5000/cart/remove?productId=${productId}`, {
-        method: "DELETE",
-        credentials: "include",
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to remove item from cart")
-      }
-
-      console.log("Item removed successfully")
-
-      // 삭제된 상품을 상태에서 즉시 제거
-      setCartItems((prevCart) => prevCart.filter((item) => item.productId !== productId))
-      showNotificationHandler("상품이 장바구니에서 제거되었습니다", "success")
-    } catch (error) {
-      console.error("Error removing item from cart:", error)
-      showNotificationHandler("상품 제거에 실패했습니다", "error")
-    }
-  }
-
-  const updateQuantity = async (productId, newQuantity) => {
-    if (newQuantity <= 0) {
-      alert("수량은 1개 이상이어야 합니다.")
-      return
-    }
-
-    try {
-      const response = await fetch(`http://localhost:5000/cart/updatequantity`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ productId, quantity: newQuantity }),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to update quantity")
-      }
-
-      console.log("Quantity updated successfully")
-
-      // 변경된 수량을 상태에 반영
-      setCartItems((prevCart) =>
-        prevCart.map((item) => (item.productId === productId ? { ...item, quantity: newQuantity } : item))
-      )
-    } catch (error) {
-      console.error("Error updating quantity:", error)
-      showNotificationHandler("수량 업데이트에 실패했습니다", "error")
-    }
-  }
 
   const calculateTotal = () => {
     return cartItems.reduce((total, item) => total + item.productPrice * item.quantity, 0)
