@@ -13,7 +13,7 @@ function SellerProductTable({ headers, products, onCheck, onToggle, onSelect, on
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm text-left text-gray-700">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+        <thead className="text-sm text-gray-700 uppercase bg-gray-50">
           <tr>
             {headers.map((header, index) => (
               <th key={index} scope="col" className="px-4 py-3">
@@ -24,14 +24,14 @@ function SellerProductTable({ headers, products, onCheck, onToggle, onSelect, on
         </thead>
         <tbody>
           {products.length === 0 ? (
-            <tr className="bg-white border-b hover:bg-gray-50">
+            <tr className="bg-white border-b border-gray-300 hover:bg-gray-50">
               <td colSpan={headers.length} className="px-4 py-16 text-center text-gray-500">
                 등록된 상품이 없습니다.
               </td>
             </tr>
           ) : (
             products.map((product) => (
-              <tr key={product.productId} className="bg-white border-b hover:bg-gray-50 transition-colors">
+              <tr key={product.productId} className="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3">
                   <input
                     type="checkbox"

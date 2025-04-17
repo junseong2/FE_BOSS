@@ -53,7 +53,6 @@ export default function SellerReviewPage() {
 
   // 리뷰 답변
   const handleSubmit = async (e, reviewId) => {
-
     if (!reviewId) return alert('정상적인 요청이 아닙니다. ');
     setAnswerLoading(true);
     e.preventDefault();
@@ -74,7 +73,6 @@ export default function SellerReviewPage() {
         setSelectedReviewId(null) // 폼 닫기
       }
       setRenderTrigger((prev) => !prev);
-
     } finally {
       setAnswerLoading(false);
     }

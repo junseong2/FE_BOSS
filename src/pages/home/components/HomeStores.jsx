@@ -23,7 +23,7 @@ export default function HomeStores({ customClassName }) {
 
   return (
     <div
-      className={`${customClassName} w-full mb-8 sm:mb-12 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm`}
+      className={`${customClassName} w-full mb-8 sm:mb-12 rounded-xl sm:rounded-2xl p-4 sm:p-6 `}
     >
       <div className='flex items-center justify-between mb-4 sm:mb-6'>
         <h2 className='text-xl sm:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent'>
