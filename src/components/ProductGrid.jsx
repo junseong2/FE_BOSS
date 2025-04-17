@@ -37,6 +37,8 @@ const ProductGrid = ({
       } else {
         url = `${import.meta.env.VITE_BACKEND_URL}/products/popular?sortBy=${type}`;
       }
+
+      console.log("요청 주소:", url, sellerId)
   
       const res = await axios.get(url);
       setProducts(res.data);
@@ -55,9 +57,12 @@ const ProductGrid = ({
     }
   }, [sortType, sellerId]);
 
-  const getCurrentPageProducts = () => {
+  function getCurrentPageProducts() {
     const start = currentPage * pageSize;
     const end = start + pageSize;
+
+    console.log(products)
+    
     return products.slice(start, end);
   };
 
@@ -118,7 +123,7 @@ const ProductGrid = ({
             padding: '0 40px',
           }}
         >
-          {getCurrentPageProducts().map((product) => (
+          {getCurrentPageProducts()?.map((product) => (
             <div
               key={product.productId}
               style={{
@@ -160,7 +165,7 @@ const ProductGrid = ({
                 style={{
                   padding: '8px 12px',
                   borderRadius: 4,
-                  background: '#000000',
+                  background: '#5e5e5e',
                   color: '#fff',
                   border: 'none',
                 }}

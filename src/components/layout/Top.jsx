@@ -1,49 +1,75 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  IoSearch,
-  IoCartOutline,
-  IoPersonOutline,
-  IoLogOutOutline,
-  IoClose,
-} from 'react-icons/io5';
-import { MdDashboard, MdStorefront } from 'react-icons/md';
-import { useCart } from '../../context/CartContext';
-import fetchUserInfo from '../../utils/api.js';
-import { useUser } from '../../context/UserContext';
-import SignIn from '../../pages/SignIn';
-import SellerRegistrationPage from '../../pages/sellerSignup/SellerRegistrationPage.jsx';
+import { useEffect, useState } from "react"
+import { useNavigate, useLocation } from "react-router-dom"
+import {IoHomeOutline,IoSearch, IoCartOutline, IoPersonOutline, IoLogOutOutline, IoClose } from "react-icons/io5"
+import { MdDashboard, MdStorefront } from "react-icons/md"
+import { useCart } from "../../context/CartContext"
+import fetchUserInfo from "../../utils/api.js"
+import { useUser } from "../../context/UserContext"
+import SignIn from "../../pages/SignIn"
+import SellerRegistrationPage from "../../pages/sellerSignup/SellerRegistrationPage.jsx"
 import bossLogo from '../../assets/boss_logo.jpg';
 
 export default function Top() {
-  const { userId, setUserId, userName, setUserName, role, setRole } = useUser();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [emails, setEmails] = useState(['']);
-  const [phones, setPhones] = useState(['']);
-  const [addresses, setAddresses] = useState([
-    { address1: '', address2: '', post: '', isDefault: false },
-  ]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showCartPopup, setShowCartPopup] = useState(false);
-  const { cartItems, loadCart } = useCart();
-  const [loadingCart, setLoadingCart] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [isSellerModalOpen, setIsSellerModalOpen] = useState(false);
-  const [modalAnimation, setModalAnimation] = useState(false);
+  const { userId, setUserId, userName, setUserName, role, setRole, storeName, setStoreName } = useUser()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [emails, setEmails] = useState([""])
+  const [phones, setPhones] = useState([""])
+  const [addresses, setAddresses] = useState([{ address1: "", address2: "", post: "", isDefault: false }])
+  const [searchQuery, setSearchQuery] = useState("")
+  const [showCartPopup, setShowCartPopup] = useState(false)
+  const { cartItems, loadCart } = useCart()
+  const [loadingCart, setLoadingCart] = useState(false)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [isSellerModalOpen, setIsSellerModalOpen] = useState(false)
+  const [modalAnimation, setModalAnimation] = useState(false)
 
   const [trigger, setTrigger] = useState(false);
 
   useEffect(() => {
     const getUserInfo = async () => {
       await fetchUserInfo(setUserId, setUserName, setEmails, setPhones, setAddresses, (role) => {
-        setRole(role);
-        setTrigger((prev) => !prev); // 👈 트리거 강제 업데이트
-      });
-    };
-    getUserInfo();
-  }, []);
+        setRole(role)
+        setTrigger(prev => !prev) // 👈 트리거 강제 업데이트
+      },
+      setStoreName 
+    )
 
+    }
+    getUserInfo()
+  }, [])
+  const fetchSellerStoreName = async (userId) => {
+    try {
+      console.log("📦 fetchSellerStoreName 호출됨 - userId:", userId);
+      const res = await fetch(`http://localhost:5000/seller/seller-info-byuserid/${userId}`);
+      const data = await res.json();
+      console.log("📦 fetchSellerStoreName 응답:", data);
+  
+      if (data.storename) {
+        setStoreName(data.storename);
+        console.log("✅ storeName 저장됨:", data.storename);
+      } else {
+        console.warn("⚠️ storeName이 없습니다:", data);
+      }
+    } catch (err) {
+      console.error("❌ 스토어명 불러오기 실패", err);
+    }
+  };
+  useEffect(() => {
+    console.log("🧪 useEffect 감지됨:", { role, userId, storeName });
+  
+    if (role === "SELLER" && userId && !storeName) {
+      console.log("🟡 조건 충족 → fetchSellerStoreName 실행");
+      fetchSellerStoreName(userId);
+    }
+  }, [role, userId]);
+  useEffect(() => {
+    // ✅ role이 SELLER이고 userId가 존재할 때만 storeName을 따로 요청
+    if (role === "SELLER" && userId && !storeName) {
+      fetchSellerStoreName(userId);
+    }
+  }, [role, userId]);
+  
   useEffect(() => {
     if (isSellerModalOpen) {
       document.body.style.overflow = 'hidden';
@@ -91,18 +117,22 @@ export default function Top() {
       case 'SELLER':
         return (
           <>
-            <IconBtn icon={<MdDashboard />} label='에디터' onClick={() => navigate('/editor')} />
+            <IconBtn icon={<MdDashboard />} label="에디터" onClick={() => navigate("/editor")} />
+            <IconBtn icon={<MdStorefront />} label="판매자" onClick={() => navigate("/seller/dashboard")} />
+            <IconBtn icon={<IoCartOutline />} label="장바구니" onClick={() => navigate("/cart")} badge={cartItems.length}/>
             <IconBtn
-              icon={<MdStorefront />}
-              label='판매자'
-              onClick={() => navigate('/seller/dashboard')}
-            />
-            <IconBtn
-              icon={<IoCartOutline />}
-              label='장바구니'
-              onClick={() => navigate('/cart')}
-              badge={cartItems.length}
-            />
+  icon={<IoHomeOutline />}
+  label="내 스토어"
+  onClick={() => {
+    console.log("🔘 내 스토어 버튼 클릭됨", storeName);
+    if (storeName) {
+      navigate(`/${storeName}/shop`)
+    } else {
+      alert("스토어 정보가 없습니다.")
+    }
+  }}
+/>
+   
           </>
         );
       case 'ADMIN':

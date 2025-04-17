@@ -43,8 +43,6 @@ function SellerProductPage() {
     const isChecked = e.currentTarget.checked
     const id = Number(e.currentTarget.value)
 
-    console.log("productId:", id)
-
     if (isChecked) {
       setProductIds((prev) => [...prev, id])
     } else {
@@ -84,7 +82,6 @@ function SellerProductPage() {
     try {
       const data = await getAllSellerProducts(Math.max(0, page), PAGE_SIZE, productName)
       if (data) {
-        console.log(data)
         setProducts(data.products ?? [])
         setTotalCount(data.totalCount ?? 1)
       }

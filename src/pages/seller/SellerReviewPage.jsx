@@ -90,7 +90,8 @@ export default function SellerReviewPage() {
       answerText: answer,
     };
 
-    try {
+try{
+
       const isSuccess = await updateSellerReviewAnswer(reviewId, answerId, data);
       if (isSuccess) {
         toastSuccess('답변이 수정되었습니다.');
