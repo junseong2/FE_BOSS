@@ -29,9 +29,9 @@ export default [
       ...react.configs.recommended.rules,
       ...react.configs['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
-      'react/jsx-no-target-blank': 'off',
       'no-unused-vars': 'off',
       'react/prop-types': 'off',
+      'react/jsx-no-target-blank': 'off',
       'react/react-in-jsx-scope': 'off',
       'no-undef': 'off', // no-undef 규칙 끄기
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],

@@ -72,5 +72,6 @@
 }
 .remove-item-btn {
   background-color: white;
+  font-size: 5px !important;
   border: 3px solid black;
 }

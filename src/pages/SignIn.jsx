@@ -1,202 +1,191 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import fetchUserInfo from '../utils/api';
+import { getUserInfo } from '../services/auth.service';
+import { getToken } from '../utils/storage';
+import { useUser } from '../context/UserContext'; // ✅ Context import
+import kakao from '../assets/kakao_login_logo.png'
+import naver from '../assets/naver_login_logo.png'
 
-function SignIn() {
-  const [userId, setUserId] = useState(null);
 
-  console.log('SignIn 컴포넌트 렌더링됨'); // ✅ 확인용 로그 추가
+function SignIn({ onClose, onLoginSuccess }) {
+  const { setUserId, setUserName, setRecommendedProducts, setRole } = useUser();
+
+  const navigate = useNavigate();
   const location = useLocation();
-  const navigate = useNavigate(); // ✅ useNavigate 선언 추가
 
-  const [userName, setUserName] = useState(null);
-  const [redirectUrl, setRedirectUrl] = useState('/');
-  const [email, setEmail] = useState(''); // ✅ 이메일 상태 추가
-  const [password, setPassword] = useState(''); // ✅ 비밀번호 상태 추가
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  // 로그인 후 리디렉션될 URL을 서버에서 가져오기
-  const getRedirectUrl = async () => {
-    try {
-      console.log('리디렉션 URL 가져오는 중...'); // ✅ 확인용 로그 추가
-      const response = await fetch('http://localhost:5000/auth/get-redirect-url', {
-        method: 'GET',
-        credentials: 'include',
-      });
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000' ;
+  // 로그인 폼의 이메일, 비밀번호 상태 관리
 
-      if (!response.ok) {
-        throw new Error('서버에서 리디렉션 URL을 가져오지 못함');
-      }
 
-      const data = await response.json();
-      console.log('가져온 리디렉션 URL:', data.redirectUrl); // ✅ 확인용 로그 추가
-      setRedirectUrl(data.redirectUrl);
-    } catch (error) {
-      console.error('리디렉션 URL 가져오기 실패:', error);
-    }
-    await fetchUserInfo(setUserId, setUserName); // 사용자 정보 불러오기
 
-    console.log('현재 사용자 ID:', userId); // 사용자 ID 출력
-    console.log('현재 사용자 이름:', userName); // 사용자 이름 출력
-  };
-
+  // 사용자 정보 상태 관리
+  
+  const [phones, setPhones] = useState([]);
+  const [addresses, setAddresses] = useState([]);
+  // 로그인 상태 추적
   const checkLoginStatus = async () => {
     try {
-      console.log('로그인 상태 확인 중...');
-
-      const token = localStorage.getItem('token'); // ✅ JWT 가져오기
-      if (!token) {
-        console.error('토큰이 없습니다. 로그인 필요');
-        return;
-      }
-
-      const response = await fetch('http://localhost:5000/auth/user-info', {
-        method: 'GET',
-        credentials: 'include', // ✅ 쿠키 포함 요청 (CORS 문제 방지)
-        headers: {
-          Authorization: `Bearer ${token}`, // ✅ JWT 토큰 추가
-          'Content-Type': 'application/json',
-        },
+      const res = await fetch(`${BASE_URL}/auth/user-info`, {
+        credentials: 'include', // ✅ 쿠키 포함 필수!
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log('로그인된 사용자 정보:', data);
+  
+      if (res.ok) {
+        const data = await res.json();
         setUserName(data.userName);
-        navigate('/');
-      } else {
-        console.error('로그인 상태 확인 실패:', response.status);
+        setUserId(data.userId);
       }
     } catch (error) {
       console.error('로그인 상태 확인 중 오류 발생:', error);
     }
   };
+  
 
   useEffect(() => {
-    console.log('SignIn useEffect 실행됨');
-    checkLoginStatus(); // 로그인 확인 후 홈 리디렉션 처리
-
     const params = new URLSearchParams(location.search);
-    const userId = params.get('userId');
-    const userName = params.get('userName');
-
-    if (userId && userName) {
-      setUserName(userName);
+    if (params.has('code') && (window.location.href.includes('naver') || window.location.href.includes('kakao'))) {
+      console.log("✅ 소셜 로그인 콜백 감지됨, 사용자 정보 요청");
+      fetchUserInfo(setUserId, setUserName, setEmail, setPhones, setAddresses);
+      onClose?.();
     }
-  }, [location.search]); // userName 제거
+  }, [location.search]);
+  
+  useEffect(() => {
+    checkLoginStatus();
+  }, [location.search]);
 
-  // 로컬 로그인 요청
+  // 로그인 요청
+
   const handleLogin = async () => {
     try {
       const response = await fetch('http://localhost:5000/auth/locallogin', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-        credentials: 'include', // ✅ 세션 쿠키 유지 (JWT 사용 시 필수)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include',
       });
 
       const result = await response.json();
 
       if (response.ok) {
         alert('로그인 성공!');
+        setUserName(result.userName);
 
-        // 쿠키에 JWT가 저장되므로, 여기서는 추가적인 작업이 필요하지 않음
-        setUserName(result.userName); // ✅ 로그인한 유저 이름 저장
-        await fetchUserInfo(setUserId, setUserName); // 사용자 정보 가져오기
+        await fetchUserInfo(setUserId, setUserName, undefined, undefined, undefined, setRole);
 
-        navigate('/'); // ✅ 로그인 후 홈으로 이동
+        const token = getToken();
+        const currentUserId = result.userId;
+
+        if (!currentUserId) throw new Error('userId가 null입니다');
+
+        const recommendRes = await fetch(
+          `http://localhost:5000/vector/recommend?userId=${currentUserId}&n=20&m=3`,
+          {
+            method: 'GET',
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        const recommendData = await recommendRes.json();
+        setRecommendedProducts(recommendData);
+
+        if (onLoginSuccess) onLoginSuccess(); // ✅ Top.jsx에 로그인 성공 알림
+        onClose();
+        // navigate('/');
       } else {
-        alert('로그인 실패: ' + result.error); // error 메시지 수정
+        alert('로그인 실패: ' + result.error);
       }
     } catch (error) {
-      console.error('로그인 요청 중 오류 발생:', error);
+      console.error('❌ 로그인 요청 중 오류:', error);
       alert('로그인 중 오류가 발생했습니다.');
     }
-    fetchUserInfo();
-  };
-
-  useEffect(() => {
-    console.log('SignIn useEffect 실행됨'); // ✅ 확인용 로그 추가
-    getRedirectUrl();
-
-    const params = new URLSearchParams(location.search);
-    const userId = params.get('userId');
-    const userName = params.get('userName');
-
-    console.log('URL Params:', { userId, userName }); // ✅ 확인용 로그 추가
-
-    if (userId && userName) {
-      setUserName(userName);
-    }
-  }, [location.search]);
-
-  const handleKakaoLogin = () => {
-    window.location.href = `http://localhost:5000/auth/kakao`;
-  };
-
-  const handleNaverLogin = () => {
-    window.location.href = 'http://localhost:5000/auth/naver';
-  };
-
-  const handleGoogleLogin = () => {
-    window.location.href = `http://localhost:5000/auth/google`;
-  };
-
-  const handleSignUpRedirect = () => {
-    navigate('/signup');
   };
 
   return (
-    <div className='signin-container'>
-      {/* ✅ 로컬 로그인 폼 추가 */}
-      <h2>로컬 로그인</h2>
-      <input
-        type='email'
-        placeholder='이메일 입력'
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type='password'
-        placeholder='비밀번호 입력'
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={handleLogin} className='login-btn'>
-        로그인
-      </button>
-      <button onClick={handleSignUpRedirect} className='signup-redirect-btn'>
-        회원가입
-      </button>
+    <div className="fixed inset-0 flex items-center justify-center bg-transparent z-50">
+      <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-sm relative">
+        <button
+          className="absolute top-4 right-4 text-gray-600 hover:text-blue-500 text-xl font-bold"
+          onClick={onClose}
+        >
+          &times;
+        </button>
+        <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">로그인</h2>
+        <div>
+          <label className="text-gray-500">이메일</label>
+          <input
+            type="email"
+            placeholder="이메일 입력"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-2 mb-3 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div className="mt-1.5">
+          <label className="text-gray-500">비밀번호</label>
+          <input
+            type="password"
+            placeholder="비밀번호 입력"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-2 mb-4 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <button
+          onClick={handleLogin}
+          className="w-full bg-[#4294F2] hover:bg-[#5d8ee4] cursor-pointer text-white py-2 rounded font-semibold transition"
+        >
+          로그인
+        </button>
 
-      <h1>
-        또는<br></br>소셜 로그인
-      </h1>
-      <img
-        src='src/assets/kakao_login_logo.png'
-        alt='Kakao 로그인'
-        className='login-btn'
-        onClick={handleKakaoLogin}
-        style={{ cursor: 'pointer', width: '100px', height: 'auto' }} // 원하는 크기로 조정
-      />
-      <img
-        src='src/assets/naver_login_logo.png'
-        alt='Naver 로그인'
-        className='login-btn'
-        onClick={handleNaverLogin}
-        style={{ cursor: 'pointer', width: '100px', height: 'auto', marginLeft: '50px' }} // 원하는 크기로 조정
-      />
-      {/* 
-<button onClick={handleGoogleLogin} className="login-btn">
-    구글 로그인
-</button>
-*/}
+        <div className="flex justify-between mt-3">
+          <button
+            onClick={() => {
+              navigate('/signup');
+              onClose();
+            }}
+            className="text-blue-500 hover:text-blue-700 text-sm"
+          >
+            회원가입
+          </button>
+          <button
+            onClick={() => {
+              navigate('/auth/account-recovery');
+              onClose();
+            }}
+            className="text-blue-500 hover:text-blue-700 text-sm"
+          >
+            비밀번호 찾기
+          </button>
+        </div>
 
-      {userName && <div className='topbar'>환영합니다, {userName}님!</div>}
+        <div className="flex flex-col relative">
+          <div className="absolute w-full h-[0.15px] bg-gray-200 top-[50%] translate-y-[-50%]"></div>
+          <span className="text-2sm font-medium text-center text-gray-400 my-5 bg-white z-10 w-[60px] mx-auto">
+            또는
+          </span>
+        </div>
+
+        <div className="flex justify-center gap-4 mt-3">
+          <img
+            src={kakao}
+            alt="Kakao 로그인"
+            className="cursor-pointer w-12 h-12 rounded-full bg-gray-200"
+            onClick={() => (window.location.href = `${BASE_URL}/auth/kakao`)}
+          />
+          <img
+            src={naver}
+            alt="Naver 로그인"
+            className="cursor-pointer w-12 h-12 rounded-full bg-gray-200"
+            onClick={() =>
+              (window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/naver`)
+            }
+          />
+        </div>
+      </div>
     </div>
   );
 }

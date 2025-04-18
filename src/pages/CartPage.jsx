@@ -1,219 +1,471 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../App.css';
-import './styles/CartPage.css';
 
-function CartPage() {
-  const [userId, setUserId] = useState(null);
-  const [userName, setUserName] = useState(null);
-  const [cartItems, setCartItems] = useState([]);
-  const navigate = useNavigate();
+
+import { Trash2, ShoppingCart, Home, CreditCard, Minus, Plus, RefreshCw, ArrowLeft, Package, Tag, AlertCircle, Check } from 'lucide-react'
+import { cva } from "class-variance-authority"
+import React, { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { useCart } from "../context/CartContext";
+
+// Define the cn utility function
+function cn(...inputs) {
+  return inputs.filter(Boolean).join(" ")
+}
+
+// Define the Button component
+const buttonVariants = cva(
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+const Button = React.forwardRef(({ className, variant, size, asChild = false, ...props }, ref) => {
+  return <button className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />
+})
+Button.displayName = "Button"
+
+// Define the Input component
+const Input = React.forwardRef(({ className, type, ...props }, ref) => {
+  return (
+    <input
+      type={type}
+      className={cn(
+        "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        className
+      )}
+      ref={ref}
+      {...props}
+    />
+  )
+})
+Input.displayName = "Input"
+
+// Define the Card components
+const Card = React.forwardRef(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn("rounded-lg border bg-card text-card-foreground shadow-sm", className)} {...props} />
+))
+Card.displayName = "Card"
+
+const CardHeader = React.forwardRef(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn("flex flex-col space-y-1.5 p-6", className)} {...props} />
+))
+CardHeader.displayName = "CardHeader"
+
+const CardTitle = React.forwardRef(({ className, ...props }, ref) => (
+  <h3 ref={ref} className={cn("text-2xl font-semibold leading-none tracking-tight", className)} {...props} />
+))
+CardTitle.displayName = "CardTitle"
+
+const CardContent = React.forwardRef(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+))
+CardContent.displayName = "CardContent"
+
+const CardFooter = React.forwardRef(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn("flex items-center p-6 pt-0", className)} {...props} />
+))
+CardFooter.displayName = "CardFooter"
+
+// Define Separator component
+const Separator = React.forwardRef(({ className, orientation = "horizontal", ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "shrink-0 bg-border",
+      orientation === "horizontal" ? "h-[1px] w-full" : "h-full w-[1px]",
+      className
+    )}
+    {...props}
+  />
+))
+Separator.displayName = "Separator"
+
+export default function CartPage() {
+  const { cartItems, setCartItems, loadCart, removeItemFromCart, updateQuantity } = useCart();
+
+  const [userId, setUserId] = useState(null)
+  const [userName, setUserName] = useState(null)
+
+  const [isLoading, setIsLoading] = useState(true)
+  const [showConfirmClear, setShowConfirmClear] = useState(false)
+  const [showNotification, setShowNotification] = useState(false)
+  const [notificationMessage, setNotificationMessage] = useState("")
+  const [notificationType, setNotificationType] = useState("success") // success or error
+  const navigate = useNavigate()
 
   useEffect(() => {
-    fetchUserInfo();
-    loadCart();
-  }, []);
+    fetchUserInfo()
+  }, [])
 
   const fetchUserInfo = async () => {
+    setIsLoading(true)
     try {
-      const response = await fetch('http://localhost:5000/auth/user-info', {
-        method: 'GET',
-        credentials: 'include',
-      });
+      const response = await fetch("http://localhost:5000/auth/user-info", {
+        method: "GET",
+        credentials: "include",
+      })
 
       if (!response.ok) {
-        throw new Error('로그인 정보 조회 실패');
+        throw new Error("로그인 정보 조회 실패")
       }
 
-      const data = await response.json();
-      setUserId(data.userId);
-      setUserName(data.userName);
-      loadCart(); // 사용자 ID를 전달하여 장바구니 로드
+      const data = await response.json()
+      setUserId(data.userId)
+      setUserName(data.userName)
+      await loadCart()
     } catch (error) {
-      console.error('사용자 정보 조회 오류:', error.message);
+      console.error("사용자 정보 조회 오류:", error)
+    } finally {
+      setIsLoading(false)
     }
-  };
-  const handleQuantityChange = (e, productId) => {
-    const updatedCart = cartItems.map((item) =>
-      item.productId === productId ? { ...item, quantity: Number(e.target.value) } : item,
-    );
-    setCartItems(updatedCart);
-  };
+  }
 
-  const loadCart = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/cart', {
-        // 쿼리 없이 요청
-        method: 'GET',
-        credentials: 'include', // 쿠키에서 JWT 자동 전송
-      });
 
-      if (!response.ok) {
-        throw new Error('장바구니 조회 실패');
-      }
-
-      const data = await response.json();
-      setCartItems(data.cartItems || []); // 장바구니 데이터를 설정
-    } catch (error) {
-      console.error('장바구니 조회 오류:', error.message);
-    }
-  };
 
   const clearCart = async () => {
     try {
-      const response = await fetch('http://localhost:5000/cart/clear', {
-        // userId 제거
-        method: 'POST',
-        credentials: 'include', // 쿠키에서 JWT 전송
-      });
+      const response = await fetch("http://localhost:5000/cart/clear", {
+        method: "POST",
+        credentials: "include",
+      })
 
       if (!response.ok) {
-        throw new Error('장바구니 비우기 실패');
+        throw new Error("장바구니 비우기 실패")
       }
 
-      setCartItems([]);
+      console.log("Cart cleared successfully")
+
+      // 장바구니 상태를 빈 배열로 설정
+      setCartItems([])
+      setShowConfirmClear(false)
+      showNotificationHandler("장바구니가 비워졌습니다", "success")
     } catch (error) {
-      console.error('장바구니 비우기 오류:', error.message);
+      console.error("장바구니 비우기 오류:", error)
+      showNotificationHandler("장바구니 비우기에 실패했습니다", "error")
     }
-  };
+  }
 
-  const removeItemFromCart = async (productId) => {
-    console.log(`🗑️ 삭제 요청 시작: productId=${productId}`); // 함수 호출 확인
 
-    try {
-      const response = await fetch(`http://localhost:5000/cart/remove?productId=${productId}`, {
-        method: 'DELETE',
-        credentials: 'include', // JWT 자동 전송
-      });
+  const calculateTotal = () => {
+    return cartItems.reduce((total, item) => total + item.productPrice * item.quantity, 0)
+  }
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`장바구니에서 아이템 삭제 실패: ${errorText}`);
-      }
+  const showNotificationHandler = (message, type = "success") => {
+    setNotificationMessage(message)
+    setNotificationType(type)
+    setShowNotification(true)
+    setTimeout(() => {
+      setShowNotification(false)
+    }, 3000)
+  }
 
-      setCartItems(cartItems.filter((item) => item.productId !== productId));
-      console.log('✅ 장바구니에서 삭제 성공');
-    } catch (error) {
-      console.error('❌ 장바구니에서 삭제 오류:', error);
-    }
-  };
-
-  const updateQuantity = async (productId, newQuantity) => {
-    if (newQuantity <= 0) {
-      alert('수량은 1개 이상이어야 합니다.');
-      return;
-    }
-
-    try {
-      const response = await fetch('http://localhost:5000/cart/updatequantity', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // 쿠키에서 JWT 자동 전송
-        body: JSON.stringify({
-          productId: productId,
-          quantity: newQuantity,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('수량 업데이트 실패');
-      }
-
-      const data = await response.json();
-      console.log('수량 업데이트 성공:', data);
-
-      // 장바구니 상태 갱신 후 UI 업데이트
-      loadCart(); // 갱신된 장바구니 정보를 다시 로드합니다
-    } catch (error) {
-      console.error('수량 업데이트 오류:', error.message);
-    }
-  };
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-2">
+          <RefreshCw className="h-8 w-8 animate-spin text-blue-600" />
+          <p className="text-lg font-medium">로딩 중...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className='cart-container'>
-      <h2 className='cart-title'>🛒 장바구니</h2>
-      {userId && userName ? (
-        <p className='user-info'>
-          현재 로그인된 사용자: {userName} (ID: {userId})
-        </p>
-      ) : (
-        <p className='login-prompt'>로그인이 필요합니다.</p>
+    <div className="bg-gradient-to-b from-gray-50 to-white min-h-screen">
+      {/* 알림 메시지 */}
+      {showNotification && (
+        <div 
+          className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-slide-in-right ${
+            notificationType === "success" 
+              ? "bg-blue-50 text-blue-800 border border-blue-200" 
+              : "bg-red-50 text-red-800 border border-red-200"
+          }`}
+        >
+          {notificationType === "success" ? (
+            <Check className="h-5 w-5 text-blue-500" />
+          ) : (
+            <AlertCircle className="h-5 w-5 text-red-500" />
+          )}
+          <span>{notificationMessage}</span>
+        </div>
       )}
 
-      <table className='cartTable'>
-        <thead>
-          <tr>
-            <th>상품명</th>
-            <th>가격</th>
-            <th>수량</th>
-            <th>총가격</th>
-            <th>삭제</th>
-            <th>장바구니 ID</th>
-            <th>상품 ID(여긴 이후삭제예정)</th>
-          </tr>
-        </thead>
+      {/* 장바구니 비우기 확인 모달 */}
+      {showConfirmClear && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl animate-scale-in">
+            <h3 className="text-xl font-bold mb-3 text-gray-900">장바구니 비우기</h3>
+            <p className="text-gray-600 mb-6">장바구니의 모든 상품이 삭제됩니다. 계속하시겠습니까?</p>
+            <div className="flex justify-end gap-3">
+              <Button 
+                variant="outline" 
+                className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                onClick={() => setShowConfirmClear(false)}
+              >
+                취소
+              </Button>
+              <Button 
+                className="bg-red-500 hover:bg-red-600 text-white"
+                onClick={clearCart}
+              >
+                비우기
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
-        <tbody id='cartTable-sku' className='cart-bundle-list'>
-          {cartItems.length > 0 ? (
-            cartItems.map((item) => (
-              <tr key={item.cartId} className='cart-deal-item'>
-                <td className='product-box'>{item.productName}</td>
-                <td className='option-price-part'>{item.productPrice}원</td>
-                <td>
-                  <td>
-                    {/* 수량 입력 필드 */}
-                    <input
-                      type='number'
-                      value={item.quantity}
-                      onChange={(e) => handleQuantityChange(e, item.productId)}
-                      min='1'
-                      className='quantity-input'
-                    />
+      <div className="container mx-auto px-4 py-8">
+        {/* 페이지 헤더 */}
+        <div className="max-w-6xl mx-auto mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+                <ShoppingCart className="h-8 w-8 text-blue-600" />
+                장바구니
+              </h1>
+              <p className="text-gray-500 mt-1">
+                {cartItems.length > 0
+                  ? `${cartItems.length}개의 상품이 장바구니에 있습니다`
+                  : "장바구니가 비어 있습니다"}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="outline" 
+                className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                onClick={() => navigate("/")}
+              >
+                <Home className="h-4 w-4 mr-2" />
+                쇼핑 계속하기
+              </Button>
+              {cartItems.length > 0 && (
+                <Button 
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={() => navigate("/paymentpage")}
+                >
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  결제하기
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
 
-                    {/* 수량 변경 버튼 */}
-                    <button
-                      onClick={() => updateQuantity(item.productId, item.quantity)} // 입력된 값으로 수량 업데이트
-                      className='update-quantity-btn'
-                    >
-                      변경
-                    </button>
-                  </td>
-                </td>
+        {!userId && (
+          <div className="max-w-6xl mx-auto bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg mb-6 flex items-center gap-2">
+            <AlertCircle className="h-5 w-5 text-amber-500 flex-shrink-0" />
+            <p>로그인이 필요합니다. 로그인 후 장바구니를 이용해주세요.</p>
+          </div>
+        )}
 
-                <td>{item.productPrice * item.quantity}원</td>
-                <td>
-                  <button
-                    className='remove-item-btn'
-                    onClick={() => removeItemFromCart(item.productId)}
-                  >
-                    삭제
-                  </button>
-                </td>
-                <td>{item.cartId}</td>
-                <td>아이디: {item.productId}</td>
-              </tr>
-            ))
+        {/* 장바구니 내용 */}
+        <div className="max-w-6xl mx-auto">
+          {cartItems.length === 0 ? (
+            <div className="bg-white rounded-2xl shadow-md p-8 text-center">
+              <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <ShoppingCart className="h-12 w-12 text-gray-400" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">장바구니가 비어 있습니다</h2>
+              <p className="text-gray-500 mb-8 max-w-md mx-auto">
+                원하는 상품을 장바구니에 담고 편리하게 쇼핑을 즐겨보세요.
+              </p>
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-6 text-lg"
+                onClick={() => navigate("/")}
+              >
+                쇼핑하러 가기
+              </Button>
+            </div>
           ) : (
-            <tr>
-              <td colSpan='6'>장바구니가 비어 있습니다.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+            <div className="space-y-6">
+              {/* 장바구니 헤더 */}
+              <div className="hidden md:flex bg-gray-100 rounded-lg p-4 text-gray-600 font-medium">
+                <div className="w-1/2">상품 정보</div>
+                <div className="w-1/6 text-center">단가</div>
+                <div className="w-1/6 text-center">수량</div>
+                <div className="w-1/6 text-center">합계</div>
+              </div>
 
-      <div className='cart-actions'>
-        <button className='clear-cart-btn' onClick={clearCart}>
-          장바구니 비우기
-        </button>
-        <button className='back-btn' onClick={() => navigate('/')}>
-          홈으로 돌아가기
-        </button>
-        <button>결제</button>
+              {/* 장바구니 상품 목록 */}
+              <div className="space-y-4">
+                {cartItems.map((item) => (
+                  <div 
+                    key={item.cartId} 
+                    className="bg-gradient-to-r from-blue-50 to-blue-100/50 rounded-xl shadow-sm overflow-hidden border border-blue-100 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex flex-col md:flex-row p-4">
+                      {/* 상품 정보 */}
+                      <div className="md:w-1/2 flex gap-4 mb-4 md:mb-0">
+                        <div className="w-20 h-20 bg-white rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200">
+                          {item.productImage ? (
+                            <img
+                              src={item.productImage || "/placeholder.svg"}
+                              alt={item.productName}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <Package className="h-8 w-8 text-gray-300" />
+                          )}
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-gray-900">{item.productName}</h3>
+                          <p className="text-sm text-gray-500 mt-1">상품 ID: {item.productId}</p>
+                          <button 
+                            className="text-red-500 hover:text-red-700 text-sm flex items-center mt-2 md:hidden"
+                            onClick={() => removeItemFromCart(item.productId)}
+                          >
+                            <Trash2 className="h-3 w-3 mr-1" />
+                            삭제
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 단가 */}
+                      <div className="md:w-1/6 flex justify-between md:justify-center items-center mb-3 md:mb-0">
+                        <span className="text-sm text-gray-500 md:hidden">단가:</span>
+                        <span className="font-medium text-gray-900">{item.productPrice.toLocaleString()}원</span>
+                      </div>
+
+                      {/* 수량 */}
+                      <div className="md:w-1/6 flex justify-between md:justify-center items-center mb-3 md:mb-0">
+                        <span className="text-sm text-gray-500 md:hidden">수량:</span>
+                        <div className="flex items-center">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8 rounded-l-md border-gray-300"
+                            onClick={() => updateQuantity(item.productId, Math.max(1, item.quantity - 1))}
+                          >
+                            <Minus className="h-3 w-3" />
+                          </Button>
+                          <Input
+                            type="number"
+                            value={item.quantity}
+                            onChange={(e) => {
+                              const newQuantity = Number.parseInt(e.target.value) || 1
+                              const updatedCart = cartItems.map((cartItem) =>
+                                cartItem.productId === item.productId
+                                  ? { ...cartItem, quantity: newQuantity }
+                                  : cartItem
+                              )
+                              setCartItems(updatedCart)
+                            }}
+                            onBlur={(e) => updateQuantity(item.productId, Number.parseInt(e.target.value) || 1)}
+                            min="1"
+                            className="h-8 w-12 rounded-none text-center border-x-0 border-gray-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          />
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8 rounded-r-md border-gray-300"
+                            onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                          >
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* 합계 */}
+                      <div className="md:w-1/6 flex justify-between md:justify-center items-center">
+                        <span className="text-sm text-gray-500 md:hidden">합계:</span>
+                        <span className="font-bold text-blue-700">{(item.productPrice * item.quantity).toLocaleString()}원</span>
+                      </div>
+
+                      {/* 삭제 버튼 (데스크톱) */}
+                      <div className="hidden md:flex md:items-center md:justify-center">
+                        <button 
+                          className="text-gray-400 hover:text-red-500 transition-colors"
+                          onClick={() => removeItemFromCart(item.productId)}
+                          aria-label="상품 삭제"
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* 주문 요약 */}
+              <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-1">주문 요약</h3>
+                    <p className="text-gray-500 text-sm">총 {cartItems.length}개 상품</p>
+                  </div>
+                  
+                  <div className="flex flex-col items-end">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-gray-600">상품 금액:</span>
+                      <span className="font-medium">{calculateTotal().toLocaleString()}원</span>
+                    </div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-gray-600">배송비:</span>
+                      <span className="font-medium">무료</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-lg mt-2">
+                      <span className="font-medium text-gray-900">총 결제 금액:</span>
+                      <span className="font-bold text-blue-700">{calculateTotal().toLocaleString()}원</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 하단 버튼 */}
+              <div className="flex flex-col-reverse sm:flex-row justify-between items-center gap-4 pt-4">
+                <Button 
+                  variant="outline" 
+                  className="w-full sm:w-auto border-red-300 text-red-600 hover:bg-red-50"
+                  onClick={() => setShowConfirmClear(true)}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  장바구니 비우기
+                </Button>
+                
+                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                  <Button 
+                    variant="outline" 
+                    className="w-full sm:w-auto border-gray-300 text-gray-700"
+                    onClick={() => navigate("/")}
+                  >
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    쇼핑 계속하기
+                  </Button>
+                  <Button 
+                    className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => navigate("/paymentpage")}
+                  >
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    결제하기
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+        
       </div>
     </div>
-  );
+  )
 }
 
-export default CartPage;
