@@ -81,11 +81,11 @@ export const getReviews = async ({ sortby, page, size, productId }) => {
 };
 
 /** 리뷰 추가 */
-export const insertReview = async (productId, reviewData) => {
+export const insertReview = async (productId, formData) => {
   const url = apiRoutes.reviews.insert(productId);
 
   try {
-    const response = await instance.post(url, reviewData);
+    const response = await instance.post(url, formData);
 
     if (response.status > 399) {
       return false;

@@ -5,9 +5,14 @@ import { addToCart } from '../services/cart.service';
 import { IoFilterOutline, IoGridOutline, IoListOutline, IoCartOutline } from 'react-icons/io5';
 import noimage from '../assets/noimage.jpg';
 import Pagination from '../components/Pagination';
+import { useCartStore } from '../store/cartStore';
 
 const PAGE_SIZE = 20;
 function CategoryPage() {
+
+
+  const {setTrigger:cartItemStateTrigger} = useCartStore()
+
   const [page, setPage] = useState(0);
   const { categoryId } = useParams(); // URL에서 categoryId 가져오기
   const [products, setProducts] = useState([]);
@@ -17,7 +22,6 @@ function CategoryPage() {
   const [viewMode, setViewMode] = useState('grid'); // 그리드/리스트 뷰 모드
   const [isFilterOpen, setIsFilterOpen] = useState(false); // 필터 패널 상태
   const [loading, setLoading] = useState(true); // 로딩 상태
-  const [showNotification, setShowNotification] = useState(false); // 알림 상태 관리
   const navigate = useNavigate();
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
@@ -115,13 +119,9 @@ function CategoryPage() {
     try {
       await addToCart({ productId, quantity: 1 });
 
-      // 성공 알림 표시
-      setShowNotification(true);
+      cartItemStateTrigger();
+      
 
-      // 3초 후 알림 숨기기
-      setTimeout(() => {
-        setShowNotification(false);
-      }, 3000);
     } catch (error) {
       console.error('❌ 장바구니 추가 오류:', error);
     }
@@ -133,9 +133,9 @@ function CategoryPage() {
   };
 
   return (
-    <div className='min-h-screen bg-gray-100'>
+    <div className='min-h-screen'>
       {/* 헤더 섹션 */}
-      <div className='bg-gradient-to-r from-blue-400 to-blue-500 text-white py-8 px-4 sm:px-6 lg:px-8 mb-6'>
+      <div className='bg-gradient-to-r from-blue-400 to-blue-500 text-white flex items-center justify-center py-8 sm:px-6 lg:px-8 mb-6 min-h-[200px]'>
         <div className='max-w-7xl mx-auto'>
           <h1 className='text-2xl sm:text-3xl font-bold text-center mb-2'>
             {categoryName || '상품 목록'}
@@ -149,12 +149,13 @@ function CategoryPage() {
       </div>
 
       {/* 필터 및 정렬 섹션 */}
-      <div className='max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mb-6  bg-white rounded-lg shadow-sm'>
+      <div className='max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mb-6  bg-white'>
         <div className='flex flex-col sm:flex-row justify-between items-center p-4'>
           <div className='flex items-center mb-4 sm:mb-0'>
             <button
+              title='가격 필터'
               onClick={toggleFilter}
-              className='flex items-center text-gray-700 hover:text-gray-900 transition-colors mr-4'
+              className='hover:cursor-pointer hover:bg-gray-100 bg-gray-200 p-1 rounded-[5px] flex items-center text-gray-700 hover:text-gray-900 transition-colors mr-4'
             >
               <IoFilterOutline className='mr-1' /> 필터
             </button>
@@ -203,7 +204,7 @@ function CategoryPage() {
 
       {/* 필터 패널 (모바일에서는 슬라이드 업) */}
       <div
-        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300 ${isFilterOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`fixed inset-0 bg-[rgba(0,0,0,0.7)] z-40 transition-opacity duration-300 ${isFilterOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       >
         <div
           className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-xl p-6 z-50 transition-transform duration-300 transform ${isFilterOpen ? 'translate-y-0' : 'translate-y-full'}`}
@@ -230,8 +231,8 @@ function CategoryPage() {
 
           {/* 필터 내용 - 실제 구현은 백엔드 연동에 따라 달라질 수 있음 */}
           {/* 필터 내용 - 가격 필터 */}
-          <div className='bg-white p-5 rounded-xl shadow-lg border border-gray-200 space-y-5'>
-            <h3 className='text-lg font-semibold text-gray-800 border-b pb-2'>가격 필터</h3>
+          <div className='bg-white p-5 rounded-xl shadow-sm border border-gray-200 space-y-5'>
+            <h3 className='text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2'>가격 필터</h3>
             <div className='grid grid-cols-2 gap-3'>
               <div>
                 <label htmlFor='minPrice' className='text-sm font-medium text-gray-600 mb-1 block'>
@@ -289,7 +290,7 @@ function CategoryPage() {
                 <div
                   key={product.productId}
                   onClick={() => navigate(`/product/${product.productId}`)}
-                  className='bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group'
+                  className='bg-white rounded-xl overflow-hidden hover:bg-gray-100 transition-all duration-300 cursor-pointer group'
                 >
                   <div className='relative'>
                     <div className='aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-100'>
@@ -421,13 +422,6 @@ function CategoryPage() {
         <Pagination handlePageClick={({ selected }) => setPage(selected)} totalPageCount={5} />
       </div>
 
-      {/* 장바구니 추가 알림 */}
-      {showNotification && (
-        <div className='fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-3 rounded-lg shadow-lg flex items-center z-50'>
-          <IoCartOutline className='mr-2' />
-          <span>상품이 장바구니에 추가되었습니다!</span>
-        </div>
-      )}
     </div>
   );
 }

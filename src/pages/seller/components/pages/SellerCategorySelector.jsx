@@ -25,9 +25,9 @@ export default function SellerCategorySelector({ onCancel, onSave, categories, i
     <div
       className={`${
         isOpen ? "opacity-100 visible" : "opacity-0 invisible"
-      } fixed left-0 top-0 bottom-0 right-0 bg-black/50 z-50 transition-all duration-200 backdrop-blur-sm`}
+      } fixed left-0 top-0 bottom-0 right-0 bg-black/50 z-50 transition-all duration-200 backdrop-blur-sm overflow-y-scroll`}
     >
-      <div className="bg-white rounded-xl absolute overflow-hidden left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] max-w-[768px] max-h-[540px] w-full h-full shadow-xl">
+      <div className="bg-white rounded-xl absolute overflow-hidden left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] max-w-[768px] max-h-[580px] w-full h-full shadow-xl">
         {/* 헤더 */}
         <div className="bg-gray-700 text-white p-3 px-4 font-bold flex items-center justify-between">
           <h3 className="text-lg">판매할 카테고리 선택</h3>

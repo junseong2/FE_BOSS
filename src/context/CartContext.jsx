@@ -1,5 +1,6 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { useCartStore } from '../store/cartStore';
 
 // CartContext 생성
 const CartContext = createContext();
@@ -7,6 +8,8 @@ const CartContext = createContext();
 // CartProvider 컴포넌트 (전역 상태를 관리)
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
+
+  const {setTrigger: cartItemStateUpdateTrigger} = useCartStore()
 
   useEffect(() => {
     console.log("📌 CartProvider 마운트됨");
@@ -47,6 +50,7 @@ export const CartProvider = ({ children }) => {
       }
 
       setCartItems(cartItems.filter((item) => item.productId !== productId));
+      cartItemStateUpdateTrigger() // 장바구니 담긴 아이템 개수 상태 업데이트
     } catch (error) {
       console.error('장바구니에서 삭제 오류:', error);
     }

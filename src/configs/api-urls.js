@@ -120,4 +120,9 @@ export const apiRoutes = {
     create: () => BASE_URL + `/payment/portone`,
     updateStatus: () => BASE_URL + `/payment/update-status`,
   },
+
+  // 장바구니
+  carts:{
+    count: ()=> BASE_URL + `/cart/count`
+  }
 };

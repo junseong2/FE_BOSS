@@ -26,14 +26,14 @@ export function SellerInventoryTable({ inventories, actionButtonName, onToggle, 
       <table className="w-full min-w-[1024px] border-collapse">
         <thead>
           <tr className="bg-gray-50 text-gray-600 text-sm border-b border-gray-200">
-            <th className="py-3 px-4 text-left font-medium">카테고리ID</th>
-            <th className="py-3 px-4 text-left font-medium">상품ID</th>
-            <th className="py-3 px-4 text-left font-medium">상품명</th>
-            <th className="py-3 px-4 text-center font-medium">재고</th>
-            <th className="py-3 px-4 text-left font-medium">최소 재고</th>
-            <th className="py-3 px-4 text-left font-medium">최근 입고일</th>
-            <th className="py-3 px-4 text-left font-medium">상태</th>
-            <th className="py-3 px-4 text-center font-medium">작업</th>
+            <th className="py-2 px-4 text-left font-medium">카테고리ID</th>
+            <th className="py-2 px-4 text-left font-medium">상품ID</th>
+            <th className="py-2 px-4 text-left font-medium">상품명</th>
+            <th className="py-2 px-4 text-center font-medium">재고</th>
+            <th className="py-2 px-4 text-left font-medium">최소 재고</th>
+            <th className="py-2 px-4 text-left font-medium">최근 입고일</th>
+            <th className="py-2 px-4 w-[100px] text-left font-medium">상태</th>
+            <th className="py-2 px-4 text-center font-medium">작업</th>
           </tr>
         </thead>
 
@@ -53,10 +53,10 @@ export function SellerInventoryTable({ inventories, actionButtonName, onToggle, 
                   key={inventory.inventoryId}
                   className="hover:bg-gray-50 transition duration-200 border-b border-gray-100"
                 >
-                  <td className="py-3 px-4 text-gray-700">{inventory.inventoryId}</td>
-                  <td className="py-3 px-4 text-gray-700">{inventory.productId}</td>
-                  <td className="py-3 px-4 text-gray-700 font-medium">{inventory.name}</td>
-                  <td className="py-3 px-4 text-center">
+                  <td className="py-2 px-4 text-gray-700">{inventory.inventoryId}</td>
+                  <td className="py-2 px-4 text-gray-700">{inventory.productId}</td>
+                  <td className="py-2 px-4 text-gray-700 font-medium">{inventory.name}</td>
+                  <td className="py-2 px-4 text-center">
                     {isEditing ? (
                       <input
                         className="border border-gray-300 rounded-md px-3 py-1.5 w-20 text-center focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
@@ -68,7 +68,7 @@ export function SellerInventoryTable({ inventories, actionButtonName, onToggle, 
                       <span className="font-medium">{inventory.stock}</span>
                     )}
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-2 px-4">
                     {isEditing ? (
                       <input
                         className="border border-gray-300 rounded-md px-3 py-1.5 w-20 text-center focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
@@ -80,13 +80,13 @@ export function SellerInventoryTable({ inventories, actionButtonName, onToggle, 
                       inventory.minStock
                     )}
                   </td>
-                  <td className="py-3 px-4 text-gray-600">{formatDate(inventory.updatedDate)}</td>
+                  <td className="py-2 px-4 text-gray-600">{formatDate(inventory.updatedDate)}</td>
                   <td className={`py-3 px-4`}>
                     <span className={`${getStatusClassName(stockWarn)} py-1.5 px-3 rounded-full text-xs font-medium`}>
                       {stockWarn}
                     </span>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-2 px-4">
                     <div className="flex flex-col items-center gap-2">
                       <button
                         className="min-w-[80px] bg-gray-700 text-white rounded-md px-4 py-1.5 text-sm hover:bg-gray-800 transition-colors"

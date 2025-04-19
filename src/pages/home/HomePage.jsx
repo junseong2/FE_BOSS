@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useUser } from '../../context/UserContext';
-import { mockProductList } from '../../data/home-product';
 import HomeBanner from './components/HomeBanner';
 import HomeCategories from './components/HomeCategories';
 import HomeProducts from './components/HomeProducts';
@@ -57,16 +56,16 @@ export default function HomePage() {
         <div>
           <HomeStores/>
           <HomeProducts
-            products={mockProductList}
-            title={'2030이 많이 찾는 상품'}
+            products={products.map((product)=> product).sort((a,b)=> b.productId-a.productId)}
+            title={'고객이 많이 찾는 상품'}
             customClassName={'bg-[rgba(0,0,0,0.025)]'}
           />
           <HomeProducts 
           products={products} 
           title={'BOSS가 추천하는 TOP10'} />
           <HomeProducts
-            products={mockProductList}
-            title={'건강이 걱정인 당신을 위한 추천 상품'}
+            products={products.map((product)=> product).slice(30,40)}
+            title={'인기 상품 TOP10'}
             customClassName={'bg-[rgba(0,0,0,0.025)]'}
           />
 

@@ -70,21 +70,21 @@ export default function SellerOrderTable({
                   <td className='py-3 px-4 text-sm font-medium'>
                     ₩{order.totalPrice?.toLocaleString()}
                   </td>
-                  <td className='py-3 px-4'>
+                  <td className='py-2 px-4'>
                     <span
                       className={`inline-block px-3 py-1 text-xs rounded-full ${getStatusClassName(order.status)}`}
                     >
                       {getPaymentLabel(order.paymentStatus)}
                     </span>
                   </td>
-                  <td className='py-3 px-4'>
+                  <td className='py-2 px-4'>
                     <span
                       className={`inline-block px-3 py-1 text-xs rounded-full ${getStatusClassName(order.status)}`}
                     >
                       {order.status}
                     </span>
                   </td>
-                  <td className='py-3 px-4 text-center relative'>
+                  <td className='py-2 px-4 text-center relative'>
                     <>
                       <button
                         onClick={() => toggleDropdown(order.orderId)}

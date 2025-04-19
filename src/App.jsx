@@ -58,6 +58,7 @@ function App() {
   const [storename, setStorename] = useState(null);
   const [headerId, setHeaderId] = useState(null);
   const [sellerId, setSellerId] = useState(null);
+  const [userId, setUserId] = useState(null)
   const [menuBarId, setMenuBarId] = useState(null);
   const [navigationId, setNavigationId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -170,7 +171,7 @@ function App() {
 
   return (
     <CartProvider>
-      <Toaster position='top-right' />
+      <Toaster position='top-right' containerClassName='mt-[2rem]' />
       <UserProvider>
         <div className='flex flex-col min-h-screen'>
           {/* ✅ 상단 영역 */}

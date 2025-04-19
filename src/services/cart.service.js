@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios';
 import { toastError, toastInfo, toastSuccess } from '../components/toast/CustomToast';
 import instance from '../configs/axios.config';
+import { apiRoutes } from '../configs/api-urls';
 
 // { productId: product.productId, quantity }
 export const addToCart = async (data) => {
@@ -16,11 +17,10 @@ export const addToCart = async (data) => {
       if (error.status === 401) {
         toastInfo('로그인 후 이용 가능합니다.');
       }
-      if(error.status>499) {
-        toastError("네트워크 문제로 요청에 실패 하였습니다.")
+      if (error.status > 499) {
+        toastError('네트워크 문제로 요청에 실패 하였습니다.');
       }
     }
-   
   }
 
   // ✅ 사용자 벡터 업데이트 요청 추가
@@ -29,4 +29,21 @@ export const addToCart = async (data) => {
     method: 'POST',
     credentials: 'include',
   });
+};
+
+// 장바구니 아이템 개수 조회
+export const getCartCount = async () => {
+  const url = apiRoutes.carts.count();
+
+  try {
+    const response = await instance.get(url);
+
+    if (response.status > 399) {
+      throw new Error();
+    }
+    
+    return response.data?.totalCount ?? 0
+  } catch {
+    return 0;
+  }
 };
