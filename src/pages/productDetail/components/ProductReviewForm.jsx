@@ -4,6 +4,7 @@ import { Rating, ThinRoundedStar } from '@smastrom/react-rating';
 import { IoImageOutline, IoCloseCircle } from 'react-icons/io5';
 import { toastError, toastInfo } from '../../../components/toast/CustomToast';
 import { getImagePreviewReaders } from '../../../utils/imageUtil';
+import { AxiosError } from 'axios';
 
 const myStyles = {
   itemShapes: ThinRoundedStar,
@@ -40,7 +41,6 @@ export default function ProductReviewForm({ productId, renderTrigger }) {
       toastInfo('이미지 파일은 최대 10장 까지만 등록 가능합니다.');
       return;
     }
-    
 
     const fileArray = Array.from(files);
 
@@ -60,7 +60,7 @@ export default function ProductReviewForm({ productId, renderTrigger }) {
   // 이미지 제거 핸들러
   const removeImage = (i) => {
     setPreviewImages(previewImages.filter((_, targetIndex) => targetIndex != i));
-    setImageFiles(imageFiles.filter((_, targetIndex) => targetIndex != i));
+    setImageFiles(Array.from(imageFiles).filter((_, targetIndex) => targetIndex != i));
   };
 
   // 리뷰 등록 요청
@@ -79,11 +79,11 @@ export default function ProductReviewForm({ productId, renderTrigger }) {
     formData.append('ratings', rating);
     formData.append('reviewText', reviewText);
 
-    if (Array.isArray(imageFiles)) {
-      imageFiles.forEach((imageBold) => {
-        formData.append('images', imageBold);
-      });
-    } 
+    const images = Array.from(imageFiles);
+    images.forEach((imageBold) => {
+      formData.append('images', imageBold);
+    });
+
 
     try {
       const isSuccess = await insertReview(productId, formData);
@@ -92,9 +92,6 @@ export default function ProductReviewForm({ productId, renderTrigger }) {
         alert('리뷰가 등록되었습니다!');
         handleToggleReviewForm();
       }
-    } catch (error) {
-      console.error('리뷰 등록 실패:', error);
-      alert('리뷰 등록에 실패했습니다. 다시 시도해주세요.');
     } finally {
       setLoading(false);
     }

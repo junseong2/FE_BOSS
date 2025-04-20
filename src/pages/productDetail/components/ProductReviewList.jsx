@@ -17,7 +17,6 @@ const myStyles = {
 };
 
 export default function ProductReviewList({ reviews }) {
-  // 실제 구현에서는 이 부분이 백엔드와 연동될 것입니다
   const [likedReviews, setLikedReviews] = useState({});
 
   const toggleLike = (reviewId) => {
@@ -71,21 +70,31 @@ export default function ProductReviewList({ reviews }) {
                   </div>
                 </div>
 
+                {/* 리뷰 이미지 */}
                 <div className='mt-4'>
                   <p className='text-gray-700 whitespace-pre-line'>{review.reviewText}</p>
 
                   <div className='mt-3 flex flex-wrap gap-2'>
                     {review.imageList?.map((imgUrl) => {
+                      let imgSrc = '';
+                      if (import.meta.env.VITE_REACT_APP_ENV !== 'production') {
+                        imgSrc = import.meta.env.VITE_BACKEND_URL + '/uploads/' + imgUrl;
+                      }
+
                       return (
-                        <img
+                        <div
                           key={imgUrl}
-                          src={imgUrl}
-                          alt='리뷰 이미지'
-                          onError={(e) => {
-                            e.currentTarget.src = noImage;
-                          }}
-                          className='w-20 h-20 object-cover rounded-md cursor-pointer hover:opacity-90 transition-opacity'
-                        />
+                          className='p-1 bg-white border border-gray-200 rounded-[3px] hover:bg-gray-100 transition-colors'
+                        >
+                          <img
+                            src={imgSrc}
+                            alt='리뷰 이미지'
+                            onError={(e) => {
+                              e.currentTarget.src = noImage;
+                            }}
+                            className='w-20 h-20 object-cover rounded-md cursor-pointer hover:opacity-90 transition-opacity'
+                          />
+                        </div>
                       );
                     })}
                   </div>
@@ -120,7 +129,9 @@ export default function ProductReviewList({ reviews }) {
                   <div className='flex gap-3'>
                     <div className='text-gray-300'>ㄴ</div>
                     <div className=''>
-                      <strong className='border border-gray-300 rounded-[3px] p-1 px-2 bg-green-500 text-white'>{review.storeName}</strong>
+                      <strong className='border border-gray-300 rounded-[3px] p-1 px-2 bg-green-500 text-white'>
+                        {review.storeName}
+                      </strong>
                       <p className='mt-3 pl-2'>{review.answerText}</p>
                     </div>
                   </div>
