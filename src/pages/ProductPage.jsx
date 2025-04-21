@@ -168,13 +168,22 @@ export default function ProductListing() {
 
       const data = response.data
       console.log("상품 목록 데이터:", data)
+      
+      if (data.content.length === 0) {
+        setHasMore(false)
+        return
+      }
+      
+      setProducts((prev) => [...prev, ...data.content])
+      setCurrentPage((prev) => prev + 1)
+      
 
       if (data.length === 0) {
         setHasMore(false)
         return
       }
 
-      setProducts((prev) => [...prev, ...data]) // 기존 상품 목록에 새 상품 추가
+      setProducts((prev) => [...prev, ...data.content])
       setCurrentPage((prev) => prev + 1)
     } catch (error) {
       console.error("❌ 상품 불러오기 오류:", error)

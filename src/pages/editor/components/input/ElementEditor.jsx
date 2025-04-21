@@ -716,6 +716,7 @@ export default function ElementEditor({
                       <option value="Arial">Arial</option>
                       <option value="Roboto">Roboto</option>
                       <option value="Pretendard">Pretendard</option>
+
                       <option value="Poor Story">Poor Story</option>
 <option value="East Sea Dokdo">East Sea Dokdo</option>
 <option value="Yeon Sung">Yeon Sung</option>
@@ -728,6 +729,7 @@ export default function ElementEditor({
 <option value="Libre Baskerville">Libre Baskerville</option>
 <option value="Cormorant Garamond">Cormorant Garamond</option>
 <option value="DM Serif Display">DM Serif Display</option>
+
                   </select>
                 </div>
               </div>
@@ -1053,7 +1055,7 @@ export default function ElementEditor({
                     })
                   }
                 />
-              
+
               </div>
             </div>
 
@@ -1296,7 +1298,6 @@ export default function ElementEditor({
   }
 />
 
-              
               </div>
             </div>
 

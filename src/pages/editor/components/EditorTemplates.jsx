@@ -20,8 +20,10 @@ export function TemplateHeader({ properties }) {
 
   return (
     <div
+
       className='relative flex items-center justify-between border-b border-[#E4E4E7] p-2'
       style={{ backgroundColor, width, height }} // ✅ 사이즈 반영
+
     >
       {/* 왼쪽 영역 */}
       <div className="flex items-center gap-4 flex-1">
@@ -48,7 +50,9 @@ export function TemplateHeader({ properties }) {
       <div className='w-[60px] h-[55px] text-center relative'>
         <img
           className='w-full h-full object-contain'
+
           src={logoUrl ? BASE_URL+`${logoUrl}` : "https://placehold.co/50x50"}
+
           alt='로고 이미지'
         />
       </div>
@@ -81,7 +85,9 @@ export function TemplateHeader({ properties }) {
 
   return (
     <div
+
       className='relative flex justify-between items-center gap-2 border-b border-[#E4E4E7] p-2'
+
       style={{ backgroundColor, width, height }} // ✅ 사이즈 반영
     >
       {/* 카테고리 버튼 */}
@@ -107,7 +113,9 @@ export function TemplateHeader({ properties }) {
       <div className='w-[60px] h-[55px] text-center relative'>
         <img
           className='w-full h-full'
+
           src={logoUrl ? BASE_URL+`${logoUrl}` : "https://placehold.co/50x50"}
+
           alt='로고 이미지'
         />
       </div>

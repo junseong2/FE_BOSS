@@ -26,7 +26,7 @@ export default function EditorSidebar({ children }) {
         <div className="p-3 border-t border-gray-100 bg-gray-50">
           <div className="text-xs text-gray-500 text-center">
             <p>© 2024 디자인 에디터</p>
-            <p className="mt-1">모든 변경사항은 자동으로 저장됩니다</p>
+            <p className="mt-1">모든 변경사항은 수동으로 저장됩니다</p>
           </div>
         </div>
       </div>

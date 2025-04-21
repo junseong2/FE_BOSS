@@ -339,13 +339,13 @@ const handleMoveElement = (dragIndex, hoverIndex) => {
   
       {/* 세부 편집기 */}
       {selectedElement && (
-        <div className="w-80 border-l border-[#E4E4E7] p-4 overflow-auto">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-medium">{selectedElement?.name || '요소 없음'} 편집</h3>
-            <button className="border rounded-xl" onClick={() => setSelectedElement(null)}>
-              <IoCloseOutline className="w-4 h-4" />
-            </button>
-          </div>
+      <div className="w-80 border-l z-50 border-[#E4E4E7] p-4 overflow-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-medium">{selectedElement?.name || '요소 없음'} 편집</h3>
+          <button className="border rounded-xl" onClick={() => setSelectedElement(null)}>
+            <IoCloseOutline className="w-4 h-4" />
+          </button>
+        </div>
   
           <ElementEditor
             element={selectedElement}
