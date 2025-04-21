@@ -10,6 +10,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
 import 'swiper/css/pagination';
 import 'swiper/css/zoom';
+import { DOM_URL } from '../../../lib/api';
 
 export default function ProductImageSlider({ imageList }) {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -50,7 +51,7 @@ export default function ProductImageSlider({ imageList }) {
                   alt={`Product image ${index + 1}`}
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = 'http://localhost:5173/src/assets/noimage.jpg';
+                    e.target.src = DOM_URL+'/src/assets/noimage.jpg';
                   }}
                 />
               </div>
@@ -90,7 +91,7 @@ export default function ProductImageSlider({ imageList }) {
                 alt={`Thumbnail ${index + 1}`}
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = 'http://localhost:5173/src/assets/noimage.jpg';
+                  e.target.src = DOM_URL+'/src/assets/noimage.jpg';
                 }}
               />
             </div>
@@ -130,7 +131,7 @@ export default function ProductImageSlider({ imageList }) {
                     alt={`Product image ${index + 1}`}
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = 'http://localhost:5173/src/assets/default-product.jpg';
+                      e.target.src = DOM_URL+'/src/assets/default-product.jpg';
                     }}
                   />
                 </div>

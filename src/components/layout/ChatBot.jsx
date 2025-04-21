@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import BounceLoader from 'react-spinners/BounceLoader';
 import bossLogo from '../../assets/boss_logo.jpg';
 import './ChatBot.css';
-import { BASE_URL } from '../../lib/api';
+import { BASE_URL,DOM_URL } from '../../lib/api';
 
 
 function ChatBot() {
@@ -195,14 +195,14 @@ function ProductRecommendationCard({ productId, reason }) {
   return (
     <div className='mt-2 border border-gray-200 rounded-xl overflow-hidden'>
       <a
-        href={`http://localhost:5173/product/${productId}`}
+        href={DOM_URL+`/product/${productId}`}
         target='_blank'
         rel='noopener noreferrer'
         className='block hover:bg-gray-50'
       >
 
         <img
-          src={base_url+`/uploads/${imageUrl}`}
+          src={BASE_URL+`/uploads/${imageUrl}`}
           alt={product.name}
           className="w-full h-28 object-cover"
         />

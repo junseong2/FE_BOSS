@@ -17,7 +17,7 @@ import {
   AlertCircle,
   Loader2,
 } from "lucide-react"
-import { BASE_URL } from "../lib/api"
+import { BASE_URL,DOM_URL } from "../lib/api"
 
 function PaymentPage() {
   const [userId, setUserId] = useState(null)
@@ -190,7 +190,7 @@ function PaymentPage() {
           buyer_name: userName,
           buyer_tel: phoneNumber,
           buyer_addr: address,
-          m_redirect_url: "http://localhost:5173",
+          m_redirect_url: DOM_URL,
         },
         async (rsp) => {
           if (rsp.success) {
