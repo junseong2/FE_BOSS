@@ -98,14 +98,14 @@ export default function EditorTabContent({ targetTabName, onSelectElement, eleme
 
 function EditorElementGrid({ onSelectElement, elements }) {
   const items = [
-    { icon: <IoGridOutline size={24} />, label: "헤더", type: "header", color: "blue" },
-    { icon: <IoGridOutline size={24} />, label: "헤더2", type: "header2", color: "blue" },
+    { icon: <IoGridOutline size={24} />, label: "헤더 (상단바)", type: "header", color: "blue" },
+    { icon: <IoGridOutline size={24} />, label: "헤더2 (상단바)", type: "header2", color: "blue" },
     { icon: <IoImageOutline size={24} />, label: "배너", type: "banner", color: "purple" },
     { icon: <IoBagHandleOutline size={24} />, label: "상품 그리드", type: "grid", color: "green" },
     { icon: <IoBagHandleOutline size={24} />, label: "상품 그리드2", type: "grid2", color: "green" },
     {
       icon: <IoPhonePortraitOutline size={24} />,
-      label: "바텀네비게이션바",
+      label: "바텀네비게이션바(모바일 하단바)",
       type: "bottomNavigationbar",
       color: "indigo",
     },

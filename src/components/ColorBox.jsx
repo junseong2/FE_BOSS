@@ -1,6 +1,6 @@
 export default function ColorBox({
   backgroundColor = '#f0f0f0',
-  size = { web: { width: '100%', height: '100px' } }, // ✅ size를 통째로 받아옴
+  size = { web: { width: '100%', height: '100px' } }, 
   borderRadius = '0px',
 }) {
   const { width, height } = size.web || {};

@@ -1,6 +1,5 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
@@ -8,43 +7,62 @@ import 'swiper/css/navigation';
 import { Pagination, Navigation, Autoplay } from 'swiper/modules';
 
 export default function InfiniteSlider() {
+  const BASE_IMAGE_URL = "http://localhost:5000/uploads";
+
   const progressCircle = useRef(null);
   const progressContent = useRef(null);
+
   const onAutoplayTimeLeft = (s, time, progress) => {
-    progressCircle.current.style.setProperty('--progress', 1 - progress);
-    progressContent.current.textContent = `${Math.ceil(time / 1000)}s`;
+    if (progressCircle.current && progressContent.current) {
+      progressCircle.current.style.setProperty('--progress', 1 - progress);
+      progressContent.current.textContent = `${Math.ceil(time / 1000)}s`;
+    }
   };
+
   return (
-    <div className=' w-full h-1/3 bg-[#dadcdd]'>
+    <div className='w-full bg-[#dadcdd]'>
       <Swiper
         slidesPerView={1}
         spaceBetween={30}
         loop={true}
-        pagination={{
-          clickable: true,
-        }}
+        pagination={{ clickable: true }}
         autoplay={{
           delay: 2500,
           disableOnInteraction: false,
         }}
+        navigation={true}
         modules={[Pagination, Navigation, Autoplay]}
         onAutoplayTimeLeft={onAutoplayTimeLeft}
-        className='mySwiper h-[580px]'
+        className='mySwiper h-[700px]'
+        
       >
-        <SwiperSlide>Slide 1</SwiperSlide>
-        <SwiperSlide>Slide 2</SwiperSlide>
-        <SwiperSlide>Slide 3</SwiperSlide>
-        <SwiperSlide>Slide 4</SwiperSlide>
-        <SwiperSlide>Slide 5</SwiperSlide>
-        <SwiperSlide>Slide 6</SwiperSlide>
-        <SwiperSlide>Slide 7</SwiperSlide>
-        <SwiperSlide>Slide 8</SwiperSlide>
-        <SwiperSlide>Slide 9</SwiperSlide>
+        {[1, 2, 3].map((num) => (
+          <SwiperSlide key={num}>
+<img
+  src={`${BASE_IMAGE_URL}/banner${num}.jpg`}
+  alt={`배너 ${num}`}
+  className="w-full h-full object-cover object-center"
+  onError={(e) => (e.currentTarget.src = '/placeholder.jpg')}
+/>
+
+          </SwiperSlide>
+        ))}
+
         <div className='autoplay-progress z-10' slot='container-end'>
-          <svg viewBox='0 0 48 48' ref={progressCircle}>
-            <circle cx='24' cy='24' r='20'></circle>
+          <svg viewBox='0 0 48 48' ref={progressCircle} className='w-6 h-6 absolute right-4 top-4'>
+            <circle
+              cx='24'
+              cy='24'
+              r='20'
+              stroke='black'
+              strokeWidth='4'
+              fill='none'
+              strokeDasharray='125.6'
+              strokeDashoffset='calc(125.6 * var(--progress))'
+              style={{ transition: 'stroke-dashoffset 0.25s linear' }}
+            ></circle>
           </svg>
-          <span ref={progressContent}></span>
+          <span ref={progressContent} className="absolute right-4 top-12 text-sm text-black"></span>
         </div>
       </Swiper>
     </div>

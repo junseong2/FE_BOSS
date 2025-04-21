@@ -67,12 +67,12 @@ export default function HomeStores({ customClassName }) {
                         }}
                       />
                     </div>
-                    <div className='absolute inset-0 bg-red opacity-0 transition-opacity duration-300 group-hover:opacity-10'></div>
+                    <div className='absolute inset-0 bg-black opacity-0 transition-opacity duration-300 group-hover:opacity-10'></div>
                   </div>
-                  <strong className='mt-2 sm:mt-3 text-center group-hover:text-red-800 font-medium text-sm sm:text-base transition-colors line-clamp-1'>
+                  <strong className='mt-2 sm:mt-3 text-center group-hover:text-black-800 font-medium text-sm sm:text-base transition-colors line-clamp-1'>
                     {store.storeName}
                   </strong>
-                  <p className='text-center text-xs sm:text-sm text-red-500'>{store.description}</p>
+                  <p className='text-center text-xs sm:text-sm text-black-500'>{store.description}</p>
                 </Link>
               </SwiperSlide>
             );
