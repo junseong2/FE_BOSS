@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { BASE_URL } from "../../../lib/api"
 
 import {
   IoHeartOutline,
@@ -19,7 +20,7 @@ const Sidebar = ({ activeTab, setActiveTab, userId, userName, setUserId, setUser
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const res = await fetch("http://localhost:5000/auth/user-info", {
+        const res = await fetch(BASE_URL+"/auth/user-info", {
           method: "GET",
           credentials: "include",
         })
@@ -45,7 +46,7 @@ const Sidebar = ({ activeTab, setActiveTab, userId, userName, setUserId, setUser
     if (!confirmLogout) return
 
     try {
-      await fetch("http://localhost:5000/auth/logout", {
+      await fetch(BASE_URL+"/auth/logout", {
         method: "GET",
         credentials: "include",
       })

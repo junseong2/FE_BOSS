@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:5000';
+import { BASE_URL } from "../lib/api";
 
 export const apiRoutes = {
   // 상품

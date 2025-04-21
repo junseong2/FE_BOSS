@@ -11,6 +11,7 @@ import axios from 'axios';
 import { mobileelementTemplates, mobileinitialElements } from '../../data/shop-templates';
 import { IoCloseOutline } from 'react-icons/io5';
 import { getCategories } from '../../services/category.service';
+import { BASE_URL } from '../../lib/api';
 
 const sidebarTabList = ['요소', '설정'];
 const canvasTabList = ['미리보기'];
@@ -40,7 +41,7 @@ export default function MobileShopEditorPage() {
   // ✅ 2. userId 기반으로 sellerId 가져오기 (axios 사용)
   async function fetchSellerInfo(userId) {
     try {
-      const response = await axios.get(`http://localhost:5000/seller/seller-info-byuserid/${userId}`);
+      const response = await axios.get(BASE_URL+`/seller/seller-info-byuserid/${userId}`);
       console.log('✅ 서버에서 받아온 모바일 sellerInfo:', response.data);
       setSellerInfo(response.data);
       setSellerId(response.data.sellerId);
@@ -230,7 +231,7 @@ export default function MobileShopEditorPage() {
     }
   
     try {
-      const response = await axios.put(`http://localhost:5000/seller/${sellerId}/updateMobileSettings`, 
+      const response = await axios.put(BASE_URL+`/seller/${sellerId}/updateMobileSettings`, 
         JSON.stringify(elements), // ✅ List<Map<String,Object>> 형식으로
         {
           headers: {

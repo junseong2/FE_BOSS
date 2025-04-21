@@ -5,8 +5,9 @@ import { useEffect, useState, useCallback } from "react"
 import axios from "axios"
 import { useParams, useNavigate } from "react-router-dom"
 import Header from "../components/Header"
+import { BASE_URL } from "../lib/api"
 
-const BASE_IMAGE_URL = "http://localhost:5000/uploads" // Spring Boot 서버 URL, 차후 배포할 때 수정
+const BASE_IMAGE_URL = BASE_URL+"/uploads" // Spring Boot 서버 URL, 차후 배포할 때 수정
 const pageSize = 9
 const DEFAULT_IMAGE_PATH = `${BASE_IMAGE_URL}/default-product.jpg`
 
@@ -88,7 +89,7 @@ export default function ProductListing() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/seller/used-categories?sellerId=${sellerId}`)
+        const res = await axios.get(BASE_URL+`/seller/used-categories?sellerId=${sellerId}`)
         setCategoryList(res.data) // [{ id: 1, name: "상의" }, { id: 2, name: "하의" }, ...]
       } catch (err) {
         console.error("❌ 사용된 카테고리 불러오기 실패:", err)
@@ -110,7 +111,7 @@ export default function ProductListing() {
   useEffect(() => {
     const fetchHeaderSettings = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/seller/page-data?seller_id=${sellerId}`)
+        const res = await axios.get(BASE_URL+`/seller/page-data?seller_id=${sellerId}`)
         const headerComponent = res.data.settings.find((el) => el.type === "header")
         if (headerComponent) {
           setHeaderSettings(headerComponent.properties)
@@ -145,7 +146,7 @@ export default function ProductListing() {
   useEffect(() => {
     const fetchSellerId = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/seller/info/${storename}`)
+        const response = await axios.get(BASE_URL+`/seller/info/${storename}`)
         if (response.data?.sellerId) setSellerId(response.data.sellerId)
       } catch (error) {
         console.error("❌ sellerId 가져오기 실패:", error)
@@ -162,7 +163,7 @@ export default function ProductListing() {
       const sortParam = sortOrder && sortOrder !== "recommend" ? `&sort=${sortOrder}` : ""
       const categoryParam = selectedCategory ? `&categoryId=${selectedCategory}` : ""
       const response = await axios.get(
-        `http://localhost:5000/seller/productslist?sellerId=${sellerId}&page=${currentPage}&size=${pageSize}${sortParam}${categoryParam}`,
+        BASE_URL+`/seller/productslist?sellerId=${sellerId}&page=${currentPage}&size=${pageSize}${sortParam}${categoryParam}`,
       )
 
       const data = response.data

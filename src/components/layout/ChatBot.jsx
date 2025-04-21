@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import BounceLoader from 'react-spinners/BounceLoader';
 import bossLogo from '../../assets/boss_logo.jpg';
 import './ChatBot.css';
-
+import { BASE_URL } from '../../lib/api';
 
 
 function ChatBot() {
@@ -25,7 +25,7 @@ function ChatBot() {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/vector/rag?query=${encodeURIComponent(input)}`,
+        BASE_URL+`/vector/rag?query=${encodeURIComponent(input)}`,
         {
           method: 'GET',
           headers: { Accept: 'application/json' },
@@ -58,7 +58,7 @@ function ChatBot() {
       console.error('서버 오류:', error);
       setMessages((prev) => [
         ...prev,
-        { class: 0, sender: 'bot', text: '서버 오류가 발생했습니다.' },
+        { class: 0, sender: 'bot', text: BASE_URL+`/vector/rag?query=${encodeURIComponent(input)}`+'서버 오류가 발생했습니다.' },
       ]);
     } finally {
       setLoading(false);
@@ -177,7 +177,7 @@ function ProductRecommendationCard({ productId, reason }) {
     const fetchProduct = async () => {
       try {
 
-        const res = await fetch(`http://localhost:5000/products/${productId}`);
+        const res = await fetch(BASE_URL+`/products/${productId}`);
         const data = await res.json();
 
         setProduct(data);
@@ -202,7 +202,7 @@ function ProductRecommendationCard({ productId, reason }) {
       >
 
         <img
-          src={`http://localhost:5000/uploads/${imageUrl}`}
+          src={base_url+`/uploads/${imageUrl}`}
           alt={product.name}
           className="w-full h-28 object-cover"
         />

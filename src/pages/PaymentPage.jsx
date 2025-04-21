@@ -17,6 +17,7 @@ import {
   AlertCircle,
   Loader2,
 } from "lucide-react"
+import { BASE_URL } from "../lib/api"
 
 function PaymentPage() {
   const [userId, setUserId] = useState(null)
@@ -50,7 +51,7 @@ function PaymentPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch("http://localhost:5000/auth/user-info", {
+        const response = await fetch(BASE_URL+"/auth/user-info", {
           method: "GET",
           credentials: "include",
           headers: { Accept: "application/json" },
@@ -68,7 +69,7 @@ function PaymentPage() {
         setUserId(data.userId)
         setUserName(data.userName)
         setEmail(data.userEmail || "")
-        const addressRes = await fetch(`http://localhost:5000/address/user/${data.userId}`, {
+        const addressRes = await fetch(BASE_URL+`/address/user/${data.userId}`, {
           method: "GET",
           credentials: "include",
         });
@@ -102,7 +103,7 @@ function PaymentPage() {
 
     const fetchCart = async () => {
       try {
-        const response = await fetch("http://localhost:5000/cart", {
+        const response = await fetch(BASE_URL+"/cart", {
           method: "GET",
           credentials: "include",
           headers: { Accept: "application/json" },
@@ -130,7 +131,7 @@ function PaymentPage() {
   useEffect(() => {
     const fetchChannelKey = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/payment/channel-key/${selectedPaymentMethod}`)
+        const response = await fetch(BASE_URL+`/payment/channel-key/${selectedPaymentMethod}`)
         if (!response.ok) throw new Error("채널 키 가져오기 실패")
 
         const data = await response.json()
@@ -213,7 +214,7 @@ function PaymentPage() {
             await updatePaymentStatus(statusData)
 
             try {
-              await fetch("http://localhost:5000/cart/clear", {
+              await fetch(BASE_URL+"/cart/clear", {
                 method: "POST",
                 credentials: "include",
               })

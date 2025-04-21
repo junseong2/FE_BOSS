@@ -7,6 +7,7 @@ import HomeProducts from './components/HomeProducts';
 import RecommendHomeProducts from './components/RecommendHomeProducts'; // ✅ 추천 전용 컴포넌트
 import HomeStores from './components/HomeStores';
 import axios from 'axios';
+import { BASE_URL } from '../../lib/api';
 export default function HomePage() {
   const { recommendedProducts } = useUser();
   const [recommendedProductList, setRecommendedProductList] = useState([]);
@@ -15,7 +16,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchPopularProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/products/popular', {
+        const response = await axios.get(BASE_URL+'/products/popular', {
           params: { sortBy: 'daily' },
         });
         setProducts(response.data);
@@ -33,7 +34,7 @@ export default function HomePage() {
 
       try {
         const productDetailPromises = recommendedProducts.map((id) =>
-          fetch(`http://localhost:5000/products/${id}`).then((res) => res.json()),
+          fetch(BASE_URL+`/products/${id}`).then((res) => res.json()),
         );
 
         const results = await Promise.all(productDetailPromises);

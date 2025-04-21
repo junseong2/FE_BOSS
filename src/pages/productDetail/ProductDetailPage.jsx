@@ -24,8 +24,9 @@ import { getReviews } from "../../services/review.service"
 import ProductReviewList from "./components/ProductReviewList"
 import { ThinRoundedStar } from "@smastrom/react-rating"
 import ProductSkeleton from "./components/ProductDetailSkeleton"
+import { BASE_URL } from "../../lib/api"
 
-const BASE_IMAGE_URL = "http://localhost:5000/uploads" // Spring Boot 서버 URL,차후 배포할때 수정
+const BASE_IMAGE_URL = BASE_URL+"/uploads" // Spring Boot 서버 URL,차후 배포할때 수정
 const DEFAULT_IMAGE_PATH = `${BASE_IMAGE_URL}/default-product.jpg`
 const PAGE_SIZE = 5
 

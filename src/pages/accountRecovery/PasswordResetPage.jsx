@@ -4,6 +4,7 @@ import CodeVerifyForm from "./components/CodeVerifyForm";
 import ResetPasswordForm from "./components/ResetPasswordForm";
 import { motion } from "framer-motion";
 import { passsendEmailAuthCode, verifyEmailAuthCode } from "../../services/auth.service"; // 수정된 import
+import { BASE_URL } from "../../lib/api";
 
 export default function PasswordResetPage() {
   const [step, setStep] = useState(1);
@@ -92,7 +93,7 @@ const handleEmailVerify = async () => {
   
     setIsLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/auth/reset-password`, {
+      const res = await fetch(BASE_URL+`/auth/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

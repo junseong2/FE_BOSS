@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Webcam from 'react-webcam';
 import axios from 'axios';
+import { BASE_URL } from '../lib/api';
 
 function CameraCapturePage() {
   const [image, setImage] = useState(null);
@@ -47,7 +48,7 @@ function CameraCapturePage() {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/add-face', {
+      const response = await axios.post(BASE_URL+'/add-face', {
         base64Image: image,
         name,
         user_id: name,
@@ -69,7 +70,7 @@ function CameraCapturePage() {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/face-recognition', {
+      const response = await axios.post(BASE_URL+'/face-recognition', {
         base64Image: image,
       });
 

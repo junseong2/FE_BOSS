@@ -5,6 +5,7 @@ import BusinessRegistrationForm from "./BusinessRegistrationForm"
 import OnlineSalesForm from "./OnlineSalesForm"
 import { CheckCircle, ArrowRight, Store, FileCheck, UserCheck } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { BASE_URL } from "../../../lib/api"
 
 const SellerRegistrationForm = ({ onClose }) => {
   const { userId } = useUser()
@@ -24,7 +25,7 @@ const SellerRegistrationForm = ({ onClose }) => {
   useEffect(() => {
     const checkIfUserIsSeller = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/seller/check/${userId}`)
+        const response = await axios.get(BASE_URL+`/seller/check/${userId}`)
         setIsUserSeller(response.data.isSeller)
       } catch (error) {
         console.error("판매자 등록 여부 확인 실패", error)
@@ -56,7 +57,7 @@ const SellerRegistrationForm = ({ onClose }) => {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/seller/register", sellerData)
+      const response = await axios.post(BASE_URL+"/seller/register", sellerData)
       setShowSuccess(true)
     } catch (error) {
       console.error("🚨 등록 실패:", error)

@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './styles/seller-store-page.css';
 import './styles/CartPage.css';
+import { BASE_URL } from '../lib/api';
+
 const SellerStorePage = () => {
   const { storename } = useParams(); // storename 가져오기
   const [seller, setSeller] = useState(null);
@@ -20,7 +22,7 @@ const SellerStorePage = () => {
     console.log('✅ Fetch 요청 시작 - storename:', storename);
 
     // 1️⃣ 판매자 정보 가져오기
-    fetch(`http://localhost:5000/store/${storename}/products`)
+    fetch(BASE_URL+`/store/${storename}/products`)
       .then((res) => res.text()) // 텍스트 형식으로 받기
       .then((data) => {
         console.log('응답 텍스트:', data); // 데이터 확인
@@ -43,7 +45,7 @@ const SellerStorePage = () => {
     try {
       console.log(`🛒 장바구니 추가 요청: productId=${productId}`);
 
-      const response = await fetch('http://localhost:5000/cart/add', {
+      const response = await fetch(BASE_URL+'/cart/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

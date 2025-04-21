@@ -1,5 +1,6 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { BASE_URL } from '../lib/api';
 
 // CartContext 생성
 const CartContext = createContext();
@@ -18,7 +19,7 @@ export const CartProvider = ({ children }) => {
   const loadCart = async () => {
     try {
      // const backendUrl = import.meta.env.VITE_BACKEND_URL; // ✅ 환경 변수 할당
-      const response = await fetch(`http://localhost:5000/cart`, {
+      const response = await fetch(BASE_URL+`/cart`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -37,7 +38,7 @@ export const CartProvider = ({ children }) => {
   const removeItemFromCart = async (productId) => {
     try {
      // const backendUrl = import.meta.env.VITE_BACKEND_URL;
-      const response = await fetch(`http://localhost:5000/cart/remove?productId=${productId}`, {
+      const response = await fetch(BASE_URL+`/cart/remove?productId=${productId}`, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -60,7 +61,7 @@ export const CartProvider = ({ children }) => {
 
     try {
       
-      const response = await fetch(`http://localhost:5000/cart/updatequantity`, {
+      const response = await fetch(BASE_URL + `/cart/updatequantity`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

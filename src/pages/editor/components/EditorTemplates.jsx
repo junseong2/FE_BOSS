@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import SortList from '../../../components/SortList';
+import { BASE_URL } from '../../../lib/api';
 
 /**
  * 커스텀 헤더
@@ -47,7 +48,7 @@ export function TemplateHeader({ properties }) {
       <div className='w-[60px] h-[55px] text-center relative'>
         <img
           className='w-full h-full object-contain'
-          src={logoUrl ? `http://localhost:5000${logoUrl}` : "https://placehold.co/50x50"}
+          src={logoUrl ? BASE_URL+`${logoUrl}` : "https://placehold.co/50x50"}
           alt='로고 이미지'
         />
       </div>
@@ -106,7 +107,7 @@ export function TemplateHeader({ properties }) {
       <div className='w-[60px] h-[55px] text-center relative'>
         <img
           className='w-full h-full'
-          src={logoUrl ? `http://localhost:5000${logoUrl}` : "https://placehold.co/50x50"}
+          src={logoUrl ? BASE_URL+`${logoUrl}` : "https://placehold.co/50x50"}
           alt='로고 이미지'
         />
       </div>
@@ -137,7 +138,7 @@ export function TemplateHeader({ properties }) {
  */export function TemplateBanner({ properties }) {
   const { title, subtitle, backgroundColor, imageUrl } = properties || {};
 
-  const fullImgUrl = imageUrl ? `http://localhost:5000${imageUrl}` : null;
+  const fullImgUrl = imageUrl ? BASE_URL+`${imageUrl}` : null;
 
   return (
     <div
@@ -342,7 +343,7 @@ export function TemplateImage({ properties }) {
     borderRadius = '0px', // ✅ 둥근 정도 props로 받을 수 있도록 추가
   } = properties;
 
-  const fullImgUrl = imageUrl?.startsWith('http') ? imageUrl : `http://localhost:5000${imageUrl}`;
+  const fullImgUrl = imageUrl?.startsWith('http') ? imageUrl : BASE_URL+`${imageUrl}`;
 
   return (
     <div className="w-full h-full overflow-hidden">

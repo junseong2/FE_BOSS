@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { BASE_URL } from '../lib/api';
+
 
 export default function ImageBox({ imageUrl, alt, borderRadius = '0px' }) {
-  const fullUrl = imageUrl?.startsWith('http') ? imageUrl : `http://localhost:5000${imageUrl}`;
+  const fullUrl = imageUrl?.startsWith('http') ? imageUrl : BASE_URL +`${imageUrl}`;
   const isVideo = fullUrl?.match(/\.(mp4|webm|ogg)$/i);
 
   const [hasLoaded, setHasLoaded] = useState(false);

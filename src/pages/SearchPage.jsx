@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import { IoFilterOutline, IoGridOutline, IoListOutline, IoCartOutline, IoSearchOutline } from "react-icons/io5"
 import noimage from '../assets/noimage.jpg';
+import { BASE_URL } from "../lib/api";
 
 function SearchPage() {
   const [searchResults, setSearchResults] = useState([])
@@ -22,7 +23,7 @@ function SearchPage() {
   const fetchSearchResults = async () => {
     setLoading(true)
     try {
-      const response = await axios.get(`http://localhost:5000/products/search?query=${query}`)
+      const response = await axios.get(BASE_URL+`/products/search?query=${query}`)
       let filtered = response.data
 
       // 가격 필터 적용
@@ -48,7 +49,7 @@ function SearchPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch("http://localhost:5000/auth/user-info", {
+        const response = await fetch(BASE_URL+"/auth/user-info", {
           method: "GET",
           credentials: "include",
         })
@@ -87,7 +88,7 @@ function SearchPage() {
     try {
       console.log(`🛒 장바구니 추가 요청: productId=${productId}`)
 
-      const response = await fetch("http://localhost:5000/cart/add", {
+      const response = await fetch(BASE_URL+"/cart/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

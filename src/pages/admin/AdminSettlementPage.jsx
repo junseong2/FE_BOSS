@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react"
 import AdminContentHeader from "./components/common/AdminContentHeader"
 import AdminTitle from "./components/common/AdminTitle"
+import { BASE_URL } from "../../lib/api"
 
 function AdminSettlementPage() {
   const [search, setSearch] = useState("") // 정산 번호 검색
@@ -19,7 +20,7 @@ function AdminSettlementPage() {
     setIsLoading(true)
     try {
       const response = await fetch(
-        `http://localhost:5000/settlements/admin/check?status=${statusFilter}&sellerId=${selectedSellerId || ""}`,
+        BASE_URL+`/settlements/admin/check?status=${statusFilter}&sellerId=${selectedSellerId || ""}`,
         {
           method: "GET",
           headers: {
@@ -45,7 +46,7 @@ function AdminSettlementPage() {
 
   const handleStatusUpdate = async (id, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:5000/settlements/admin/${id}/status?status=${newStatus}`, {
+      const response = await fetch(BASE_URL+`/settlements/admin/${id}/status?status=${newStatus}`, {
         method: "PATCH",
         credentials: "include",
       })

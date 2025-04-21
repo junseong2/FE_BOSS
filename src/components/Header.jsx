@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { BASE_URL } from "../lib/api";
+
 function Header({
   backgroundColor,
   logoUrl,
@@ -12,7 +14,7 @@ function Header({
 }) {
   const navigate = useNavigate();
   const { storename } = useParams();
-  const fullLogoUrl = logoUrl ? `http://localhost:5000${logoUrl}` : null;
+  const fullLogoUrl = logoUrl ? BASE_URL+`${logoUrl}` : null;
 
   const [isSticky, setIsSticky] = useState(false);
 

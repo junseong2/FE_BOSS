@@ -5,6 +5,7 @@ import { addToCart } from '../services/cart.service';
 import { IoFilterOutline, IoGridOutline, IoListOutline, IoCartOutline } from 'react-icons/io5';
 import noimage from '../assets/noimage.jpg';
 import Pagination from '../components/Pagination';
+import { BASE_URL } from '../lib/api';
 
 const PAGE_SIZE = 20;
 function CategoryPage() {
@@ -26,7 +27,7 @@ function CategoryPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch('http://localhost:5000/auth/user-info', {
+        const response = await fetch(BASE_URL+'/auth/user-info', {
           method: 'GET',
           credentials: 'include',
         });
@@ -51,7 +52,7 @@ function CategoryPage() {
     const fetchCategoryName = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/category/${categoryId}?page=${page}&size=${PAGE_SIZE}`,
+          BASE_URL+`/category/${categoryId}?page=${page}&size=${PAGE_SIZE}`,
         );
         console.log('✅ Category Name Fetched:', response.data);
         setCategoryName(response.data.name);
@@ -71,7 +72,7 @@ function CategoryPage() {
       setLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:5000/products/category/${categoryId}?page=${page}&size=${PAGE_SIZE}`,
+          BASE_URL+`/products/category/${categoryId}?page=${page}&size=${PAGE_SIZE}`,
         );
         let filtered = response.data;
 

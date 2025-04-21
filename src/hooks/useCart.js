@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { BASE_URL } from '../lib/api';
 
 const useCart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -9,7 +10,7 @@ const useCart = () => {
 
   const loadCart = async () => {
     try {
-      const response = await fetch('http://localhost:5000/cart', {
+      const response = await fetch(BASE_URL+'/cart', {
         method: 'GET',
         credentials: 'include',
       });
@@ -27,7 +28,7 @@ const useCart = () => {
 
   const removeItemFromCart = async (productId) => {
     try {
-      const response = await fetch(`http://localhost:5000/cart/remove?productId=${productId}`, {
+      const response = await fetch(BASE_URL+`/cart/remove?productId=${productId}`, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -49,7 +50,7 @@ const useCart = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/cart/updatequantity', {
+      const response = await fetch(BASE_URL+'/cart/updatequantity', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

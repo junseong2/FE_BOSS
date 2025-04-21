@@ -3,10 +3,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Draggable from 'react-draggable';
 import SignIn from '../../pages/SignIn';
 import { useUser } from '../../context/UserContext'; // ✅ 전역 상태 사용
+import { BASE_URL } from '../../lib/api';
 
 const Top5 = ({ sellerMenubarColor, storename }) => {
   const { userId, setUserId, userName, setUserName } = useUser(); // ✅ 전역 상태 사용
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || BASE_URL;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const Top5 = ({ sellerMenubarColor, storename }) => {
 
   useEffect(() => {
     const getUserInfo = async () => {
-      const response = await fetch('http://localhost:5000/auth/user-info', {
+      const response = await fetch(BASE_URL+'/auth/user-info', {
         credentials: 'include',
       });
       if (response.ok) {
@@ -52,7 +53,7 @@ const Top5 = ({ sellerMenubarColor, storename }) => {
   };
 
   const handleLogoutClick = async () => {
-    await fetch('http://localhost:5000/auth/logout', { method: 'GET', credentials: 'include' });
+    await fetch(BASE_URL+'/auth/logout', { method: 'GET', credentials: 'include' });
     setUserId(null);
     setUserName(null);
     navigate('/');
