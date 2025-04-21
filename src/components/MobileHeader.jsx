@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { BASE_URL } from '../lib/api';
 
 function MobileHeader({
   title,
@@ -9,7 +10,7 @@ function MobileHeader({
   fontFamily = 'inherit',
   fontWeight = 'normal',
 }) {
-  const BASE_IMAGE_URL = 'http://localhost:5000';
+  const BASE_IMAGE_URL = BASE_URL;
   const { storename } = useParams();
 
   const fullLogoUrl = logoUrl?.startsWith('/uploads')

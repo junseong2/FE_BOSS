@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { BASE_URL } from "../lib/api";
 
 const UserContext = createContext(null);
 
@@ -13,7 +14,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/auth/user-info`, {
+        const response = await fetch(BASE_URL+`/auth/user-info`, {
           credentials: "include",
         });
         if (!response.ok) throw new Error("로그인 정보 없음");

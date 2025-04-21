@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tailwindcss-animated";
 
 /* ✅ Pretendard 웹폰트 설정 */
 @font-face {

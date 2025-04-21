@@ -1,5 +1,7 @@
+import { AxiosError } from 'axios';
 import { apiRoutes } from '../configs/api-urls';
 import instance from '../configs/axios.config';
+import { toastError } from '../components/toast/CustomToast';
 
 // 판매자
 /** 판매자 리뷰 조회 */
@@ -81,18 +83,34 @@ export const getReviews = async ({ sortby, page, size, productId }) => {
 };
 
 /** 리뷰 추가 */
-export const insertReview = async (productId, reviewData) => {
+export const insertReview = async (productId, formData) => {
   const url = apiRoutes.reviews.insert(productId);
 
   try {
-    const response = await instance.post(url, reviewData);
-
+    const response = await instance.post(url, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     if (response.status > 399) {
-      return false;
+      throw new AxiosError('리뷰 등록에 실패했습니다.');
     }
     return true;
   } catch (error) {
-    return false;
+    if (error instanceof AxiosError) {
+      if (error.status === 401) {
+        toastError('로그인 후 이용 가능합니다.');
+        return;
+      }
+      if (error.status === 400) {
+        toastError('리뷰 등록에 실패했습니다. 이미 작성한 리뷰가 있습니다.');
+        return;
+      }
+      if (error.status === 500) {
+        toastError('서버 오류로 리뷰 등록에 실패했습니다. 잠시 후 다시 시도해주세요.');
+        return;
+      }
+    }
   }
 };
 

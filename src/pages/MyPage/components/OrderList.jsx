@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Pagination from '../../../components/Pagination';
 import noImage from '../../../assets/noImage.jpg'
+import {BASE_URL} from '../../../lib/api'
 
 const PAGE_SIZE = 5;
 
@@ -45,7 +46,7 @@ const OrderList = ({ userId }) => {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/orders/user/${userId}`, {
+      const response = await fetch(BASE_URL+`/orders/user/${userId}`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -69,7 +70,7 @@ const OrderList = ({ userId }) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/orderdetail/${orderId}`, {
+      const response = await fetch(BASE_URL+`/orderdetail/${orderId}`, {
         method: 'GET',
         credentials: 'include',
       });

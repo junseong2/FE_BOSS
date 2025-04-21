@@ -1,5 +1,7 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { useCartStore } from '../store/cartStore';
+import { BASE_URL } from '../lib/api';
 
 // CartContext 생성
 const CartContext = createContext();
@@ -7,6 +9,8 @@ const CartContext = createContext();
 // CartProvider 컴포넌트 (전역 상태를 관리)
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
+
+  const {setTrigger: cartItemStateUpdateTrigger} = useCartStore()
 
   useEffect(() => {
     console.log("📌 CartProvider 마운트됨");
@@ -18,7 +22,7 @@ export const CartProvider = ({ children }) => {
   const loadCart = async () => {
     try {
      // const backendUrl = import.meta.env.VITE_BACKEND_URL; // ✅ 환경 변수 할당
-      const response = await fetch(`http://localhost:5000/cart`, {
+      const response = await fetch(BASE_URL+`/cart`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -37,7 +41,7 @@ export const CartProvider = ({ children }) => {
   const removeItemFromCart = async (productId) => {
     try {
      // const backendUrl = import.meta.env.VITE_BACKEND_URL;
-      const response = await fetch(`http://localhost:5000/cart/remove?productId=${productId}`, {
+      const response = await fetch(BASE_URL+`/cart/remove?productId=${productId}`, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -47,6 +51,7 @@ export const CartProvider = ({ children }) => {
       }
 
       setCartItems(cartItems.filter((item) => item.productId !== productId));
+      cartItemStateUpdateTrigger() // 장바구니 담긴 아이템 개수 상태 업데이트
     } catch (error) {
       console.error('장바구니에서 삭제 오류:', error);
     }
@@ -60,7 +65,7 @@ export const CartProvider = ({ children }) => {
 
     try {
       
-      const response = await fetch(`http://localhost:5000/cart/updatequantity`, {
+      const response = await fetch(BASE_URL + `/cart/updatequantity`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

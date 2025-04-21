@@ -37,7 +37,7 @@ export const toastError = (message) => {
   toast.custom((t) => (
     <div
       className={`${
-        t.visible ? 'animate-enter' : 'animate-leave'
+        t.visible ? 'animate-in fade-in' : 'animate-out fade-out'
       } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-red-100 ring-opacity-25`}
     >
       <div className='flex-1 w-0 p-4'>

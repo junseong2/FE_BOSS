@@ -16,6 +16,7 @@ import {
   IoSettingsOutline,
   IoNotificationsOutline,
 } from "react-icons/io5"
+import { BASE_URL } from "../../../lib/api"
 
 const UserProfile = () => {
   const [userId, setUserId] = useState(null)
@@ -42,7 +43,7 @@ const UserProfile = () => {
   const fetchUserInfo = async () => {
     setIsLoading(true)
     try {
-      const response = await fetch("http://localhost:5000/auth/user-info", {
+      const response = await fetch(BASE_URL+"/auth/user-info", {
         method: "GET",
         credentials: "include",
       })
@@ -62,7 +63,7 @@ const UserProfile = () => {
       setEmails([data.userEmail])
       setPhones([data.userPhone1 ?? "", data.userPhone2 ?? "", data.userPhone3 ?? ""])
 
-      const addressRes = await fetch(`http://localhost:5000/address/user/${data.userId}`, {
+      const addressRes = await fetch(BASE_URL+`/address/user/${data.userId}`, {
         method: "GET",
         credentials: "include",
       })
@@ -100,7 +101,7 @@ const UserProfile = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/auth/update-userinfo", {
+      const response = await fetch(BASE_URL+"/auth/update-userinfo", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -180,7 +181,7 @@ const UserProfile = () => {
 
     setIsLoading(true)
     try {
-      const res = await fetch(`http://localhost:5000/auth/usersout/${userId}`, {
+      const res = await fetch(BASE_URL+`/auth/usersout/${userId}`, {
         method: "DELETE",
         credentials: "include",
       })
@@ -211,7 +212,7 @@ const UserProfile = () => {
 
     try {
       // 현재 비밀번호를 서버로 보내서 확인
-      const response = await fetch("http://localhost:5000/auth/check-current-password", {
+      const response = await fetch(BASE_URL+"/auth/check-current-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -251,7 +252,7 @@ const UserProfile = () => {
 
     try {
       // 새 비밀번호 변경 요청
-      const response = await fetch("http://localhost:5000/auth/update-password", {
+      const response = await fetch(BASE_URL+"/auth/update-password", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

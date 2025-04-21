@@ -6,6 +6,7 @@ import { SingleImageUploader, SingleProductImageUploader } from "../../../../com
 
 import { updateSellerSettings } from "../../../../utils/usercustomui" // ✅ API 호출 함수 추가
 import { fetchSellerMobileSettings } from "../../../../utils/usercustomui"
+import { BASE_URL } from "../../../../lib/api"
 
 export default function ElementEditor({
   element,
@@ -16,10 +17,10 @@ export default function ElementEditor({
   setElements,
   onSizeChange,
 }) {
-  const [headerLogoUrl, setHeaderLogoUrl] = useState(`http://localhost:5000/uploads/${sellerId}_headerlogo.png`)
+  const [headerLogoUrl, setHeaderLogoUrl] = useState(BASE_URL+`/uploads/${sellerId}_headerlogo.png`)
   const [headerLogoFile, setHeaderLogoFile] = useState(null)
   const isFirstLoad = useRef(true)
-  const [bannerUrl, setBannerUrl] = useState(`http://localhost:5000/uploads/${sellerId}_banner.png`)
+  const [bannerUrl, setBannerUrl] = useState(BASE_URL+`/uploads/${sellerId}_banner.png`)
   const [backgroundImage, setBackgroundImage] = useState(null)
   const [isUploading, setIsUploading] = useState(false)
   const currentDevice = element.type.startsWith("mobile") ? "mobile" : "web"
@@ -304,14 +305,14 @@ export default function ElementEditor({
         // 여러 개의 헤더 처리
         updatedSettings.header = {
           ...el.properties,
-          logoUrl: el.properties.logoUrl || `http://localhost:5000/uploads/${sellerId}_headerlogo.png`,
+          logoUrl: el.properties.logoUrl || BASE_URL+`/uploads/${sellerId}_headerlogo.png`,
           backgroundColor: el.properties.backgroundColor || "#ffffff",
         }
       } else if (el.type === "banner") {
         // 여러 개의 배너 처리
         updatedSettings.banner = {
           ...el.properties,
-          imageUrl: el.properties.imageUrl || `http://localhost:5000/uploads/${sellerId}_banner.png`,
+          imageUrl: el.properties.imageUrl || BASE_URL+`/uploads/${sellerId}_banner.png`,
           backgroundColor: el.properties.backgroundColor || "#ffffff",
         }
       } else {
@@ -370,7 +371,7 @@ export default function ElementEditor({
     if (headerElement) {
       updatedSettings.header = {
         ...headerElement.properties,
-        logoUrl: `http://localhost:5000/uploads/${sellerId}_headerlogo.png`, // ✅ 로고 URL 설정
+        logoUrl: BASE_URL+`/uploads/${sellerId}_headerlogo.png`, // ✅ 로고 URL 설정
       }
     } else {
       updatedSettings.header = null
@@ -379,7 +380,7 @@ export default function ElementEditor({
     if (bannerElement) {
       updatedSettings.banner = {
         ...bannerElement.properties,
-        logoUrl: `http://localhost:5000/uploads/${sellerId}_banner.png`, // ✅ 배너 이미지 저장
+        logoUrl: BASE_URL+`/uploads/${sellerId}_banner.png`, // ✅ 배너 이미지 저장
       }
     } else {
       updatedSettings.banner = null

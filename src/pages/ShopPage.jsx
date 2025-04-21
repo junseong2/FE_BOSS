@@ -17,6 +17,8 @@ import Text from '../components/Text';
 import ImageBox from '../components/ImageBox';
 import ColorBox from '../components/ColorBox';
 import Footer from '../components/layout/Footer';
+import { BASE_URL } from '../lib/api';
+
 
 const componentsMap = {
   header: Header,
@@ -92,7 +94,7 @@ function ShopPage() {
   useEffect(() => {
     const fetchSellerId = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/seller/info/${storename}`);
+        const response = await axios.get(BASE_URL+`/seller/info/${storename}`);
         if (response.data?.sellerId) setSellerId(response.data.sellerId);
       } catch (error) {
         console.error("sellerId 가져오기 실패:", error);
@@ -131,7 +133,7 @@ function ShopPage() {
     if (!sellerId) return;
     const fetchSellerSettings = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/seller/page-data?seller_id=${sellerId}`);
+        const response = await axios.get(BASE_URL+`/seller/page-data?seller_id=${sellerId}`);
         // 백엔드 응답에서 settings만 추출 (canvasHeight 등 부가값은 별도)
         setSettings(response.data.settings || []);
         setMobileSettings(response.data.mobilesettings || []);
@@ -147,7 +149,7 @@ function ShopPage() {
     if (!hasMore || loading || !sellerId) return;
     setLoading(true);
     try {
-      const url = `http://localhost:5000/seller/product?sellerId=${sellerId}&page=${currentPage}&size=8&sort=${sortOrder}`;
+      const url = BASE_URL+`/seller/product?sellerId=${sellerId}&page=${currentPage}&size=8&sort=${sortOrder}`;
       const response = await axios.get(url);
       const data = response.data;
       if (!data.products?.length) {

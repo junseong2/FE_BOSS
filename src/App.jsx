@@ -52,12 +52,14 @@ import Footer from './components/layout/Footer'; // ✅ Footer import 추가
 import SignUpPage from './pages/signup/SignUpPage.jsx';
 import SellerSettlementPage from './pages/seller/SellerSettlementPage.jsx';
 import SellerReviewPage from './pages/seller/SellerReviewPage.jsx';
+import { BASE_URL } from './lib/api.js';
 
 function App() {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [storename, setStorename] = useState(null);
   const [headerId, setHeaderId] = useState(null);
   const [sellerId, setSellerId] = useState(null);
+  const [userId, setUserId] = useState(null)
   const [menuBarId, setMenuBarId] = useState(null);
   const [navigationId, setNavigationId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -102,7 +104,7 @@ function App() {
     }
     const fetchSellerInfo = async () => {
       try {
-        const sellerResponse = await fetch(`http://localhost:5000/seller/info/${storename}`, {
+        const sellerResponse = await fetch(BASE_URL + `/seller/info/${storename}`, {
           method: 'GET',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
@@ -170,7 +172,7 @@ function App() {
 
   return (
     <CartProvider>
-      <Toaster position='top-right' />
+      <Toaster position='top-right' containerClassName='mt-[2rem]' />
       <UserProvider>
         <div className='flex flex-col min-h-screen'>
           {/* ✅ 상단 영역 */}

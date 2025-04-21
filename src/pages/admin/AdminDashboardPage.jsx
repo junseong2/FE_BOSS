@@ -6,6 +6,7 @@ import AdminVerification from "./AdminVerificationPage"
 import AdminSettlement from "./AdminSettlementPage"
 import { AdminCard, AdminCardLayout } from "./components/common/AdminCard"
 import AdminHeader from "./components/layout/AdminHeader"
+import { BASE_URL } from "../../lib/api"
 
 export default function AdminDashboardPage() {
   const [selectedTab, setSelectedTab] = useState("AdminVerification")
@@ -33,7 +34,7 @@ export default function AdminDashboardPage() {
 
   const fetchSellerStats = async () => {
     try {
-      const response = await fetch("http://localhost:5000/seller/seller-stats", {
+      const response = await fetch(BASE_URL+"/seller/seller-stats", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -51,7 +52,7 @@ export default function AdminDashboardPage() {
 
   const fetchSettlementStats = async () => {
     try {
-      const response = await fetch("http://localhost:5000/settlements/admin/stats", {
+      const response = await fetch(BASE_URL+"/settlements/admin/stats", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

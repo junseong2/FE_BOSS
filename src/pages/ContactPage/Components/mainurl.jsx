@@ -1,5 +1,8 @@
+import { BASE_URL } from "../../../lib/api";
+
+
 function mainurl() {
-  return 'http://localhost:5000';
+  return BASE_URL;
 }
 
 export default mainurl;

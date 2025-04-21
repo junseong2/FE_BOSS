@@ -4,6 +4,7 @@ import {
   IoLogOutOutline, IoBarChartOutline, IoBriefcaseOutline, IoCartOutline,
   IoCarOutline, IoPersonOutline, IoCardOutline, IoGridOutline, IoStorefront
 } from 'react-icons/io5';
+import {BASE_URL} from '../../../../lib/api'
 
 function SellerSideBar() {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ function SellerSideBar() {
   const [storename, setStorename] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000/auth/user-info', {
+    fetch(BASE_URL+'/auth/user-info', {
       credentials: 'include',
     })
       .then(res => res.json())
@@ -27,7 +28,7 @@ function SellerSideBar() {
   useEffect(() => {
     async function fetchSellerInfo() {
       try {
-        const res = await fetch(`http://localhost:5000/seller/seller-info-byuserid/${userId}`, {
+        const res = await fetch(BASE_URL+`/seller/seller-info-byuserid/${userId}`, {
           credentials: 'include',
         });
         const data = await res.json();

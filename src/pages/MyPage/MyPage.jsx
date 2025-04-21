@@ -3,7 +3,7 @@ import Sidebar from "./components/Sidebar"
 import UserProfile from "./components/UserProfile"
 import OrderList from "./components/OrderList"
 import { useNavigate } from "react-router-dom"
-
+import {BASE_URL} from '../../lib/api'
 const MyPage = () => {
   const [userName, setUserName] = useState("")
   const [userId, setUserId] = useState(null)
@@ -14,7 +14,7 @@ const MyPage = () => {
 
   const fetchUserInfo = async () => {
     try {
-      const response = await fetch("http://localhost:5000/auth/user-info", {
+      const response = await fetch(BASE_URL+"/auth/user-info", {
         method: "GET",
         credentials: "include",
       })

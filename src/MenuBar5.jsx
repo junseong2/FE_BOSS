@@ -11,6 +11,7 @@ import {
 } from 'react-icons/io5'; // 필요한 아이콘 추가
 import axios from 'axios';
 import styles from './styles/MenuBar.module.css'; // CSS 모듈 경로
+import { BASE_URL } from './lib/api';
 
 function MenuBar5() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,7 +23,7 @@ function MenuBar5() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/category/root');
+        const response = await axios.get(BASE_URL + '/category/root');
         console.log('Fetched Categories:', response.data);
         setCategories(response.data);
       } catch (error) {
@@ -41,7 +42,7 @@ function MenuBar5() {
   const handleMouseEnter = async (categoryId) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/category/${categoryId}/subcategories`,
+        BASE_URL + `/category/${categoryId}/subcategories`,
       );
       setOpenSubMenu({ id: categoryId, subcategories: response.data });
     } catch (error) {

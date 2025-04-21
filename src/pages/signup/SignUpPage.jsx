@@ -285,7 +285,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className='relative bg-gray-100 min-h-screen flex flex-col justify-center items-center py-12'>
+    <div className='relative bg-gray-50 min-h-screen flex flex-col justify-center items-center py-12'>
       <div className='max-w-7xl w-full px-6 lg:px-0 flex flex-col lg:flex-row items-center'>
         <div className='lg:w-1/2 text-center lg:text-left mb-8 lg:mb-0'>
           <h1 className='text-3xl lg:text-4xl font-bold text-[#4294F2] pl-1 mb-4'>BOSS</h1>
@@ -296,7 +296,7 @@ export default function SignUpPage() {
           </p>
         </div>
 
-        <div className='w-full max-w-md bg-white p-8 rounded-lg shadow-xl'>
+        <div className='w-full max-w-md bg-white p-8 rounded-lg shadow-lg'>
           <form onSubmit={handleSubmit}>
             <div className='grid grid-cols-1 gap-4 mb-6'>
               {/* 이름 */}

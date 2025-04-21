@@ -6,7 +6,7 @@ import { getToken } from '../utils/storage';
 import { useUser } from '../context/UserContext'; // ✅ Context import
 import kakao from '../assets/kakao_login_logo.png'
 import naver from '../assets/naver_login_logo.png'
-
+import { BASE_URL } from '../lib/api';
 
 function SignIn({ onClose, onLoginSuccess }) {
   const { setUserId, setUserName, setRecommendedProducts, setRole } = useUser();
@@ -17,7 +17,6 @@ function SignIn({ onClose, onLoginSuccess }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000' ;
   // 로그인 폼의 이메일, 비밀번호 상태 관리
 
 
@@ -61,7 +60,7 @@ function SignIn({ onClose, onLoginSuccess }) {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://localhost:5000/auth/locallogin', {
+      const response = await fetch(BASE_URL+'/auth/locallogin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -82,7 +81,7 @@ function SignIn({ onClose, onLoginSuccess }) {
         if (!currentUserId) throw new Error('userId가 null입니다');
 
         const recommendRes = await fetch(
-          `http://localhost:5000/vector/recommend?userId=${currentUserId}&n=20&m=3`,
+          BASE_URL+`/vector/recommend?userId=${currentUserId}&n=20&m=3`,
           {
             method: 'GET',
             headers: { Authorization: `Bearer ${token}` },

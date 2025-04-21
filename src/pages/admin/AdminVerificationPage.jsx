@@ -4,7 +4,7 @@ import AdminContentHeader from "./components/common/AdminContentHeader"
 import AdminTitle from "./components/common/AdminTitle"
 import AdminHeader from "./components/layout/AdminHeader"
 import { useNavigate, useLocation } from "react-router-dom"
-
+import { BASE_URL } from "../../lib/api"
 
 function AdminVerificationPage() {
   const [search, setSearch] = useState("")
@@ -23,7 +23,7 @@ function AdminVerificationPage() {
   const fetchSellers = async () => {
     setIsLoading(true)
     try {
-      const response = await axios.get("http://localhost:5000/seller/all")
+      const response = await axios.get(BASE_URL+"/seller/all")
       setSellers(response.data)
     } catch (error) {
       console.error("판매자 목록 가져오기 실패", error)
@@ -34,7 +34,7 @@ function AdminVerificationPage() {
 
   const fetchSellerPhone = async (userId) => {
     try {
-      const response = await axios.get(`http://localhost:5000/auth/users/${userId}/phone`)
+      const response = await axios.get(BASE_URL+`/auth/users/${userId}/phone`)
       setSellerPhone(response.data)
     } catch (error) {
       console.error("전화번호 가져오기 실패", error)
@@ -43,8 +43,8 @@ function AdminVerificationPage() {
 
   const handleApprove = async (seller) => {
     try {
-      await axios.patch(`http://localhost:5000/seller/${seller.sellerId}/approve`)
-      await axios.patch(`http://localhost:5000/auth/users/${seller.userId}/update-seller?storename=${seller.storename}`)
+      await axios.patch(BASE_URL+`/seller/${seller.sellerId}/approve`)
+      await axios.patch(BASE_URL+`/auth/users/${seller.userId}/update-seller?storename=${seller.storename}`)
       alert("승인 완료!")
       setShowModal(false)
       fetchSellers()
@@ -55,8 +55,8 @@ function AdminVerificationPage() {
 
   const handleReject = async (seller) => {
     try {
-      await axios.patch(`http://localhost:5000/seller/${seller.sellerId}/reject`)
-      await axios.patch(`http://localhost:5000/auth/users/${seller.userId}/reject-seller?storename=${seller.storename}`)
+      await axios.patch(BASE_URL+`/seller/${seller.sellerId}/reject`)
+      await axios.patch(BASE_URL+`/auth/users/${seller.userId}/reject-seller?storename=${seller.storename}`)
       alert("거절 완료!")
       setShowModal(false)
       fetchSellers()
@@ -67,7 +67,7 @@ function AdminVerificationPage() {
 
   const userout = async (seller) => {
     try {
-      await axios.delete(`http://localhost:5000/auth/usersout/${seller.userId}`)
+      await axios.delete(BASE_URL+`/auth/usersout/${seller.userId}`)
       console.log(seller.userId)
       alert("정상적으로 탈퇴처리 되었습니다")
       setShowModal(false)
