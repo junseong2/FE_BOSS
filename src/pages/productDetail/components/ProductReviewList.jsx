@@ -76,10 +76,13 @@ export default function ProductReviewList({ reviews }) {
 
                   <div className='mt-3 flex flex-wrap gap-2'>
                     {review.imageList?.map((imgUrl) => {
-                      let imgSrc = '';
-                      if (import.meta.env.VITE_REACT_APP_ENV !== 'production') {
-                        imgSrc = import.meta.env.VITE_BACKEND_URL + '/uploads/' + imgUrl;
-                      }
+                      // console.log(imgUrl)
+                      // let imgSrc = '';
+                      // if (import.meta.env.VITE_REACT_APP_ENV !== 'production') {
+                      //   imgSrc = import.meta.env.VITE_BACKEND_URL + '/uploads/' + imgUrl;
+                      // } else {
+                      //   imgSrc = imgUrl
+                      // }
 
                       return (
                         <div
@@ -87,7 +90,7 @@ export default function ProductReviewList({ reviews }) {
                           className='p-1 bg-white border border-gray-200 rounded-[3px] hover:bg-gray-100 transition-colors'
                         >
                           <img
-                            src={imgSrc}
+                            src={imgUrl}
                             alt='리뷰 이미지'
                             onError={(e) => {
                               e.currentTarget.src = noImage;

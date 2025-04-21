@@ -176,10 +176,10 @@ function ChatBot() {
                   );
                   isDelete && resetChat();
                 }}
-                className=' border border-blue-600 hover:bg-blue-700 px-2 py-1 rounded flex gap-1 items-center'
+                className='px-2 py-1 rounded flex gap-1 items-center hover:text-blue-100 text-xl cursor-pointer'
                 title='대화 초기화'
               >
-                <IoRefreshCircle /> 초기화
+                <IoRefreshCircle />
               </button>
               <button onClick={toggleChat} className='text-xl hover:text-blue-100'>
                 ✖
