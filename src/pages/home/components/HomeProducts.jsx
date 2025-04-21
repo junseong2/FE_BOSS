@@ -2,7 +2,8 @@ import { SwiperSlide } from 'swiper/react';
 import CenteredSlider from '../../../components/slide/CenteredSlider';
 import { Link } from 'react-router-dom'; // ✅ 수정: react-router-dom으로 변경
 import React from 'react';
-import defaultImage from '../../../assets/no-image.jpg';
+import defaultImage from '../../../assets/no-image.jpg'
+import { BASE_URL } from "../../../lib/api";
 
 export default function HomeProducts({ title, products, customClassName }) {
   return (
@@ -39,7 +40,7 @@ export default function HomeProducts({ title, products, customClassName }) {
                   <div className='w-full min-w-[140px] sm:min-w-[200px] h-[180px] sm:h-[250px] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center'>
                     {typeof product.gimage === 'string' && product.gimage.length > 0 ? (
                       <img
-                        src={`http://localhost:5000/uploads/${product.gimage.split(',')[0]}`}
+                        src={BASE_URL+`/uploads/${product.gimage.split(',')[0]}`}
                         alt={product.name}
                         className='w-full h-full object-cover'
                         onError={(e) => {

@@ -52,6 +52,7 @@ import Footer from './components/layout/Footer'; // ✅ Footer import 추가
 import SignUpPage from './pages/signup/SignUpPage.jsx';
 import SellerSettlementPage from './pages/seller/SellerSettlementPage.jsx';
 import SellerReviewPage from './pages/seller/SellerReviewPage.jsx';
+import { BASE_URL } from './lib/api.js';
 
 function App() {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -103,7 +104,7 @@ function App() {
     }
     const fetchSellerInfo = async () => {
       try {
-        const sellerResponse = await fetch(`http://localhost:5000/seller/info/${storename}`, {
+        const sellerResponse = await fetch(BASE_URL + `/seller/info/${storename}`, {
           method: 'GET',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },

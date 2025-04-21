@@ -16,18 +16,30 @@ import {
   IoStarHalf,
   IoStarOutline,
 } from 'react-icons/io5';
-import { getProductDetail, getProductDetail2 } from '../../services/product.service';
-import { addToCart } from '../../services/cart.service';
-import ProductReviewForm from './components/ProductReviewForm';
-import { getReviews } from '../../services/review.service';
-import ProductReviewList from './components/ProductReviewList';
-import ProductSkeleton from './components/ProductDetailSkeleton';
+
+import { getProductDetail, getProductDetail2 } from "../../services/product.service"
+import { addToCart } from "../../services/cart.service"
+import ProductReviewForm from "./components/ProductReviewForm"
+import { getReviews } from "../../services/review.service"
+import ProductReviewList from "./components/ProductReviewList"
+import { ThinRoundedStar } from "@smastrom/react-rating"
+import ProductSkeleton from "./components/ProductDetailSkeleton"
 import EmptyProduct from '../../components/error/EmptyProduct';
 import { useCartStore } from '../../store/cartStore';
+import { BASE_URL } from "../../lib/api"
+import noImage  from "../../assets/noimage.jpg"
 
-const BASE_IMAGE_URL = 'http://localhost:5000/uploads'; // Spring Boot 서버 URL,차후 배포할때 수정
-const DEFAULT_IMAGE_PATH = `${BASE_IMAGE_URL}/default-product.jpg`;
-const PAGE_SIZE = 5;
+const BASE_IMAGE_URL = BASE_URL+"/uploads" // Spring Boot 서버 URL,차후 배포할때 수정
+const DEFAULT_IMAGE_PATH = `${BASE_IMAGE_URL}/default-product.jpg`
+const PAGE_SIZE = 5
+
+const myStyles = {
+  itemShapes: ThinRoundedStar,
+  activeFillColor: "#3b82f6",
+  inactiveFillColor: "#f3f4f6",
+  inactiveBoxBorderColor: "#e5e7eb",
+}
+
 
 export default function ProductDetailPage() {
   const { setTrigger: cartItemsStateTrigger } = useCartStore();
@@ -466,6 +478,11 @@ export default function ProductDetailPage() {
                           src={img || '/placeholder.svg'}
                           alt={`${product.name} 상세 이미지 ${index + 1}`}
                           className='w-full rounded-xl transition-transform duration-500 group-hover:scale-105'
+                          onError={(e)=>{
+                            e.currentTarget.onerror = null; // prevents looping
+                            e.currentTarget.src = noImage; // fallback image
+
+                          }}
                         />
                         <div className='absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
                       </div>

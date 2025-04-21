@@ -1,6 +1,8 @@
+import {BASE_URL} from '../lib/api'
+
 const saveHeaderColor = async (headerName, color) => {
   try {
-    const response = await fetch(`http://localhost:5000/api/headers/save`, {
+    const response = await fetch(BASE_URL+`/api/headers/save`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -24,7 +26,7 @@ const saveHeaderColor = async (headerName, color) => {
 
 export const fetchHeaderBackgroundColor = async (sellerId) => {
   try {
-    const response = await fetch(`http://localhost:5000/UI/sellers/${sellerId}/headers/getBackgroundColor`);
+    const response = await fetch(BASE_URL+`/UI/sellers/${sellerId}/headers/getBackgroundColor`);
     const data = await response.json();
     return data.backgroundColor; 
   } catch (error) {
@@ -36,7 +38,7 @@ export const fetchHeaderBackgroundColor = async (sellerId) => {
 */
 const updateHeaderColor = async (headerId, color) => {
   try {
-    const response = await fetch(`http://localhost:5000/api/headers/${headerId}/update`, {
+    const response = await fetch(BASE_URL+`/api/headers/${headerId}/update`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -57,7 +59,7 @@ import axios from 'axios';
 
 export const fetchSellerSettings = async (sellerId) => {
   try {
-    const response = await axios.get(`http://localhost:5000/seller/seller-info/${sellerId}`);
+    const response = await axios.get(BASE_URL+`/seller/seller-info/${sellerId}`);
     console.log("📥 불러온 seller settings:", response.data.settings);
     
     return response.data.settings || "N/A"; // ✅ 설정이 없으면 "N/A" 반환
@@ -68,7 +70,7 @@ export const fetchSellerSettings = async (sellerId) => {
 };
 export const fetchSellerMobileSettings = async (sellerId) => {
   try {
-    const response = await axios.get(`http://localhost:5000/seller/seller-info/${sellerId}`);
+    const response = await axios.get(BASE_URL+`/seller/seller-info/${sellerId}`);
     console.log("📥 불러온 seller settings:", response.data.settings);
     
     return response.data.mobilesettings || "N/A"; // ✅ 설정이 없으면 "N/A" 반환
@@ -108,7 +110,7 @@ export async function updateSellerSettings(sellerId, settings) {
 // 설정된 순서대로 배열을 직렬화하여 전송
 console.log("📤 요청 데이터 (settings)(usercustomui.js):", settings);
 console.log("📤 요청 데이터는 (settings)(usercustomui.js):", JSON.stringify(settings, null, 2));
-const response = await fetch(`http://localhost:5000/seller/${sellerId}/updateSettings`, {
+const response = await fetch(BASE_URL+`/seller/${sellerId}/updateSettings`, {
   method: "PUT",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify(settings),  // 동적 순서대로 전송
@@ -159,7 +161,7 @@ export async function updateSellerMobileSettings(sellerId, settings) {
 // 설정된 순서대로 배열을 직렬화하여 전송
 console.log("📤 요청 모바일데이터 (settings)(usercustomui.js):", settings);
 console.log("📤 요청 모바일 데이터는 (settings)(usercustomui.js):", JSON.stringify(settings, null, 2));
-const response = await fetch(`http://localhost:5000/seller/${sellerId}/updateMobileSettings`, {
+const response = await fetch(BASE_URL+`/seller/${sellerId}/updateMobileSettings`, {
   method: "PUT",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify(settings),  // 동적 순서대로 전송
@@ -189,7 +191,7 @@ const response = await fetch(`http://localhost:5000/seller/${sellerId}/updateMob
 /*
 export const updateHeaderBackgroundColor = async (sellerId, headerId, color) => {
   try {
-    const response = await fetch(`http://localhost:5000/seller/${sellerId}/updateBackgroundColor`, {
+    const response = await fetch(BASE_URL+`/seller/${sellerId}/updateBackgroundColor`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

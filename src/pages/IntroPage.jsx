@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './styles/intropage.css';
+import { BASE_URL } from '../lib/api';
 
 function IntroPage({ sellerId }) {
   const { storename } = useParams();
@@ -14,7 +15,7 @@ function IntroPage({ sellerId }) {
       try {
         if (!sellerId) return;
 
-        const response = await axios.get(`http://localhost:5000/seller/${sellerId}/image`);
+        const response = await axios.get(BASE_URL+`/seller/${sellerId}/image`);
         setUserImg(response.data.image);  // 서버에서 받은 userImg를 상태에 저장
       } catch (error) {
         console.error('❌ 사용자 이미지 로드 실패:', error);
@@ -36,8 +37,8 @@ function IntroPage({ sellerId }) {
         className="storename-container"
         style={{
           backgroundImage: userImg 
-            ? `url(http://localhost:5000/uploads/${userImg})` 
-            : 'url(http://localhost:5000/uploads/defaultintroimg.jpg)',
+            ? `url(${BASE_URL}/uploads/${userImg})` 
+            : `url(${BASE_URL}/uploads/defaultintroimg.jpg)`,
         }}
       ><h1>'{storename}'의 소개페이지입니다.</h1>
       </div>

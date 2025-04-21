@@ -17,6 +17,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
+import { BASE_URL,DOM_URL } from "../lib/api"
 
 function PaymentPage() {
   const { setTrigger: cartItemStateUpdateTrigger } = useCartStore();
@@ -52,11 +53,11 @@ function PaymentPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch('http://localhost:5000/auth/user-info', {
-          method: 'GET',
-          credentials: 'include',
-          headers: { Accept: 'application/json' },
-        });
+        const response = await fetch(BASE_URL+"/auth/user-info", {
+          method: "GET",
+          credentials: "include",
+          headers: { Accept: "application/json" },
+        })
 
         if (response.status === 403) {
           console.warn('❌ 로그인 필요. 로그인 페이지로 이동.');
@@ -66,13 +67,13 @@ function PaymentPage() {
 
         if (!response.ok) throw new Error('로그인 정보 조회 실패');
 
-        const data = await response.json();
-        setUserId(data.userId);
-        setUserName(data.userName);
-        setEmail(data.userEmail || '');
-        const addressRes = await fetch(`http://localhost:5000/address/user/${data.userId}`, {
-          method: 'GET',
-          credentials: 'include',
+        const data = await response.json()
+        setUserId(data.userId)
+        setUserName(data.userName)
+        setEmail(data.userEmail || "")
+        const addressRes = await fetch(BASE_URL+`/address/user/${data.userId}`, {
+          method: "GET",
+          credentials: "include",
         });
 
         if (addressRes.ok) {
@@ -103,11 +104,11 @@ function PaymentPage() {
 
     const fetchCart = async () => {
       try {
-        const response = await fetch('http://localhost:5000/cart', {
-          method: 'GET',
-          credentials: 'include',
-          headers: { Accept: 'application/json' },
-        });
+        const response = await fetch(BASE_URL+"/cart", {
+          method: "GET",
+          credentials: "include",
+          headers: { Accept: "application/json" },
+        })
 
         if (!response.ok) throw new Error('장바구니 조회 실패');
 
@@ -131,10 +132,8 @@ function PaymentPage() {
   useEffect(() => {
     const fetchChannelKey = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/payment/channel-key/${selectedPaymentMethod}`,
-        );
-        if (!response.ok) throw new Error('채널 키 가져오기 실패');
+        const response = await fetch(BASE_URL+`/payment/channel-key/${selectedPaymentMethod}`)
+        if (!response.ok) throw new Error("채널 키 가져오기 실패")
 
         const data = await response.json();
         setChannelKey(data.channelKey);
@@ -192,7 +191,7 @@ function PaymentPage() {
           buyer_name: userName,
           buyer_tel: phoneNumber,
           buyer_addr: address,
-          m_redirect_url: 'http://localhost:5173',
+          m_redirect_url: DOM_URL,
         },
         async (rsp) => {
           if (rsp.success) {
@@ -216,13 +215,15 @@ function PaymentPage() {
             await updatePaymentStatus(statusData);
 
             try {
-              await fetch('http://localhost:5000/cart/clear', {
-                method: 'POST',
-                credentials: 'include',
-              });
 
+
+              await fetch(BASE_URL+"/cart/clear", {
+                method: "POST",
+                credentials: "include",
+              })
               cartItemStateUpdateTrigger() // 장바구니 아이템 상태 업데이트 트리거(아이템 개수 다시 불러옴)
-              console.log('🧹 장바구니 비우기 완료');
+              console.log("🧹 장바구니 비우기 완료")
+
             } catch (clearError) {
               console.warn('⚠️ 장바구니 비우기 실패:', clearError.message);
             }

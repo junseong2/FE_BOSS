@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { IoImageOutline, IoTrash } from 'react-icons/io5';
+import { BASE_URL } from '../lib/api';
 
 /** 단일 이미지 업로드 기능 */
 export function SingleImageUploader({  elementType,onUpdateImage, sellerId, onUpload }) {
@@ -39,7 +40,7 @@ export function SingleImageUploader({  elementType,onUpdateImage, sellerId, onUp
     formData.append("type", elementType); // ✅ header 또는 banner 구분
 
     try {
-        const response = await fetch("http://localhost:5000/seller/upload", {
+        const response = await fetch( BASE_URL +"/seller/upload", {
             method: "POST",
             body: formData,
         });
@@ -171,7 +172,7 @@ export function MultipleImageUploader({  elementType,sellerId, onUpload }) {
         formData.append('file', selectedFiles[i]);
         formData.append('sellerId', sellerId);
 
-        const response = await fetch('http://localhost:5000/seller/upload', {
+        const response = await fetch(BASE_URL+'/seller/upload', {
           method: 'POST',
           body: formData,
         });
@@ -321,7 +322,7 @@ export function SingleProductImageUploader({
     formData.append("type", elementType);  // 기존 type은 전달하지 않아도 됨
   
     try {
-      const response = await fetch("http://localhost:5000/seller/upload", {
+      const response = await fetch(BASE_URL+"/seller/upload", {
         method: "POST",
         body: formData,
       });

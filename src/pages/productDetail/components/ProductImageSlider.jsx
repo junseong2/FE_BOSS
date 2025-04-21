@@ -12,6 +12,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/zoom';
 import { createPortal } from 'react-dom';
 import noImage from '../../../assets/noImage.jpg'
+import { DOM_URL } from '../../../lib/api';
 
 export default function ProductImageSlider({ imageList }) {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -52,7 +53,7 @@ export default function ProductImageSlider({ imageList }) {
                   alt={`Product image ${index + 1}`}
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = 'http://localhost:5173/src/assets/noimage.jpg';
+                    e.target.src = noImage;
                   }}
                 />
               </div>
@@ -91,7 +92,7 @@ export default function ProductImageSlider({ imageList }) {
                 alt={`Thumbnail ${index + 1}`}
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = noImage;
+                  e.target.src = DOM_URL+'/src/assets/noimage.jpg';
                 }}
               />
             </div>
@@ -118,15 +119,15 @@ export default function ProductImageSlider({ imageList }) {
               {imageList.map((imageUrl, index) => (
                 <SwiperSlide key={`fullscreen-${imageUrl}-${index}`}>
                   <div className='swiper-zoom-container max-h-[680px] h-auto bg-gray-100'>
-                    <img
-                      src={imageUrl || '/placeholder.svg'}
-                      className='w-full h-full object-contain aspect-square'
-                      alt={`Product image ${index + 1}`}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = noImage
-                      }}
-                    />
+                  <img 
+                    src={imageUrl || "/placeholder.svg"} 
+                    className="w-full h-full object-contain" 
+                    alt={`Product image ${index + 1}`}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = DOM_URL+'/src/assets/default-product.jpg';
+                    }}
+                  />
                     <button
                       onClick={toggleFullscreen}
                       className='absolute top-3 right-3 bg-gray-300 backdrop-blur-sm p-2 rounded-full '
@@ -141,6 +142,7 @@ export default function ProductImageSlider({ imageList }) {
           </div>,
            document.body
         )}
+
       {/* <style jsx>{`
         .thumbs-swiper .swiper-slide-thumb-active {
           border-color: #4a90e2;

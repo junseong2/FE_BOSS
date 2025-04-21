@@ -14,6 +14,7 @@ import axios from 'axios';
 import { elementTemplates, initialElements } from '../../data/shop-templates';
 import { IoCloseOutline } from 'react-icons/io5';
 import { getCategories } from '../../services/category.service';
+import { BASE_URL } from '../../lib/api';
 
 const sidebarTabList = ['요소', '설정','탬플릿'];
 const canvasTabList = ['미리보기'];
@@ -55,7 +56,7 @@ export default function ShopEditorPage() {
   // ✅ 2. userId 기반으로 sellerId 가져오기 (axios 사용)
   async function fetchSellerInfo(userId) {
     try {
-      const response = await axios.get(`http://localhost:5000/seller/seller-info-byuserid/${userId}`);
+      const response = await axios.get(BASE_URL+`/seller/seller-info-byuserid/${userId}`);
       console.log('✅ 서버에서 받아온 sellerInfo:', response.data);
       setSellerInfo(response.data);
       setSellerId(response.data.sellerId);

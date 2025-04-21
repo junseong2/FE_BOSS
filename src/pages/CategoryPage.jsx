@@ -6,6 +6,7 @@ import { IoFilterOutline, IoGridOutline, IoListOutline, IoCartOutline } from 're
 import noimage from '../assets/noimage.jpg';
 import Pagination from '../components/Pagination';
 import { useCartStore } from '../store/cartStore';
+import { BASE_URL } from '../lib/api';
 
 const PAGE_SIZE = 20;
 function CategoryPage() {
@@ -30,7 +31,7 @@ function CategoryPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch('http://localhost:5000/auth/user-info', {
+        const response = await fetch(BASE_URL+'/auth/user-info', {
           method: 'GET',
           credentials: 'include',
         });
@@ -55,7 +56,7 @@ function CategoryPage() {
     const fetchCategoryName = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/category/${categoryId}?page=${page}&size=${PAGE_SIZE}`,
+          BASE_URL+`/category/${categoryId}?page=${page}&size=${PAGE_SIZE}`,
         );
         console.log('✅ Category Name Fetched:', response.data);
         setCategoryName(response.data.name);
@@ -75,9 +76,10 @@ function CategoryPage() {
       setLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:5000/products/category/${categoryId}?page=${page}&size=${PAGE_SIZE}`,
+          BASE_URL+`/products/category/${categoryId}?page=${page}&size=${PAGE_SIZE}`,
         );
         let filtered = response.data;
+        console.log('✅ Products Fetched:', filtered);
 
         const min = minPrice !== '' ? parseInt(minPrice) : 0;
         const max = maxPrice !== '' ? parseInt(maxPrice) : Infinity;
@@ -295,11 +297,7 @@ function CategoryPage() {
                   <div className='relative'>
                     <div className='aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-100'>
                       <img
-                        src={
-                          Array.isArray(product.gimage)
-                            ? product.gimage[0] || noimage
-                            : product.gimage || noimage
-                        }
+                           src={product.gimage[0]}
                         alt={product.name}
                         className='w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300'
                         onError={(e) => {
@@ -345,11 +343,7 @@ function CategoryPage() {
                   <div className='sm:w-1/4 relative'>
                     <div className='aspect-w-16 aspect-h-9 sm:aspect-w-1 sm:aspect-h-1 w-full overflow-hidden bg-gray-100'>
                       <img
-                        src={
-                          Array.isArray(product.gimage)
-                            ? product.gimage[0] || noimage
-                            : product.gimage || noimage
-                        }
+                        src={product.gimage[0]}
                         alt={product.name}
                         className='w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300'
                         onError={(e) => {

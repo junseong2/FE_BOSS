@@ -11,6 +11,7 @@ import {
 import noimage from '../assets/noimage.jpg';
 import { useCartStore } from '../store/cartStore';
 import { addToCart } from '../services/cart.service';
+import { BASE_URL } from "../lib/api";
 
 function SearchPage() {
   const { setTrigger } = useCartStore();
@@ -31,8 +32,8 @@ function SearchPage() {
   const fetchSearchResults = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:5000/products/search?query=${query}`);
-      let filtered = response.data;
+      const response = await axios.get(BASE_URL+`/products/search?query=${query}`)
+      let filtered = response.data
 
       // 가격 필터 적용
       const min = minPrice !== '' ? parseInt(minPrice) : 0;
@@ -56,10 +57,10 @@ function SearchPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch('http://localhost:5000/auth/user-info', {
-          method: 'GET',
-          credentials: 'include',
-        });
+        const response = await fetch(BASE_URL+"/auth/user-info", {
+          method: "GET",
+          credentials: "include",
+        })
 
         if (!response.ok) {
           throw new Error('로그인 정보 조회 실패');
@@ -93,8 +94,34 @@ function SearchPage() {
       return;
     }
     try {
-      await addToCart(event, productId);
-      setTrigger();
+      // await addToCart(event, productId); // => 아래로직 모듈화한 것
+     
+      console.log(`🛒 장바구니 추가 요청: productId=${productId}`)
+
+      const response = await fetch(BASE_URL+"/cart/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // JWT 쿠키 자동 전송
+        body: JSON.stringify({ productId, quantity: 1 }),
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`장바구니 추가 실패: ${errorText}`)
+      }
+
+      setTrigger(); // 장바구니 상태 업데이트
+      await response.json()
+
+      // 성공 알림 표시
+      setShowNotification(true)
+
+      // 3초 후 알림 숨기기
+      setTimeout(() => {
+        setShowNotification(false)
+      }, 3000)
     } catch (error) {
       console.error('❌ 장바구니 추가 오류:', error);
     }

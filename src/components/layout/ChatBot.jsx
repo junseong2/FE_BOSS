@@ -5,6 +5,8 @@ import noImage from '../../assets/noImage.jpg';
 import './ChatBot.css';
 import { IoRefresh, IoRefreshCircle } from 'react-icons/io5';
 import { recommendKeywordSets } from '../../data/recommendText';
+import { BASE_URL } from '../../lib/api';
+import { Link } from 'react-router-dom';
 
 function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -73,13 +75,11 @@ function ChatBot() {
     setInput('');
 
     try {
-      const res = await fetch(
-        `http://localhost:5000/vector/rag?query=${encodeURIComponent(text)}`,
-        {
-          method: 'GET',
-          headers: { Accept: 'application/json' },
-        },
-      );
+      const res = await fetch(BASE_URL + `/vector/rag?query=${encodeURIComponent(input)}`, {
+        method: 'GET',
+        headers: { Accept: 'application/json' },
+      });
+
 
       const data = await res.json();
 
@@ -108,12 +108,11 @@ function ChatBot() {
     } catch (error) {
       console.error('서버 오류:', error);
       setMessages((prev) => [
-        ...prev.map((msg) => ({ ...msg, isNewMessage: false })),
+        ...prev,
         {
           class: 0,
           sender: 'bot',
-          text: '서버 오류가 발생했습니다.',
-          isNewMessage: true,
+          text: BASE_URL + `/vector/rag?query=${encodeURIComponent(input)}` + ' 서버 오류가 발생했습니다.',
         },
       ]);
     } finally {
@@ -193,7 +192,6 @@ function ChatBot() {
               alt='Chat Background'
               className='absolute top-1/2 left-1/2 w-32 h-32 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-0 opacity-10'
             />
-
             <div className='relative z-10'>
               {messages.map((msg, index) => (
                 <div
@@ -238,7 +236,7 @@ function ChatBot() {
                     {recommendKeywordSets[keywordSet].map((keyword, idx) => (
                       <button
                         key={idx}
-                        onClick={() => handleKeywordClick(keyword)}
+                        onClick={() => handleKeywordClick(keyword+" 추천 해줘")}
                         className='bg-white text-blue-600 text-xs px-2 py-1 rounded-full border border-blue-200 hover:bg-blue-500 hover:text-white transition-colors duration-200'
                       >
                         {keyword}
@@ -281,9 +279,8 @@ function ProductRecommendationCard({ productId, reason }) {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/products/${productId}`);
+        const res = await fetch(BASE_URL + `/products/${productId}`);
         const data = await res.json();
-
         setProduct(data);
       } catch (error) {
         console.error('상품 정보 실패:', error);
@@ -294,32 +291,26 @@ function ProductRecommendationCard({ productId, reason }) {
 
   if (!product) return null;
 
-  const imageUrl = product.gImage?.split(',')[0] || '/default-product.jpg';
+  console.log(product);
+  const imageUrl = product?.gimage[0] || '/default-product.jpg';
 
   return (
-    <div className='mt-2 border border-gray-200 rounded-xl overflow-hidden animate-fadeIn'>
-      <a
-        href={`http://localhost:5173/product/${productId}`}
-        target='_blank'
-        rel='noopener noreferrer'
-        className='block hover:bg-gray-50'
-      >
+    <div className='mt-2 border border-gray-200 rounded-xl overflow-hidden'>
+      <Link to={`/product/${productId}`} className='block hover:bg-gray-50'>
         <img
-          src={`http://localhost:5000/uploads/${imageUrl}`}
+          src={BASE_URL + "/uploads/"+ imageUrl}
           alt={product.name}
           className='w-full h-28 object-cover'
           onError={(e) => {
             e.currentTarget.src = noImage;
           }}
         />
-        <div className='p-2'>
-          <p className='text-sm font-medium text-gray-700'>{product.name}</p>
-          <p className='text-xs text-gray-500 mt-1 italic'>{reason}</p>
-          <p className='text-sm font-bold text-blue-600 mt-1'>
-            {product.price?.toLocaleString()}원
-          </p>
+        <div className="p-2">
+          <p className="text-sm font-medium text-gray-700">{product.name}</p>
+          <p className="text-xs text-gray-500 mt-1 italic">{reason}</p>
+          <p className="text-sm font-bold text-blue-600 mt-1">{product.price?.toLocaleString()}원</p>
         </div>
-      </a>
+      </Link>
     </div>
   );
 }

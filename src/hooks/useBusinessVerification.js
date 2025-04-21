@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import axios from 'axios';
+import {BASE_URL} from '../lib/api';
 
 export const useBusinessVerification = () => {
   const [isVerified, setIsVerified] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  
   // 사업자 등록 인증 함수
   const verify = async (businessNumber) => {
     setLoading(true);
     try {
       console.log('🔍 사업자등록번호 인증 요청:', businessNumber);
-      const response = await axios.post('http://localhost:5000/business/check', {
+      const response = await axios.post(BASE_URL+'/business/check', {
         businesses: [{ b_no: businessNumber }],
       });
       console.log('📄 응답 데이터:', response.data); // 응답 데이터 로그

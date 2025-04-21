@@ -17,6 +17,7 @@ import SellerRegistrationPage from '../../pages/sellerSignup/SellerRegistrationP
 import bossLogo from '../../assets/boss_logo.jpg';
 import MenuButton from '../MenuButton.jsx';
 import UserNav from './UserNav.jsx';
+import { BASE_URL } from "../../lib/api.js"
 
 export default function Top() {
   const { userId, setUserId, userName, setUserName, role, setRole, storeName, setStoreName } =
@@ -39,8 +40,8 @@ export default function Top() {
   const [trigger, setTrigger] = useState(false);
 
   const handleAddToCart = async (productId) => {
-    await fetch(`http://localhost:5000/cart/add`, {
-      method: 'POST',
+    await fetch(BASE_URL+`/cart/add`, {
+      method: "POST",
       body: JSON.stringify({ productId }),
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -70,8 +71,8 @@ export default function Top() {
 
   const fetchSellerStoreName = async (userId) => {
     try {
-      console.log('📦 fetchSellerStoreName 호출됨 - userId:', userId);
-      const res = await fetch(`http://localhost:5000/seller/seller-info-byuserid/${userId}`);
+      console.log("📦 fetchSellerStoreName 호출됨 - userId:", userId);
+      const res = await fetch(BASE_URL+`/seller/seller-info-byuserid/${userId}`);
       const data = await res.json();
       console.log('📦 fetchSellerStoreName 응답:', data);
 
@@ -109,6 +110,22 @@ export default function Top() {
       document.body.style.overflow = '';
     };
   }, [isSellerModalOpen]);
+
+  const handleSignInClick = () => {
+    const currentUrl = location.pathname + location.search;
+    console.log('현재 URL:', currentUrl);
+    setIsModalOpen(true);
+  };
+
+  const handleLogoutClick = async () => {
+    const confirmLogout = window.confirm('정말 로그아웃하시겠습니까?');
+    if (!confirmLogout) return;
+    await fetch(BASE_URL+'/auth/logout', { method: 'GET', credentials: 'include' });
+    setUserId(null);
+    setUserName(null);
+    setRole(null);
+    navigate('/');
+  };
 
   const closeSellerModal = () => {
     setModalAnimation(false);

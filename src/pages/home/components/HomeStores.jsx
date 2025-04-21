@@ -3,6 +3,7 @@ import CenteredSlider from '../../../components/slide/CenteredSlider';
 import { Link } from 'react-router';
 import { useEffect, useState } from 'react';
 import { getSellerStores } from '../../../services/seller.service';
+import { BASE_URL } from '../../../lib/api';
 
 export default function HomeStores({ customClassName }) {
   const [stores, setStores] = useState([]);
@@ -57,7 +58,7 @@ export default function HomeStores({ customClassName }) {
                   <div className='relative overflow-hidden rounded-lg sm:rounded-xl shadow-sm transition-all duration-300 group-hover:shadow-md'>
                     <div className='w-full min-w-[140px] sm:min-w-[200px] h-[180px] sm:h-[250px] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center'>
                       <img
-                        src={`http://localhost:5000/uploads/${store['sellerId']}_el-1.jpg`}
+                        src={BASE_URL+`/uploads/${store['sellerId']}_el-1.jpg`}
                         alt='썸네일'
                         className='w-full h-full object-cover'
                         onError={(e) => {

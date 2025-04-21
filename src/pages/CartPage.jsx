@@ -18,6 +18,9 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useCartStore } from '../store/cartStore';
 
+import { BASE_URL } from '../lib/api';
+
+
 // Define the cn utility function
 function cn(...inputs) {
   return inputs.filter(Boolean).join(' ');
@@ -143,10 +146,10 @@ export default function CartPage() {
   const fetchUserInfo = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/auth/user-info', {
-        method: 'GET',
-        credentials: 'include',
-      });
+      const response = await fetch(BASE_URL+"/auth/user-info", {
+        method: "GET",
+        credentials: "include",
+      })
 
       if (!response.ok) {
         throw new Error('로그인 정보 조회 실패');
@@ -165,10 +168,10 @@ export default function CartPage() {
 
   const clearCart = async () => {
     try {
-      const response = await fetch('http://localhost:5000/cart/clear', {
-        method: 'POST',
-        credentials: 'include',
-      });
+      const response = await fetch(BASE_URL+"/cart/clear", {
+        method: "POST",
+        credentials: "include",
+      })
 
       if (!response.ok) {
         throw new Error('장바구니 비우기 실패');

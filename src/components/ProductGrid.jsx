@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../lib/api';
 
-const BASE_IMAGE_URL = 'http://localhost:5000/uploads';
+const BASE_IMAGE_URL = BASE_URL+'/uploads';
 const DEFAULT_IMAGE_PATH = `${BASE_IMAGE_URL}/default-product.jpg`;
 
 const ProductGrid = ({

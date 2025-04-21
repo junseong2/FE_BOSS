@@ -1,7 +1,8 @@
 import React from "react";
+import { BASE_URL } from "../lib/api";
 
 const Banner = ({ title, subtitle, backgroundColor = "#000", imageUrl }) => {
-  const fullImgUrl = imageUrl ? `http://localhost:5000${imageUrl}` : null;
+  const fullImgUrl = imageUrl ? BASE_URL+`${imageUrl}` : null;
 
   return (
     <div

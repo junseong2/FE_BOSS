@@ -11,6 +11,7 @@ import {
 } from 'react-icons/io5';
 import axios from 'axios';
 import { useMenuToggleStore } from './store/toggleStore';
+import { BASE_URL } from './lib/api';
 
 function MenuBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,7 +25,7 @@ function MenuBar() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/category/root');
+        const response = await axios.get(BASE_URL+'/category/root');
         setCategories(response.data);
       } catch (error) {
         console.error('카테고리 데이터를 불러오는 중 오류 발생:', error);

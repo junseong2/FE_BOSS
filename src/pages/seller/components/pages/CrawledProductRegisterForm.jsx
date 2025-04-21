@@ -6,9 +6,10 @@ import useToggle from "../../../../hooks/useToggle";
 import SellerCategorySelector from "./SellerCategorySelector";
 import SellerProductPriceSelector from "../pages/SellerProductPriceSelector";
 import { getCategories } from "../../../../services/category.service";
+import { BASE_URL } from "../../../../lib/api";
 
 function CrawledProductRegisterForm({ onClose }) {
-  const BACKEND_URL = "http://localhost:5000";
+  const BACKEND_URL = BASE_URL;
   const [url, setUrl] = useState("");
   const [data, setData] = useState(null);
   const [name, setName] = useState("");
@@ -307,7 +308,7 @@ export default CrawledProductRegisterForm
 
 async function uploadCrawledProduct(formData) {
   try {
-    const res = await fetch("http://localhost:5000/crawl/product/upload", {
+    const res = await fetch(BASE_URL+"/crawl/product/upload", {
       method: "POST",
       body: formData,
       credentials: "include",
