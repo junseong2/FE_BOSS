@@ -298,7 +298,7 @@ function ProductRecommendationCard({ productId, reason }) {
     <div className='mt-2 border border-gray-200 rounded-xl overflow-hidden'>
       <Link to={`/product/${productId}`} className='block hover:bg-gray-50'>
         <img
-          src={BASE_URL + "/uploads/"+ imageUrl}
+          src={imageUrl}
           alt={product.name}
           className='w-full h-28 object-cover'
           onError={(e) => {
