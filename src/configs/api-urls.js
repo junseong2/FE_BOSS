@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:5000';
+import { BASE_URL } from "../lib/api";
 
 export const apiRoutes = {
   // 상품
@@ -120,4 +120,9 @@ export const apiRoutes = {
     create: () => BASE_URL + `/payment/portone`,
     updateStatus: () => BASE_URL + `/payment/update-status`,
   },
+
+  // 장바구니
+  carts:{
+    count: ()=> BASE_URL + `/cart/count`
+  }
 };

@@ -12,7 +12,7 @@ import '@smastrom/react-rating/style.css';
 import Top from './components/layout/Top';
 import MenuBar from './MenuBar';
 import BottomNavigation from './components/layout/BottomNavigation';
-import ScrollToTop from './components/layout/ScrollToTop'; 
+import ScrollToTop from './components/layout/ScrollToTop';
 
 import SignIn from './pages/SignIn.jsx';
 import HomePage from './pages/home/HomePage';
@@ -52,26 +52,27 @@ import Footer from './components/layout/Footer'; // ✅ Footer import 추가
 import SignUpPage from './pages/signup/SignUpPage.jsx';
 import SellerSettlementPage from './pages/seller/SellerSettlementPage.jsx';
 import SellerReviewPage from './pages/seller/SellerReviewPage.jsx';
+import { BASE_URL } from './lib/api.js';
 
 function App() {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [storename, setStorename] = useState(null);
   const [headerId, setHeaderId] = useState(null);
   const [sellerId, setSellerId] = useState(null);
+  const [userId, setUserId] = useState(null)
   const [menuBarId, setMenuBarId] = useState(null);
   const [navigationId, setNavigationId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sellerMenubarColor, setSellerMenubarColor] = useState('#ffffff');
-  
+
   const location = useLocation();
   const isAdminPage =
     location.pathname.toLowerCase().startsWith('/seller') ||
     location.pathname.toLowerCase().startsWith('/admin') ||
     location.pathname.toLowerCase().startsWith('/editor') ||
     location.pathname.toLowerCase().startsWith('/mobileeditor');
-    const hiddenPaths = 
-      location.pathname.toLowerCase().startsWith("/signin");
-    
+  const hiddenPaths = location.pathname.toLowerCase().startsWith('/signin');
+
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   useEffect(() => {
     const checkAuth = async () => {
@@ -79,23 +80,23 @@ function App() {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/user-info`, {
           credentials: 'include',
         });
-  
+
         if (response.ok) {
           const data = await response.json();
           setUserId(data.userId);
           setUserName(data.userName);
-          console.log("✅ 로그인된 유저 정보 불러오기 성공", data);
+          console.log('✅ 로그인된 유저 정보 불러오기 성공', data);
         } else {
-          console.log("❌ 로그인되지 않은 상태입니다.");
+          console.log('❌ 로그인되지 않은 상태입니다.');
         }
       } catch (err) {
-        console.error("❌ 로그인 확인 중 에러 발생", err);
+        console.error('❌ 로그인 확인 중 에러 발생', err);
       }
     };
-  
+
     checkAuth();
   }, []);
-  
+
   useEffect(() => {
     if (!storename) {
       setLoading(false);
@@ -103,7 +104,7 @@ function App() {
     }
     const fetchSellerInfo = async () => {
       try {
-        const sellerResponse = await fetch(`http://localhost:5000/seller/info/${storename}`, {
+        const sellerResponse = await fetch(BASE_URL + `/seller/info/${storename}`, {
           method: 'GET',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
@@ -171,12 +172,12 @@ function App() {
 
   return (
     <CartProvider>
-      <Toaster position='top-right' />
+      <Toaster position='top-right' containerClassName='mt-[2rem]' />
       <UserProvider>
         <div className='flex flex-col min-h-screen'>
           {/* ✅ 상단 영역 */}
           {!isAdminPage && <Top />}
-          {!isAdminPage  &&  <MenuBar />}
+          {!isAdminPage && <MenuBar />}
           <ChatBot />
 
           {/* ✅ 메인 콘텐츠 (중복된 min-h-screen 제거됨!) */}

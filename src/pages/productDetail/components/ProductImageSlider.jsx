@@ -10,6 +10,9 @@ import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
 import 'swiper/css/pagination';
 import 'swiper/css/zoom';
+import { createPortal } from 'react-dom';
+import noImage from '../../../assets/noImage.jpg'
+import { DOM_URL } from '../../../lib/api';
 
 export default function ProductImageSlider({ imageList }) {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -24,7 +27,7 @@ export default function ProductImageSlider({ imageList }) {
   return (
     <>
       {/* 메인 이미지 슬라이더 */}
-      <div className="relative group">
+      <div className='relative group'>
         <Swiper
           style={{
             '--swiper-navigation-color': '#fff',
@@ -39,35 +42,34 @@ export default function ProductImageSlider({ imageList }) {
           zoom={true}
           thumbs={{ swiper: thumbsSwiper }}
           modules={[FreeMode, Navigation, Thumbs, Pagination, Zoom]}
-          className="rounded-lg overflow-hidden shadow-md mb-4 aspect-square"
+          className='rounded-lg overflow-hidden mb-4 aspect-square'
         >
           {imageList.map((imageUrl, index) => (
-            <SwiperSlide key={`main-${imageUrl}-${index}`} className="bg-gray-50">
-              <div className="swiper-zoom-container">
-                <img 
-                  src={imageUrl || "/placeholder.svg"} 
-                  className="w-full h-full object-contain" 
+            <SwiperSlide key={`main-${imageUrl}-${index}`} className='bg-gray-50'>
+              <div className='swiper-zoom-container'>
+                <img
+                  src={imageUrl || '/placeholder.svg'}
+                  className='w-full h-full object-contain'
                   alt={`Product image ${index + 1}`}
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = 'http://localhost:5173/src/assets/default-product.jpg';
+                    e.target.src = noImage;
                   }}
                 />
               </div>
             </SwiperSlide>
           ))}
-          
+
           {/* 확대 버튼 */}
-          <button 
+          <button
             onClick={toggleFullscreen}
-            className="absolute bottom-4 right-4 z-10 bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            aria-label="전체화면으로 보기"
+            className='absolute bottom-4 right-4 z-10 bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300'
+            aria-label='전체화면으로 보기'
           >
-            <IoExpand className="w-5 h-5 text-gray-700" />
+            <IoExpand className='w-5 h-5 text-gray-700' />
           </button>
         </Swiper>
       </div>
-
       {/* 썸네일 슬라이더 */}
       <Swiper
         onSwiper={setThumbsSwiper}
@@ -76,21 +78,21 @@ export default function ProductImageSlider({ imageList }) {
         freeMode={true}
         watchSlidesProgress={true}
         modules={[FreeMode, Navigation, Thumbs]}
-        className="thumbs-swiper"
+        className='thumbs-swiper'
       >
         {imageList.map((imageUrl, index) => (
-          <SwiperSlide 
-            key={`thumb-${imageUrl}-${index}`} 
-            className="cursor-pointer rounded-md overflow-hidden border-2 border-transparent hover:border-gray-300 transition-all duration-200"
+          <SwiperSlide
+            key={`thumb-${imageUrl}-${index}`}
+            className='cursor-pointer rounded-md overflow-hidden border-2 border-transparent hover:border-gray-300 transition-all duration-200'
           >
-            <div className="aspect-square bg-gray-50">
-              <img 
-                src={imageUrl || "/placeholder.svg"} 
-                className="w-full h-full object-cover" 
+            <div className='aspect-square bg-gray-50'>
+              <img
+                src={imageUrl || '/placeholder.svg'}
+                className='w-full h-full object-cover'
                 alt={`Thumbnail ${index + 1}`}
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = 'http://localhost:5173/src/assets/default-product.jpg';
+                  e.target.src = DOM_URL+'/src/assets/noimage.jpg';
                 }}
               />
             </div>
@@ -99,46 +101,47 @@ export default function ProductImageSlider({ imageList }) {
       </Swiper>
 
       {/* 전체화면 모드 */}
-      {isFullscreen && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
-          <button 
-            onClick={toggleFullscreen}
-            className="absolute top-4 right-4 z-10 bg-white/20 backdrop-blur-sm p-2 rounded-full"
-            aria-label="전체화면 닫기"
-          >
-            <IoClose className="w-6 h-6 text-white" />
-          </button>
-          
-          <Swiper
-            spaceBetween={0}
-            navigation={true}
-            pagination={{
-              type: 'fraction',
-            }}
-            zoom={{
-              maxRatio: 3,
-            }}
-            modules={[Navigation, Pagination, Zoom]}
-            className="w-full max-w-4xl"
-          >
-            {imageList.map((imageUrl, index) => (
-              <SwiperSlide key={`fullscreen-${imageUrl}-${index}`}>
-                <div className="swiper-zoom-container">
+      {isFullscreen &&
+        createPortal(
+          <div className='fixed inset-0 bg-black/90 z-[100000] flex items-center justify-center p-4'>
+            <Swiper
+              spaceBetween={0}
+              navigation={true}
+              pagination={{
+                type: 'fraction',
+              }}
+              zoom={{
+                maxRatio: 3,
+              }}
+              modules={[Navigation, Pagination, Zoom]}
+              className='w-full max-w-4xl'
+            >
+              {imageList.map((imageUrl, index) => (
+                <SwiperSlide key={`fullscreen-${imageUrl}-${index}`}>
+                  <div className='swiper-zoom-container max-h-[680px] h-auto bg-gray-100'>
                   <img 
                     src={imageUrl || "/placeholder.svg"} 
                     className="w-full h-full object-contain" 
                     alt={`Product image ${index + 1}`}
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = 'http://localhost:5173/src/assets/default-product.jpg';
+                      e.target.src = DOM_URL+'/src/assets/default-product.jpg';
                     }}
                   />
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
-      )}
+                    <button
+                      onClick={toggleFullscreen}
+                      className='absolute top-3 right-3 bg-gray-300 backdrop-blur-sm p-2 rounded-full '
+                      aria-label='전체화면 닫기'
+                    >
+                      <IoClose className='w-6 h-6 text-white' />
+                    </button>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>,
+           document.body
+        )}
 
       {/* <style jsx>{`
         .thumbs-swiper .swiper-slide-thumb-active {

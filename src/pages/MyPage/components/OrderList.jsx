@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Pagination from '../../../components/Pagination';
+import noImage from '../../../assets/noImage.jpg'
+import {BASE_URL} from '../../../lib/api'
 
 const PAGE_SIZE = 5;
 
@@ -44,7 +46,7 @@ const OrderList = ({ userId }) => {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/orders/user/${userId}`, {
+      const response = await fetch(BASE_URL+`/orders/user/${userId}`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -68,7 +70,7 @@ const OrderList = ({ userId }) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/orderdetail/${orderId}`, {
+      const response = await fetch(BASE_URL+`/orderdetail/${orderId}`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -212,7 +214,7 @@ const OrderList = ({ userId }) => {
               </div>
 
               {order.orderId === selectedOrderId && orderDetail && (
-                <div className="mt-6 p-5 bg-gray-50 dark:bg-gray-700/50 rounded-lg border dark:border-gray-700 animate-fadeIn">
+                <div className="mt-6 p-5 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 animate-fadeIn">
                   <h4 className="font-bold mb-4 text-gray-800 dark:text-white flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -253,13 +255,16 @@ const OrderList = ({ userId }) => {
                     {orderDetail.products?.map((item, i) => (
                       <div
                         key={i}
-                        className="flex items-center justify-between bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-3 hover:shadow-sm transition-shadow"
+                        className="flex items-center justify-between bg-white dark:bg-gray-800 border border-gray-200  dark:border-gray-700 rounded-lg p-3 hover:shadow-sm transition-shadow"
                       >
                         <div className="flex items-center gap-4">
                           <img
                             src={item.productImages?.trim() || '/placeholder.svg?height=64&width=64'}
                             alt={`상품-${i}`}
-                            className="w-16 h-16 object-cover rounded-lg border dark:border-gray-700"
+                            onError={(e)=>{
+                                e.currentTarget.src=noImage
+                            }}
+                            className="w-16 h-16 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
                           />
                           <div>
                             <p className="text-gray-800 dark:text-white font-semibold">{item.productName}</p>

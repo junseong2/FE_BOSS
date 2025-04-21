@@ -1,4 +1,7 @@
-// tailwind.config.js
+// @filename tailwind.config.js
 module.exports = {
-  darkMode: 'class', // ✅ 꼭 있어야 함
+  darkMode: 'class', //
+  plugins: [
+		require("tailwindcss-animate"),
+	],
 };

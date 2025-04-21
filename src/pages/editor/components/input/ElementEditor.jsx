@@ -6,6 +6,7 @@ import { SingleImageUploader, SingleProductImageUploader } from "../../../../com
 
 import { updateSellerSettings } from "../../../../utils/usercustomui" // ✅ API 호출 함수 추가
 import { fetchSellerMobileSettings } from "../../../../utils/usercustomui"
+import { BASE_URL } from "../../../../lib/api"
 
 export default function ElementEditor({
   element,
@@ -16,10 +17,10 @@ export default function ElementEditor({
   setElements,
   onSizeChange,
 }) {
-  const [headerLogoUrl, setHeaderLogoUrl] = useState(`http://localhost:5000/uploads/${sellerId}_headerlogo.png`)
+  const [headerLogoUrl, setHeaderLogoUrl] = useState(BASE_URL+`/uploads/${sellerId}_headerlogo.png`)
   const [headerLogoFile, setHeaderLogoFile] = useState(null)
   const isFirstLoad = useRef(true)
-  const [bannerUrl, setBannerUrl] = useState(`http://localhost:5000/uploads/${sellerId}_banner.png`)
+  const [bannerUrl, setBannerUrl] = useState(BASE_URL+`/uploads/${sellerId}_banner.png`)
   const [backgroundImage, setBackgroundImage] = useState(null)
   const [isUploading, setIsUploading] = useState(false)
   const currentDevice = element.type.startsWith("mobile") ? "mobile" : "web"
@@ -120,13 +121,15 @@ export default function ElementEditor({
 
   // ✅ 헤더 배경색 변경 핸들러
   const handleHeaderColorChange = (value) => {
-    if (!value.startsWith("#")) value = `#${value}`
-    if (!/^#([0-9A-F]{3}){1,2}$/i.test(value)) return
-
+    const isHex = /^#([0-9A-F]{3}){1,2}$/i.test(value)
+    const isRGBA = /^rgba?\((\d{1,3},\s*){2,3}(1|0?\.\d+)?\)$/i.test(value)
+    const isTransparent = value === "transparent"
+  
+    if (!(isHex || isRGBA || isTransparent)) return
+  
     setHeaderBackgroundColor(value)
-
+  
     if (element.type === "header") {
-      console.log("Header change")
       const updatedElement = {
         ...element,
         properties: {
@@ -134,10 +137,11 @@ export default function ElementEditor({
           backgroundColor: value,
         },
       }
-
+  
       onUpdate(updatedElement)
     }
   }
+  
 
   // ✅ 헤더 배경색 변경 핸들러
   const handleMobileHeaderColorChange = (value) => {
@@ -301,14 +305,14 @@ export default function ElementEditor({
         // 여러 개의 헤더 처리
         updatedSettings.header = {
           ...el.properties,
-          logoUrl: el.properties.logoUrl || `http://localhost:5000/uploads/${sellerId}_headerlogo.png`,
+          logoUrl: el.properties.logoUrl || BASE_URL+`/uploads/${sellerId}_headerlogo.png`,
           backgroundColor: el.properties.backgroundColor || "#ffffff",
         }
       } else if (el.type === "banner") {
         // 여러 개의 배너 처리
         updatedSettings.banner = {
           ...el.properties,
-          imageUrl: el.properties.imageUrl || `http://localhost:5000/uploads/${sellerId}_banner.png`,
+          imageUrl: el.properties.imageUrl || BASE_URL+`/uploads/${sellerId}_banner.png`,
           backgroundColor: el.properties.backgroundColor || "#ffffff",
         }
       } else {
@@ -367,7 +371,7 @@ export default function ElementEditor({
     if (headerElement) {
       updatedSettings.header = {
         ...headerElement.properties,
-        logoUrl: `http://localhost:5000/uploads/${sellerId}_headerlogo.png`, // ✅ 로고 URL 설정
+        logoUrl: BASE_URL+`/uploads/${sellerId}_headerlogo.png`, // ✅ 로고 URL 설정
       }
     } else {
       updatedSettings.header = null
@@ -376,7 +380,7 @@ export default function ElementEditor({
     if (bannerElement) {
       updatedSettings.banner = {
         ...bannerElement.properties,
-        logoUrl: `http://localhost:5000/uploads/${sellerId}_banner.png`, // ✅ 배너 이미지 저장
+        logoUrl: BASE_URL+`/uploads/${sellerId}_banner.png`, // ✅ 배너 이미지 저장
       }
     } else {
       updatedSettings.banner = null
@@ -577,30 +581,55 @@ export default function ElementEditor({
             </div>
 
             <div className="space-y-3 mb-5">
-              <Label htmlFor={"headerBackgroundColor"} label={"헤더 배경 색상"} className="font-medium text-gray-700" />
-              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <div className="flex items-center gap-2">
-              <input
-                    id="headerBackgroundColor"
-                    type="color"
-                    className="w-[35px] h-[35px] rounded border"
-                    value={headerBackgroundColor}
-                    onChange={(e) => handleHeaderColorChange(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    value={headerBackgroundColor}
-                    onChange={(e) => handleHeaderColorChange(e.target.value)}
-                    className="w-[140px] border rounded px-2 py-1 text-sm font-mono"
-                  />
-                </div>
-                <div className="mt-3 p-2 bg-white rounded border border-gray-200 flex items-center">
-                  <div className="w-6 h-6 rounded mr-2" style={{ backgroundColor: headerBackgroundColor }}></div>
-                  <span className="text-sm">선택된 색상</span>
-                </div>
-              </div>
-            </div>
+  <Label htmlFor={"headerBackgroundColor"} label={"헤더 배경 색상"} className="font-medium text-gray-700" />
+  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+    <div className="flex items-center gap-2 mb-3">
+      <input
+        id="headerBackgroundColor"
+        type="color"
+        className="w-[35px] h-[35px] rounded border"
+        value={headerBackgroundColor !== 'transparent' ? headerBackgroundColor : '#ffffff'}
+        disabled={headerBackgroundColor === 'transparent'}
+        onChange={(e) => handleHeaderColorChange(e.target.value)}
+      />
+      <input
+        type="text"
+        value={headerBackgroundColor}
+        onChange={(e) => handleHeaderColorChange(e.target.value)}
+        className="w-[140px] border rounded px-2 py-1 text-sm font-mono"
+        placeholder="예: #fff, rgba, transparent"
+      />
+    </div>
 
+    {/* ✅ 투명 체크박스 추가 */}
+    <div className="flex items-center gap-2 mb-3">
+      <input
+        type="checkbox"
+        id="transparentCheck"
+        checked={headerBackgroundColor === 'transparent'}
+        onChange={(e) =>
+          handleHeaderColorChange(e.target.checked ? 'transparent' : '#ffffff')
+        }
+      />
+      <label htmlFor="transparentCheck" className="text-sm text-gray-700">
+        배경을 투명하게 설정
+      </label>
+    </div>
+
+    <div className="p-2 bg-white rounded border border-gray-200 flex items-center">
+      <div
+        className="w-6 h-6 rounded mr-2"
+        style={{
+          backgroundColor: headerBackgroundColor === 'transparent' ? 'transparent' : headerBackgroundColor,
+          border: '1px solid #ccc',
+        }}
+      ></div>
+      <span className="text-sm">
+        {headerBackgroundColor === 'transparent' ? '투명' : '선택된 색상'}
+      </span>
+    </div>
+  </div>
+</div>
             <div className="space-y-3 mb-5">
               <Label label="크기 설정" className="font-medium text-gray-700" />
               <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 grid grid-cols-2 gap-4">
@@ -687,8 +716,20 @@ export default function ElementEditor({
                       <option value="Arial">Arial</option>
                       <option value="Roboto">Roboto</option>
                       <option value="Pretendard">Pretendard</option>
-        
-          
+
+                      <option value="Poor Story">Poor Story</option>
+<option value="East Sea Dokdo">East Sea Dokdo</option>
+<option value="Yeon Sung">Yeon Sung</option>
+<option value="Dancing Script">Dancing Script</option>
+<option value="Great Vibes">Great Vibes</option>
+<option value="Pacifico">Pacifico</option>
+<option value="Satisfy">Satisfy</option>
+<option value="Parisienne">Parisienne</option>
+<option value="Playfair Display">Playfair Display</option>
+<option value="Libre Baskerville">Libre Baskerville</option>
+<option value="Cormorant Garamond">Cormorant Garamond</option>
+<option value="DM Serif Display">DM Serif Display</option>
+
                   </select>
                 </div>
               </div>
@@ -702,21 +743,25 @@ export default function ElementEditor({
             <div className="space-y-3 mb-5">
               <Label label={"배너 이미지 설정"} className="font-medium text-gray-700" />
               <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <SingleImageUploader
+
+
+
+  <SingleProductImageUploader
+                  elementType={element.type}
+                  elementId={element.id}
                   sellerId={sellerId}
-                  elementType="banner" // ✅ 배너 업로드일 경우
-                  onUpload={handleBannerUpload} // ✅ 배너 이미지 업로드
+                  onUpload={(url) =>
+                    onUpdate({
+                      ...element,
+                      properties: {
+                        ...element.properties,
+                        imageUrl: url,
+                      },
+                    })
+                  }
                 />
-                {bannerUrl && (
-                  <div className="mt-3 p-2 bg-white rounded border border-gray-200">
-                    <p className="text-xs text-gray-500 mb-1">현재 배너:</p>
-                    <img
-                      src={bannerUrl || "/placeholder.svg"}
-                      alt="배너 이미지 미리보기"
-                      className="w-full h-32 object-cover rounded-md"
-                    />
-                  </div>
-                )}
+
+
               </div>
             </div>
 
@@ -847,6 +892,18 @@ export default function ElementEditor({
                       <option value="Arial">Arial</option>
                       <option value="Roboto">Roboto</option>
                       <option value="Pretendard">Pretendard</option>
+                      <option value="Poor Story">Poor Story</option>
+<option value="East Sea Dokdo">East Sea Dokdo</option>
+<option value="Yeon Sung">Yeon Sung</option>
+<option value="Dancing Script">Dancing Script</option>
+<option value="Great Vibes">Great Vibes</option>
+<option value="Pacifico">Pacifico</option>
+<option value="Satisfy">Satisfy</option>
+<option value="Parisienne">Parisienne</option>
+<option value="Playfair Display">Playfair Display</option>
+<option value="Libre Baskerville">Libre Baskerville</option>
+<option value="Cormorant Garamond">Cormorant Garamond</option>
+<option value="DM Serif Display">DM Serif Display</option>
                     </select>
                   </div>
                   <div>
@@ -998,8 +1055,7 @@ export default function ElementEditor({
                     })
                   }
                 />
-          
-          
+
               </div>
             </div>
 
@@ -1160,12 +1216,7 @@ export default function ElementEditor({
                     })
                   }
                 />
-                {headerLogoUrl && (
-                  <div className="mt-3 p-2 bg-white rounded border border-gray-200">
-                    <p className="text-xs text-gray-500 mb-1">현재 로고:</p>
-                    <img src={headerLogoUrl || "/placeholder.svg"} alt="로고 미리보기" className="max-h-12 mx-auto" />
-                  </div>
-                )}
+                
               </div>
             </div>
 
@@ -1247,16 +1298,6 @@ export default function ElementEditor({
   }
 />
 
-                {bannerUrl && (
-                  <div className="mt-3 p-2 bg-white rounded border border-gray-200">
-                    <p className="text-xs text-gray-500 mb-1">현재 배너:</p>
-                    <img
-                      src={bannerUrl || "/placeholder.svg"}
-                      alt="배너 이미지 미리보기"
-                      className="w-full h-32 object-cover rounded-md"
-                    />
-                  </div>
-                )}
               </div>
             </div>
 

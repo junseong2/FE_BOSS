@@ -1,4 +1,3 @@
-"use client"
 
 // components/Tabs.jsx
 import React from "react"

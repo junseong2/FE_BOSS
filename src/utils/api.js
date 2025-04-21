@@ -1,4 +1,5 @@
 // setRole 추가!
+import {BASE_URL} from '../lib/api'
 const fetchUserInfo = async (
   setUserId,
   setUserName,
@@ -8,7 +9,7 @@ const fetchUserInfo = async (
   setRole = () => {} // ✅ 여기에 기본 파라미터 추가!
 ) => {
   try {
-    const response = await fetch('http://localhost:5000/auth/user-info', {
+    const response = await fetch(BASE_URL+'/auth/user-info', {
       method: 'GET',
       credentials: 'include',
     });

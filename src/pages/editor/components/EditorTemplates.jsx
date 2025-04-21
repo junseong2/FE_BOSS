@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import SortList from '../../../components/SortList';
+import { BASE_URL } from '../../../lib/api';
 
 /**
  * 커스텀 헤더
@@ -19,8 +20,10 @@ export function TemplateHeader({ properties }) {
 
   return (
     <div
-      className='relative flex items-center justify-between border-b border-[#E4E4E7]'
-      style={{ backgroundColor, height }}
+
+      className='relative flex items-center justify-between border-b border-[#E4E4E7] p-2'
+      style={{ backgroundColor, width, height }} // ✅ 사이즈 반영
+
     >
       {/* 왼쪽 영역 */}
       <div className="flex items-center gap-4 flex-1">
@@ -47,7 +50,9 @@ export function TemplateHeader({ properties }) {
       <div className='w-[60px] h-[55px] text-center relative'>
         <img
           className='w-full h-full object-contain'
-          src={logoUrl ? `http://localhost:5000${logoUrl}` : "https://placehold.co/50x50"}
+
+          src={logoUrl ? BASE_URL+`${logoUrl}` : "https://placehold.co/50x50"}
+
           alt='로고 이미지'
         />
       </div>
@@ -80,7 +85,9 @@ export function TemplateHeader({ properties }) {
 
   return (
     <div
-      className='relative flex justify-between items-center gap-2 border-b border-[#E4E4E7]'
+
+      className='relative flex justify-between items-center gap-2 border-b border-[#E4E4E7] p-2'
+
       style={{ backgroundColor, width, height }} // ✅ 사이즈 반영
     >
       {/* 카테고리 버튼 */}
@@ -106,7 +113,9 @@ export function TemplateHeader({ properties }) {
       <div className='w-[60px] h-[55px] text-center relative'>
         <img
           className='w-full h-full'
-          src={logoUrl ? `http://localhost:5000${logoUrl}` : "https://placehold.co/50x50"}
+
+          src={logoUrl ? BASE_URL+`${logoUrl}` : "https://placehold.co/50x50"}
+
           alt='로고 이미지'
         />
       </div>
@@ -134,11 +143,10 @@ export function TemplateHeader({ properties }) {
 /**
  * 커스텀 배너 
  * @returns
- */
-export function TemplateBanner({ properties }) {
+ */export function TemplateBanner({ properties }) {
   const { title, subtitle, backgroundColor, imageUrl } = properties || {};
 
-  const fullImgUrl = imageUrl ? `http://localhost:5000${imageUrl}` : null;
+  const fullImgUrl = imageUrl ? BASE_URL+`${imageUrl}` : null;
 
   return (
     <div
@@ -147,25 +155,37 @@ export function TemplateBanner({ properties }) {
         textAlign: "center",
         color: "white",
         padding: "20px",
+        overflow: "hidden", // ✅ 이미지가 삐져나오지 않게
+        boxSizing: "border-box",
       }}
     >
       <h2 style={{ fontSize: "28px", color: "#4294F2", fontWeight: "bold" }}>
         {title}
       </h2>
       <p>{subtitle}</p>
-      <img
-        src={fullImgUrl || "https://placehold.co/736x300"}
-        alt="배너 이미지"
+      <div
         style={{
           width: "100%",
-          height: "auto",
-          objectFit: "cover",
-          marginTop: "10px",
+          maxWidth: "100%",
+          overflow: "hidden", // ✅ 부모 박스 기준 넘치지 않게
         }}
-      />
+      >
+        <img
+          src={fullImgUrl || "https://placehold.co/736x300"}
+          alt="배너 이미지"
+          style={{
+            width: "100%",
+            height: "auto",
+            objectFit: "cover", // ✅ 비율 유지 + 꽉 채우기
+            display: "block",
+            borderRadius: "8px", // ✅ 선택적으로 모서리도 둥글게
+          }}
+        />
+      </div>
     </div>
   );
 }
+
 
 
 
@@ -331,7 +351,7 @@ export function TemplateImage({ properties }) {
     borderRadius = '0px', // ✅ 둥근 정도 props로 받을 수 있도록 추가
   } = properties;
 
-  const fullImgUrl = imageUrl?.startsWith('http') ? imageUrl : `http://localhost:5000${imageUrl}`;
+  const fullImgUrl = imageUrl?.startsWith('http') ? imageUrl : BASE_URL+`${imageUrl}`;
 
   return (
     <div className="w-full h-full overflow-hidden">

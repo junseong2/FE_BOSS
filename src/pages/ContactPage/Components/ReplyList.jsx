@@ -1,4 +1,3 @@
-"use client"
 
 function ReplyList({ replies, onDelete, isLoading, error }) {
   // Format date

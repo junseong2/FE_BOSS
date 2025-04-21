@@ -1,10 +1,10 @@
-"use client"
 
 import { useState, useEffect } from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
+import { BASE_URL } from "../lib/api"
 
-const BASE_IMAGE_URL = "http://localhost:5000/uploads"
+const BASE_IMAGE_URL = BASE_URL+"/uploads"
 const DEFAULT_IMAGE_PATH = `${BASE_IMAGE_URL}/default-product.jpg`
 
 const ProductGrid2 = ({ sellerId = null, title = "인기 상품", onAddToCart = () => {} }) => {
@@ -72,7 +72,7 @@ const ProductGrid2 = ({ sellerId = null, title = "인기 상품", onAddToCart = 
                 key={type}
                 onClick={() => setSortType(type)}
                 className={`py-2 px-4 text-sm font-medium rounded-md transition-colors ${
-                  sortType === type ? "bg-orange-500 text-white" : "bg-transparent hover:bg-gray-200"
+                  sortType === type ? "bg-GRAY-500 text-white" : "bg-transparent hover:bg-gray-200"
                 }`}
               >
                 {getSortLabel(type)}

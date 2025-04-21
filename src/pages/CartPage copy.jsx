@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../App.css'; // 스타일 적용
+import { BASE_URL } from '../lib/api';
 
 function CartPage() {
   const [userId, setUserId] = useState(null);
@@ -16,7 +17,7 @@ function CartPage() {
   // 🔹 사용자 정보 가져오기
   const fetchUserInfo = async () => {
     try {
-      const response = await fetch('http://localhost:5000/auth/user-info', {
+      const response = await fetch(BASE_URL+ '/auth/user-info', {
         method: 'GET',
         credentials: 'include',
       });
@@ -36,7 +37,7 @@ function CartPage() {
   // 🛒 장바구니 아이템 가져오기
   const fetchCartItems = async () => {
     try {
-      const response = await fetch('http://localhost:5000/cart', {
+      const response = await fetch(BASE_URL+'/cart', {
         method: 'GET',
         credentials: 'include',
       });

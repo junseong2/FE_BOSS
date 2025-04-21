@@ -53,8 +53,10 @@ export default function SellerReviewPage() {
 
   // 리뷰 답변
   const handleSubmit = async (e, reviewId) => {
+    if (!reviewId) return alert('정상적인 요청이 아닙니다. ');
     setAnswerLoading(true);
     e.preventDefault();
+
 
     const formData = new FormData(e.currentTarget);
     const answer = formData.get('answer').toString() || '';
@@ -63,13 +65,19 @@ export default function SellerReviewPage() {
       answerText: answer,
     };
 
+
     try {
       const isSuccess = await createSellerReviewAnswer(reviewId, data);
-      setRenderTrigger(isSuccess);
+      if (isSuccess) {
+        toastSuccess('답변이 수정되었습니다.');
+        setSelectedReviewId(null) // 폼 닫기
+      }
+      setRenderTrigger((prev) => !prev);
     } finally {
       setAnswerLoading(false);
     }
   };
+
 
   // 리뷰 답변 수정
   const handleUpdateSubmit = async (e, reviewId, answerId) => {
@@ -82,26 +90,35 @@ export default function SellerReviewPage() {
       answerText: answer,
     };
 
+try{
 
-    try {
       const isSuccess = await updateSellerReviewAnswer(reviewId, answerId, data);
-      setRenderTrigger(isSuccess);
+      if (isSuccess) {
+        toastSuccess('답변이 수정되었습니다.');
+        setSelectedReviewId(null) // 폼 닫기
+      }
+      setRenderTrigger((prev) => !prev);
+
+
     } finally {
       setAnswerLoading(false);
     }
   };
+
 
   // 리뷰 답변 삭제
   const handleDeleteAnswer = async (reviewId, answerId) => {
     setAnswerLoading(true);
     try {
       const isSuccess = await deleteSellerReviewAnswer(reviewId, answerId);
-      toastSuccess(reviewId+" 번 리뷰에 대한 답변을 삭제하였습니다.")
+      toastSuccess(reviewId + ' 번 리뷰에 대한 답변을 삭제하였습니다.');
       setRenderTrigger(isSuccess);
+      setSelectedReviewId(null) // 폼 닫기
     } finally {
       setAnswerLoading(false);
     }
   };
+
 
   useEffect(() => {
     getReviewsFetch();
@@ -147,7 +164,9 @@ export default function SellerReviewPage() {
                     key={review.reviewId}
                     onCreateSubmit={handleSubmit}
                     onUpdateSubmit={handleUpdateSubmit}
-                    onDelete={()=>handleDeleteAnswer(review.reviewId, review.answerId)}
+
+                    onDelete={() => handleDeleteAnswer(review.reviewId, review.answerId)}
+
                     review={review}
                     selectedReviewId={selectedReviewId}
                     setSelectedReviewId={setSelectedReviewId}
