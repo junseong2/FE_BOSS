@@ -92,7 +92,7 @@ export default function ProductImageSlider({ imageList }) {
                 alt={`Thumbnail ${index + 1}`}
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = DOM_URL+'/src/assets/noimage.jpg';
+                  e.target.src = noImage
                 }}
               />
             </div>

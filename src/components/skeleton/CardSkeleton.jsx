@@ -2,16 +2,18 @@ import { useState, useEffect } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-export default function CardSkeleton({ baseColor = '#E4E4E6', highlightColor = '#CACACD' }) {
+export default function CardSkeleton() {
   const [rowCount, setRowCount] = useState(5);
 
   // 브레이크 포인트에 맞춰 rowCount 조정
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 640) {
-        setRowCount(2); // 작은 화면에서 1개
+        setRowCount(2); // 작은 화면에서 2개
+      } else if (window.innerWidth <= 768) {
+        setRowCount(2); // 중간 화면에서 2개
       } else if (window.innerWidth <= 1024) {
-        setRowCount(3); // 중간 화면에서 3개
+        setRowCount(4); // 중간 화면에서 4개
       } else {
         setRowCount(5); // 큰 화면에서 5개
       }
@@ -29,7 +31,7 @@ export default function CardSkeleton({ baseColor = '#E4E4E6', highlightColor = '
 
   return (
     <div>
-      <SkeletonTheme baseColor={baseColor} highlightColor={highlightColor}>
+      <SkeletonTheme>
         <div className='w-full'>
           <Skeleton
             count={rowCount}
@@ -38,7 +40,7 @@ export default function CardSkeleton({ baseColor = '#E4E4E6', highlightColor = '
           />
         </div>
       </SkeletonTheme>
-      <SkeletonTheme baseColor={baseColor} highlightColor={highlightColor}>
+      <SkeletonTheme>
         <div className='w-full mt-2'>
           <Skeleton
             count={rowCount}

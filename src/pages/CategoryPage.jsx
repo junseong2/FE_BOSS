@@ -299,7 +299,7 @@ function CategoryPage() {
                       <img
                            src={product.gimage[0]}
                         alt={product.name}
-                        className='w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300'
+                        className='w-full h-full min-h-[290px] object-cover object-center group-hover:scale-105 transition-transform duration-300'
                         onError={(e) => {
                           e.target.onerror = null; // 무한 루프 방지
                           e.target.src = noimage;
@@ -345,7 +345,7 @@ function CategoryPage() {
                       <img
                         src={product.gimage[0]}
                         alt={product.name}
-                        className='w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300'
+                        className='w-full h-full min-h-[280px] object-cover object-center group-hover:scale-105 transition-transform duration-300'
                         onError={(e) => {
                           e.target.onerror = null; // 무한 루프 방지
                           e.target.src = noimage;

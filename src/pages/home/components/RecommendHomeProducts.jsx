@@ -1,6 +1,7 @@
 import { SwiperSlide } from "swiper/react"
 import CenteredSlider from "../../../components/slide/CenteredSlider"
 import { Link } from "react-router-dom"
+import noImage from '../../../assets/noImage.jpg'
 
 export default function RecommendHomeProducts({ title, products, customClassName }) {
   return (
@@ -40,7 +41,14 @@ export default function RecommendHomeProducts({ title, products, customClassName
               <SwiperSlide key={product.productId}>
                 <Link to={`/product/${product.productId}`} className="group block">
                   <div className="relative overflow-hidden rounded-lg sm:rounded-xl shadow-sm transition-all duration-300 group-hover:shadow-md">
-                    <img src={product.gimage} className="w-full min-w-[140px] sm:min-w-[200px] h-[180px] sm:h-[250px] bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center">
+                    <img 
+                    src={product.gimage} 
+                    className="w-full min-w-[140px] sm:min-w-[200px] h-[180px] sm:h-[250px] bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center"
+                    onError={(e)=>{
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = noImage;
+                    }}
+                    >
                      
                     </img>
                     <div className="absolute top-2 right-2 bg-pink-100 text-pink-600 text-xs font-medium px-2 py-0.5 rounded-full">

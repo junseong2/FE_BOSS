@@ -15,7 +15,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchPopularProducts = async () => {
       try {
-        const response = await axios.get(BASE_URL+'/products/popular', {
+        const response = await axios.get(BASE_URL + '/products/popular?page=0&size=30', {
           params: { sortBy: 'daily' },
         });
         setProducts(response.data);
@@ -33,7 +33,7 @@ export default function HomePage() {
 
       try {
         const productDetailPromises = recommendedProducts.map((id) =>
-          fetch(BASE_URL+`/products/${id}`).then((res) => res.json()),
+          fetch(BASE_URL + `/products/${id}`).then((res) => res.json()),
         );
 
         const results = await Promise.all(productDetailPromises);
@@ -55,17 +55,15 @@ export default function HomePage() {
 
         {/* 상품 리스트 */}
         <div>
-          <HomeStores/>
+          <HomeStores />
           <HomeProducts
-            products={products.map((product)=> product).sort((a,b)=> b.productId-a.productId)}
+            products={products.map((product) => product).sort((a, b) => b.productId - a.productId)}
             title={'고객이 많이 찾는 상품'}
             customClassName={'bg-[rgba(0,0,0,0.025)]'}
           />
-          <HomeProducts 
-          products={products} 
-          title={'BOSS가 추천하는 TOP10'} />
+          <HomeProducts products={products} title={'BOSS가 추천하는 TOP10'} />
           <HomeProducts
-            products={products.map((product)=> product).slice(30,40)}
+            products={products.map((product) => product).slice(20, 30)}
             title={'인기 상품 TOP10'}
             customClassName={'bg-[rgba(0,0,0,0.025)]'}
           />
@@ -74,7 +72,6 @@ export default function HomePage() {
             <RecommendHomeProducts
               products={recommendedProductList}
               title={'회원님을 위한 맞춤 추천'}
-      
             />
           )}
         </div>

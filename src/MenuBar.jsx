@@ -42,7 +42,7 @@ function MenuBar() {
     }
     try {
       const response = await axios.get(
-        `http://localhost:5000/category/${categoryId}/subcategories`,
+        BASE_URL+`/category/${categoryId}/subcategories`,
       );
       setOpenSubMenu({ id: categoryId, subcategories: response.data });
     } catch (error) {
