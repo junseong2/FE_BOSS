@@ -339,9 +339,9 @@ export default function CartPage() {
                       {/* 상품 정보 */}
                       <div className='md:w-1/2 flex gap-4 mb-4 md:mb-0'>
                         <div className='w-20 h-20 bg-white rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200'>
-                          {item.productImage ? (
+                          {item.productThumbnail ? (
                             <img
-                              src={item.productImage || '/placeholder.svg'}
+                              src={item.productThumbnail}
                               alt={item.productName}
                               className='w-full h-full object-cover'
                             />
