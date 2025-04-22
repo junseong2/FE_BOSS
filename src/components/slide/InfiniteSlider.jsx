@@ -7,7 +7,7 @@ import 'swiper/css/navigation';
 import { Pagination, Navigation, Autoplay } from 'swiper/modules';
 
 export default function InfiniteSlider() {
-  const BASE_IMAGE_URL = "http://localhost:5000/uploads";
+  const BASE_IMAGE_URL = import.meta.env.VITE_BACKEND_URL;
 
   const progressCircle = useRef(null);
   const progressContent = useRef(null);
