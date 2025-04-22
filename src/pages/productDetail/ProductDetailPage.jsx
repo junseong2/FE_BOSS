@@ -119,6 +119,8 @@ export default function ProductDetailPage() {
     ]; // 이미지가 없을 경우 기본 이미지
   }
 
+  console.log(imageList)
+
   // 상품 상세 조회
   const getProductDetailFetch = async (productId) => {
     setLoadingState((prev) => ({
@@ -475,7 +477,7 @@ export default function ProductDetailPage() {
                         className='relative overflow-hidden rounded-xl shadow-md group'
                       >
                         <img
-                          src={img || '/placeholder.svg'}
+                          src={img}
                           alt={`${product.name} 상세 이미지 ${index + 1}`}
                           className='w-full rounded-xl transition-transform duration-500 group-hover:scale-105'
                           onError={(e)=>{

@@ -6,7 +6,6 @@ import noImage from '../../assets/noImage.jpg';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
-import 'swiper/css/navigation';
 
 import { Pagination, Navigation, Autoplay } from 'swiper/modules';
 

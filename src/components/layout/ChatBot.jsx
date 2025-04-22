@@ -77,6 +77,7 @@ function ChatBot() {
     setInput('');
 
     try {
+      console.log(input)
       const res = await fetch(BASE_URL + `/vector/rag?query=${encodeURIComponent(input)}`, {
         method: 'GET',
         headers: { Accept: 'application/json' },

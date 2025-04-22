@@ -17,7 +17,11 @@ import {
   Loader2,
 } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
-import { BASE_URL,DOM_URL } from "../lib/api"
+import { BASE_URL, DOM_URL } from '../lib/api';
+import kakaoIcon from '../assets/pay-kakao.png';
+import totalIcon from '../assets/pay-total.png';
+import tossIcon from '../assets/pay-toss.png';
+import paycoIcon from '../assets/pay-payco.png';
 
 function PaymentPage() {
   const { setTrigger: cartItemStateUpdateTrigger } = useCartStore();
@@ -53,11 +57,11 @@ function PaymentPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch(BASE_URL+"/auth/user-info", {
-          method: "GET",
-          credentials: "include",
-          headers: { Accept: "application/json" },
-        })
+        const response = await fetch(BASE_URL + '/auth/user-info', {
+          method: 'GET',
+          credentials: 'include',
+          headers: { Accept: 'application/json' },
+        });
 
         if (response.status === 403) {
           console.warn('❌ 로그인 필요. 로그인 페이지로 이동.');
@@ -67,13 +71,13 @@ function PaymentPage() {
 
         if (!response.ok) throw new Error('로그인 정보 조회 실패');
 
-        const data = await response.json()
-        setUserId(data.userId)
-        setUserName(data.userName)
-        setEmail(data.userEmail || "")
-        const addressRes = await fetch(BASE_URL+`/address/user/${data.userId}`, {
-          method: "GET",
-          credentials: "include",
+        const data = await response.json();
+        setUserId(data.userId);
+        setUserName(data.userName);
+        setEmail(data.userEmail || '');
+        const addressRes = await fetch(BASE_URL + `/address/user/${data.userId}`, {
+          method: 'GET',
+          credentials: 'include',
         });
 
         if (addressRes.ok) {
@@ -104,11 +108,11 @@ function PaymentPage() {
 
     const fetchCart = async () => {
       try {
-        const response = await fetch(BASE_URL+"/cart", {
-          method: "GET",
-          credentials: "include",
-          headers: { Accept: "application/json" },
-        })
+        const response = await fetch(BASE_URL + '/cart', {
+          method: 'GET',
+          credentials: 'include',
+          headers: { Accept: 'application/json' },
+        });
 
         if (!response.ok) throw new Error('장바구니 조회 실패');
 
@@ -132,8 +136,8 @@ function PaymentPage() {
   useEffect(() => {
     const fetchChannelKey = async () => {
       try {
-        const response = await fetch(BASE_URL+`/payment/channel-key/${selectedPaymentMethod}`)
-        if (!response.ok) throw new Error("채널 키 가져오기 실패")
+        const response = await fetch(BASE_URL + `/payment/channel-key/${selectedPaymentMethod}`);
+        if (!response.ok) throw new Error('채널 키 가져오기 실패');
 
         const data = await response.json();
         setChannelKey(data.channelKey);
@@ -215,15 +219,12 @@ function PaymentPage() {
             await updatePaymentStatus(statusData);
 
             try {
-
-
-              await fetch(BASE_URL+"/cart/clear", {
-                method: "POST",
-                credentials: "include",
-              })
-              cartItemStateUpdateTrigger() // 장바구니 아이템 상태 업데이트 트리거(아이템 개수 다시 불러옴)
-              console.log("🧹 장바구니 비우기 완료")
-
+              await fetch(BASE_URL + '/cart/clear', {
+                method: 'POST',
+                credentials: 'include',
+              });
+              cartItemStateUpdateTrigger(); // 장바구니 아이템 상태 업데이트 트리거(아이템 개수 다시 불러옴)
+              console.log('🧹 장바구니 비우기 완료');
             } catch (clearError) {
               console.warn('⚠️ 장바구니 비우기 실패:', clearError.message);
             }
@@ -256,30 +257,22 @@ function PaymentPage() {
   const paymentIcons = {
     totalpay: (
       <div className='w-10 h-10 rounded-full bg-blue-00 flex items-center justify-center text-blue-600'>
-        <CreditCard size={20} />
+        <img src={totalIcon} alt='totalpay icon' className='rounded-full object-contain' />
       </div>
     ),
     kakaopay: (
       <div className='w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center'>
-        <img
-          src='/images/kakaopay-icon.png'
-          alt='KakaoPay'
-          className='w-5 h-5'
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.parentNode.innerHTML = '<span className="font-bold text-yellow-600">K</span>';
-          }}
-        />
+        <img src={kakaoIcon} alt='KakaoPay icon' className='rounded-full object-contain' />
       </div>
     ),
     tosspay: (
       <div className='w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center'>
-        <span className='font-bold text-blue-600'>T</span>
+        <img src={tossIcon} alt='tosspay icon' />
       </div>
     ),
     paycopay: (
       <div className='w-10 h-10 rounded-full bg-red-100 flex items-center justify-center'>
-        <span className='font-bold text-red-600'>P</span>
+        <img src={paycoIcon} alt='paycopay icon' className='rounded-full object-contain' />
       </div>
     ),
   };
@@ -529,11 +522,14 @@ function PaymentPage() {
                     {cartItems.map((item) => (
                       <div key={item.cartId} className='flex gap-3 pb-3 border-b border-gray-100'>
                         <div className='w-16 h-16 bg-gray-100 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden'>
-                          {item.productImage ? (
+                          {item.productThumbnail ? (
                             <img
-                              src={item.productImage || '/placeholder.svg'}
+                              src={item.productThumbnail}
                               alt={item.productName}
                               className='w-full h-full object-cover'
+                              onError={(e) => {
+                                e.currentTarget.src = '/placeholder.svg';
+                              }}
                             />
                           ) : (
                             <Package size={24} className='text-gray-400' />

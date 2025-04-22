@@ -259,7 +259,7 @@ const OrderList = ({ userId }) => {
                       >
                         <div className="flex items-center gap-4">
                           <img
-                            src={item.productImages?.trim() || '/placeholder.svg?height=64&width=64'}
+                            src={"https://bossassets.s3.amazonaws.com/"+item.productImages?.trim() || '/placeholder.svg?height=64&width=64'}
                             alt={`상품-${i}`}
                             onError={(e)=>{
                                 e.currentTarget.src=noImage

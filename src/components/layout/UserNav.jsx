@@ -100,7 +100,7 @@ export default function UserNav({
             <IconBtn
               icon={<MdStorefront />}
               label='판매업 등록'
-              visibleLabel={'판매하기'}
+              visibleLabel={'판매업 등록'}
               onClick={() => setIsSellerModalOpen(true)}
             />
           </>

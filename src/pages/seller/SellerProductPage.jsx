@@ -83,7 +83,7 @@ function SellerProductPage() {
       const data = await getAllSellerProducts(Math.max(0, page), PAGE_SIZE, productName)
       if (data) {
         setProducts(data.products ?? [])
-        setTotalCount(data.totalCount ?? 1)
+        setTotalCount(data.totalCount ?? 0)
       }
     } finally {
       setLoading(false)

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { UserProvider } from './context/UserContext.jsx';
@@ -15,51 +15,58 @@ import BottomNavigation from './components/layout/BottomNavigation';
 import ScrollToTop from './components/layout/ScrollToTop';
 
 import SignIn from './pages/SignIn.jsx';
-import HomePage from './pages/home/HomePage';
-import AboutPage from './pages/AboutPage';
-import CartPage from './pages/CartPage';
-import CameraCapturePage from './pages/CameraCapturePage';
-import ContactPage from './pages/ContactPage';
-import MyPage from './pages/MyPage/MyPage';
-import EventPage from './pages/EventPage';
-import ProductPage from './pages/ProductPage';
-import ChatBot from './components/layout/ChatBot';
+// 기본 페이지
+// const SignIn = lazy(() => import('./pages/SignIn.jsx'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const CartPage = lazy(() => import('./pages/CartPage'));
+const CameraCapturePage = lazy(() => import('./pages/CameraCapturePage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const MyPage = lazy(() => import('./pages/MyPage/MyPage'));
+const EventPage = lazy(() => import('./pages/EventPage'));
+const ProductPage = lazy(() => import('./pages/ProductPage'));
+const ChatBot = lazy(() => import('./components/layout/ChatBot'));
+const CategoryPage = lazy(() => import('./pages/CategoryPage'));
+const SearchPage = lazy(() => import('./pages/SearchPage'));
+const ProductDetailPage = lazy(() => import('./pages/productDetail/ProductDetailPage'));
+const PaymentPage = lazy(() => import('./pages/PaymentPage'));
+const SignUpPage = lazy(() => import('./pages/signup/SignUpPage.jsx'));
+const AccountRecoveryPage = lazy(() => import('./pages/accountRecovery/PasswordResetPage.jsx'));
 
-import CategoryPage from './pages/CategoryPage';
-import SearchPage from './pages/SearchPage';
+// 홈
+const HomePage = lazy(() => import('./pages/home/HomePage'));
 
-import SellerPage from './pages/seller/SellerPage.jsx';
-import SellerDashboardPage from './pages/seller/SellerDashboardPage.jsx';
-import SellerProductPage from './pages/seller/SellerProductPage.jsx';
-import SellerOrderPage from './pages/seller/SellerOrderPage.jsx';
-import SellerInventoryPage from './pages/seller/SellerInventoryPage.jsx';
-import SellerPaymentPage from './pages/seller/SellerPaymentPage.jsx';
-import ProductDetailPage from './pages/productDetail/ProductDetailPage';
-import ShopEditorPage from './pages/editor/ShopEditorPage.jsx';
+// 셀러
+const SellerPage = lazy(() => import('./pages/seller/SellerPage.jsx'));
+const SellerDashboardPage = lazy(() => import('./pages/seller/SellerDashboardPage.jsx'));
+const SellerProductPage = lazy(() => import('./pages/seller/SellerProductPage.jsx'));
+const SellerOrderPage = lazy(() => import('./pages/seller/SellerOrderPage.jsx'));
+const SellerInventoryPage = lazy(() => import('./pages/seller/SellerInventoryPage.jsx'));
+const SellerPaymentPage = lazy(() => import('./pages/seller/SellerPaymentPage.jsx'));
+const SellerSettlementPage = lazy(() => import('./pages/seller/SellerSettlementPage.jsx'));
+const SellerReviewPage = lazy(() => import('./pages/seller/SellerReviewPage.jsx'));
+const SellerSignUpPage = lazy(() => import('./pages/sellerSignup/SellerRegistrationPage.jsx'));
 
-import MobileShopEditorPage from './pages/editor/MobileShopEditorPage.jsx';
-import SellerSignUpPage from './pages/sellerSignup/SellerRegistrationPage.jsx';
+// 에디터
+const ShopEditorPage = lazy(() => import('./pages/editor/ShopEditorPage.jsx'));
+const MobileShopEditorPage = lazy(() => import('./pages/editor/MobileShopEditorPage.jsx'));
 
-import AccountRecoveryPage from './pages/accountRecovery/PasswordResetPage.jsx';
-import PaymentPage from './pages/PaymentPage';
-// import AdminPage from './pages/adminPage';
-import AdminPage from './pages/admin/AdminPage.jsx';
-import AdminDashboardPage from './pages/admin/AdminDashboardPage.jsx';
-import AdminVerificationPage from './pages/admin/AdminVerificationPage.jsx';
-import AdminSettlementPage from './pages/admin/AdminSettlementPage';
+// 관리자
+const AdminPage = lazy(() => import('./pages/admin/AdminPage.jsx'));
+const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage.jsx'));
+const AdminVerificationPage = lazy(() => import('./pages/admin/AdminVerificationPage.jsx'));
+const AdminSettlementPage = lazy(() => import('./pages/admin/AdminSettlementPage'));
 
-import Footer from './components/layout/Footer'; // ✅ Footer import 추가
-import SignUpPage from './pages/signup/SignUpPage.jsx';
-import SellerSettlementPage from './pages/seller/SellerSettlementPage.jsx';
-import SellerReviewPage from './pages/seller/SellerReviewPage.jsx';
+// 레이아웃
+const Footer = lazy(() => import('./components/layout/Footer'));
 import { BASE_URL } from './lib/api.js';
+import SuspenseFallback from './components/SuspenseFallback.jsx';
 
 function App() {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [storename, setStorename] = useState(null);
   const [headerId, setHeaderId] = useState(null);
   const [sellerId, setSellerId] = useState(null);
-  const [userId, setUserId] = useState(null)
+  const [userId, setUserId] = useState(null);
   const [menuBarId, setMenuBarId] = useState(null);
   const [navigationId, setNavigationId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -188,96 +195,309 @@ function App() {
               <Route
                 path='/:storename/*'
                 element={
-                  <AppLayout
-                    sellerId={sellerId}
-                    setSellerId={setSellerId}
-                    headerId={headerId}
-                    menuBarId={menuBarId}
-                    navigationId={navigationId}
-                    setStorename={setStorename}
-                    sellerMenubarColor={sellerMenubarColor}
-                  />
+                  <Suspense fallback={<SuspenseFallback message='스토어 불러오는 중...' />}>
+                    <AppLayout
+                      sellerId={sellerId}
+                      setSellerId={setSellerId}
+                      headerId={headerId}
+                      menuBarId={menuBarId}
+                      navigationId={navigationId}
+                      setStorename={setStorename}
+                      sellerMenubarColor={sellerMenubarColor}
+                    />
+                  </Suspense>
                 }
               >
                 <Route
                   path='shop'
                   element={
-                    <ShopPage
-                      sellerId={sellerId}
-                      headerId={headerId}
-                      menuBarId={menuBarId}
-                      navigationId={navigationId}
-                      sellerMenubarColor={sellerMenubarColor}
-                    />
+                    <Suspense fallback={<SuspenseFallback message='상점 불러오는 중...' />}>
+                      <ShopPage
+                        {...{ sellerId, headerId, menuBarId, navigationId, sellerMenubarColor }}
+                      />
+                    </Suspense>
                   }
                 />
                 <Route
                   path='products'
                   element={
-                    <ProductPage
-                      sellerId={sellerId}
-                      headerId={headerId}
-                      menuBarId={menuBarId}
-                      navigationId={navigationId}
-                      sellerMenubarColor={sellerMenubarColor}
-                    />
+                    <Suspense fallback={<SuspenseFallback message='상품 목록 불러오는 중...' />}>
+                      <ProductPage
+                        {...{ sellerId, headerId, menuBarId, navigationId, sellerMenubarColor }}
+                      />
+                    </Suspense>
                   }
                 />
                 <Route
                   path='intro'
                   element={
-                    <IntroPage
-                      sellerId={sellerId}
-                      headerId={headerId}
-                      menuBarId={menuBarId}
-                      navigationId={navigationId}
-                      sellerMenubarColor={sellerMenubarColor}
-                    />
+                    <Suspense fallback={<SuspenseFallback message='소개 페이지 불러오는 중...' />}>
+                      <IntroPage
+                        {...{ sellerId, headerId, menuBarId, navigationId, sellerMenubarColor }}
+                      />
+                    </Suspense>
                   }
                 />
               </Route>
-              {/* ✅ 일반적인 페이지 경로 유지 */}
-              <Route path='/' element={<HomePage />} />
-              <Route path='/about' element={<AboutPage />} />
-              <Route path='/event' element={<EventPage />} />
-              <Route path='/contact/*' element={<ContactPage />} />
-              <Route path='/event' element={<EventPage />} />
-              <Route path='/camera' element={<CameraCapturePage />} />
-              <Route path='/signin' element={<SignIn />} />
-              <Route path='/mypage' element={<MyPage />} />
-              <Route path='/signup' element={<SignUpPage />} />
-              <Route path='/cart' element={<CartPage />} />
-              <Route path='/category/:categoryId' element={<CategoryPage />} />
-              <Route path='/search' element={<SearchPage />} />
-              <Route path='/paymentpage' element={<PaymentPage />} />
-              {/* <Route path="/product/recommend-text" element={<ChatBot />} /> */}
-              <Route path='/product/:productId' element={<ProductDetailPage />} />
-              <Route path='/seller/signup' element={<SellerSignUpPage />} />
 
-              {/* ✅ 판매자 대시보드 경로 유지 */}
-              <Route path='/seller' element={<SellerPage />}>
-                <Route index path='dashboard' element={<SellerDashboardPage />} />
-                <Route path='product' element={<SellerProductPage />} />
-                <Route path='order' element={<SellerOrderPage />} />
-                <Route path='inventory' element={<SellerInventoryPage />} />
-                <Route path='payment' element={<SellerPaymentPage />} />
-                <Route path='settlement' element={<SellerSettlementPage />} />
-                <Route path='review' element={<SellerReviewPage />} />
+              {/* 일반 페이지 */}
+              <Route
+                path='/'
+                element={
+                  <Suspense fallback={<SuspenseFallback message='홈페이지 불러오는 중...' />}>
+                    <HomePage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path='/about'
+                element={
+                  <Suspense fallback={<SuspenseFallback message='소개 페이지 불러오는 중...' />}>
+                    <AboutPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path='/event'
+                element={
+                  <Suspense fallback={<SuspenseFallback message='이벤트 페이지 불러오는 중...' />}>
+                    <EventPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path='/contact/*'
+                element={
+                  <Suspense fallback={<SuspenseFallback message='문의 페이지 불러오는 중...' />}>
+                    <ContactPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path='/camera'
+                element={
+                  <Suspense fallback={<SuspenseFallback message='카메라 기능 불러오는 중...' />}>
+                    <CameraCapturePage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path='/signin'
+                element={
+                  <Suspense fallback={<SuspenseFallback message='로그인 페이지 불러오는 중...' />}>
+                    <SignIn />
+                  </Suspense>
+                }
+              />
+              <Route
+                path='/signup'
+                element={
+                  <Suspense
+                    fallback={<SuspenseFallback message='회원가입 페이지 불러오는 중...' />}
+                  >
+                    <SignUpPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path='/mypage'
+                element={
+                  <Suspense fallback={<SuspenseFallback message='마이페이지 불러오는 중...' />}>
+                    <MyPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path='/cart'
+                element={
+                  <Suspense fallback={<SuspenseFallback message='장바구니 불러오는 중...' />}>
+                    <CartPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path='/category/:categoryId'
+                element={
+                  <Suspense
+                    fallback={<SuspenseFallback message='카테고리 페이지 불러오는 중...' />}
+                  >
+                    <CategoryPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path='/search'
+                element={
+                  <Suspense
+                    fallback={<SuspenseFallback message='  페이지 불러오는 중...' />}
+                  >
+                    <SearchPage />
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path='/paymentpage'
+                element={
+                  <Suspense fallback={<SuspenseFallback message='결제 페이지 불러오는 중...' />}>
+                    <PaymentPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path='/product/:productId'
+                element={
+                  <Suspense fallback={<SuspenseFallback message='상품 상세정보 불러오는 중...' />}>
+                    <ProductDetailPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path='/seller/signup'
+                element={
+                  <Suspense
+                    fallback={<SuspenseFallback message='판매자 가입 페이지 불러오는 중...' />}
+                  >
+                    <SellerSignUpPage />
+                  </Suspense>
+                }
+              />
+
+              {/* 판매자 */}
+              <Route
+                path='/seller'
+                element={
+                  <Suspense fallback={<SuspenseFallback message='판매자 페이지 불러오는 중...' />}>
+                    <SellerPage />
+                  </Suspense>
+                }
+              >
+                <Route
+                  index
+                  path='dashboard'
+                  element={
+                    <Suspense
+                      fallback={<SuspenseFallback message='판매자 대시보드 불러오는 중...' />}
+                    >
+                      <SellerDashboardPage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path='product'
+                  element={
+                    <Suspense fallback={<SuspenseFallback message='상품 관리 불러오는 중...' />}>
+                      <SellerProductPage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path='order'
+                  element={
+                    <Suspense fallback={<SuspenseFallback message='주문 관리 불러오는 중...' />}>
+                      <SellerOrderPage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path='inventory'
+                  element={
+                    <Suspense fallback={<SuspenseFallback message='재고 관리 불러오는 중...' />}>
+                      <SellerInventoryPage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path='payment'
+                  element={
+                    <Suspense fallback={<SuspenseFallback message='정산 내역 불러오는 중...' />}>
+                      <SellerPaymentPage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path='settlement'
+                  element={
+                    <Suspense fallback={<SuspenseFallback message='판매자 정산 불러오는 중...' />}>
+                      <SellerSettlementPage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path='review'
+                  element={
+                    <Suspense fallback={<SuspenseFallback message='리뷰 관리 불러오는 중...' />}>
+                      <SellerReviewPage />
+                    </Suspense>
+                  }
+                />
               </Route>
 
-              <Route path='/editor' element={<ShopEditorPage />}></Route>
+              {/* 에디터 */}
+              <Route
+                path='/editor'
+                element={
+                  <Suspense fallback={<SuspenseFallback message='에디터 불러오는 중...' />}>
+                    <ShopEditorPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path='/mobileeditor'
+                element={
+                  <Suspense fallback={<SuspenseFallback message='모바일 에디터 불러오는 중...' />}>
+                    <MobileShopEditorPage />
+                  </Suspense>
+                }
+              />
 
-              {/* ✅ 관리자 대시보드 경로 유지 */}
-              <Route path='/admin' element={<AdminPage />}>
-                <Route index element={<AdminDashboardPage />} />
-                <Route path='verification' element={<AdminVerificationPage />} />
-                <Route path='settlement' element={<AdminSettlementPage />} />
+              {/* 관리자 */}
+              <Route
+                path='/admin'
+                element={
+                  <Suspense fallback={<SuspenseFallback message='관리자 페이지 불러오는 중...' />}>
+                    <AdminPage />
+                  </Suspense>
+                }
+              >
+                <Route
+                  index
+                  element={
+                    <Suspense
+                      fallback={<SuspenseFallback message='관리자 대시보드 불러오는 중...' />}
+                    >
+                      <AdminDashboardPage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path='verification'
+                  element={
+                    <Suspense fallback={<SuspenseFallback message='인증 요청 불러오는 중...' />}>
+                      <AdminVerificationPage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path='settlement'
+                  element={
+                    <Suspense fallback={<SuspenseFallback message='정산 내역 불러오는 중...' />}>
+                      <AdminSettlementPage />
+                    </Suspense>
+                  }
+                />
               </Route>
 
-              <Route path='/mobileeditor' element={<MobileShopEditorPage />}></Route>
-
-              {/* 비밀번호/아이디 찾기 */}
-              <Route path='/auth/account-recovery' element={<AccountRecoveryPage />}></Route>
+              {/* 계정 복구 */}
+              <Route
+                path='/auth/account-recovery'
+                element={
+                  <Suspense
+                    fallback={<SuspenseFallback message='계정 복구 페이지 불러오는 중...' />}
+                  >
+                    <AccountRecoveryPage />
+                  </Suspense>
+                }
+              />
             </Routes>
           </main>
 
