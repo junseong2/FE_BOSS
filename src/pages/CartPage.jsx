@@ -336,7 +336,7 @@ export default function CartPage() {
                     className='bg-gradient-to-r from-blue-50 to-blue-100/50 rounded-xl shadow-sm overflow-hidden border border-blue-100 hover:shadow-md transition-shadow'
                   >
                     <div className='flex flex-col md:flex-row p-4'>
-                      {/* 상품 정보 */}
+              {/* 상품 정보 */}
                       <div className='md:w-1/2 flex gap-4 mb-4 md:mb-0'>
                         <div className='w-20 h-20 bg-white rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200'>
                           {item.productThumbnail ? (
