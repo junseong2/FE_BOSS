@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -86,6 +87,7 @@ export default function Top() {
       console.error('❌ 스토어명 불러오기 실패', err);
     }
   };
+
   
   useEffect(() => {
     console.log('🧪 useEffect 감지됨:', { role, userId, storeName });
@@ -159,6 +161,7 @@ export default function Top() {
                   alt='Boss Logo'
                 />
               </h1>
+
             </div>
 
             {/* 검색창 */}

@@ -3,10 +3,12 @@ import BounceLoader from 'react-spinners/BounceLoader';
 import bossLogo from '../../assets/boss_logo.jpg';
 import noImage from '../../assets/noImage.jpg';
 import './ChatBot.css';
+
 import { IoRefresh, IoRefreshCircle } from 'react-icons/io5';
 import { recommendKeywordSets } from '../../data/recommendText';
 import { BASE_URL } from '../../lib/api';
 import { Link } from 'react-router-dom';
+
 
 function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -75,6 +77,7 @@ function ChatBot() {
     setInput('');
 
     try {
+      console.log(input)
       const res = await fetch(BASE_URL + `/vector/rag?query=${encodeURIComponent(input)}`, {
         method: 'GET',
         headers: { Accept: 'application/json' },
@@ -152,17 +155,22 @@ function ChatBot() {
         className='fixed bottom-4 right-4 w-16 h-16 z-[40] cursor-pointer shadow-xl rounded-full bg-white border border-gray-200 flex items-center justify-center hover:scale-105 transition-all'
         onClick={toggleChat}
       >
+
         <img src={bossLogo} alt='Chat Icon' className='w-10 h-10' />
+
       </div>
 
       {isOpen && (
         <div className='fixed bottom-24 right-4 w-96 max-w-[95vw] h-[550px] bg-white shadow-2xl border border-gray-200 rounded-3xl flex flex-col z-[9999] overflow-hidden animate-fadeInUp'>
           <div className='flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-500 to-sky-400 text-white'>
+
             <h4 className='text-xl font-bold flex items-center'>
+
               {' '}
               <img
                 src={bossLogo}
                 alt='Chat Background'
+
                 className='w-9 h-9 pointer-events-none select-none z-0 mr-2 rounded-full'
               />{' '}
               BOSS 챗봇
@@ -184,6 +192,7 @@ function ChatBot() {
                 ✖
               </button>
             </div>
+
           </div>
 
           <div className='relative flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-white'>
@@ -192,11 +201,14 @@ function ChatBot() {
               alt='Chat Background'
               className='absolute top-1/2 left-1/2 w-32 h-32 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-0 opacity-10'
             />
+
             <div className='relative z-10'>
               {messages.map((msg, index) => (
                 <div
                   key={index}
+
                   ref={index === messages.length - 1 ? divRef : null}
+
                   className={`rounded-xl px-3 py-2 my-4 text-sm max-w-[80%] break-words ${
                     msg.sender === 'user'
                       ? 'bg-blue-100 ml-auto text-right'
@@ -298,7 +310,7 @@ function ProductRecommendationCard({ productId, reason }) {
     <div className='mt-2 border border-gray-200 rounded-xl overflow-hidden'>
       <Link to={`/product/${productId}`} className='block hover:bg-gray-50'>
         <img
-          src={ imageUrl}
+          src={imageUrl}
           alt={product.name}
           className='w-full h-28 object-cover'
           onError={(e) => {
