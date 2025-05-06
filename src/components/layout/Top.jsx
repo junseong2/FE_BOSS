@@ -6,7 +6,7 @@ import {
   IoClose,
 } from 'react-icons/io5';
 import fetchUserInfo from '../../utils/api.js';
-import { useUser } from '../../context/UserContext';
+import { useUserContext } from '../../context/UserContext';
 import SignIn from '../../pages/SignIn';
 import SellerRegistrationPage from '../../pages/sellerSignup/SellerRegistrationPage.jsx';
 import bossLogo from '../../assets/boss_logo.jpg';
@@ -16,7 +16,7 @@ import { BASE_URL } from "../../lib/api.js"
 
 export default function Top() {
   const { userId, setUserId, userName, setUserName, role, setRole, storeName, setStoreName } =
-    useUser();
+    useUserContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
@@ -40,19 +40,16 @@ export default function Top() {
 
   const fetchSellerStoreName = async (userId) => {
     try {
-      console.log("📦 fetchSellerStoreName 호출됨 - userId:", userId);
       const res = await fetch(BASE_URL+`/seller/seller-info-byuserid/${userId}`);
       const data = await res.json();
-      console.log('📦 fetchSellerStoreName 응답:', data);
 
       if (data.storename) {
         setStoreName(data.storename);
-        console.log('✅ storeName 저장됨:', data.storename);
       } else {
-        console.warn('⚠️ storeName이 없습니다:', data);
+        console.warn('storeName이 없습니다:', data);
       }
     } catch (err) {
-      console.error('❌ 스토어명 불러오기 실패', err);
+      console.error('스토어명 불러오기 실패', err);
     }
   };
 
@@ -61,7 +58,7 @@ export default function Top() {
     console.log('🧪 useEffect 감지됨:', { role, userId, storeName });
 
     if (role === 'SELLER' && userId && !storeName) {
-      console.log('🟡 조건 충족 → fetchSellerStoreName 실행');
+      console.log('조건 충족 → fetchSellerStoreName 실행');
       fetchSellerStoreName(userId);
     }
   }, [role, userId]);

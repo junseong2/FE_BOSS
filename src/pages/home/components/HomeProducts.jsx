@@ -1,9 +1,13 @@
-import { SwiperSlide } from 'swiper/react';
-import CenteredSlider from '../../../components/slide/CenteredSlider';
-import { Link } from 'react-router-dom'; // ✅ 수정: react-router-dom으로 변경
+
 import React from 'react';
-import defaultImage from '../../../assets/no-image.jpg';
+import CenteredSlider from '../../../components/slide/CenteredSlider';
 import CardSkeleton from '../../../components/skeleton/CardSkeleton';
+import { SwiperSlide } from 'swiper/react';
+import { Link } from 'react-router';
+
+import defaultImage from '../../../assets/no-image.jpg';
+
+
 
 export default function HomeProducts({ title, products, customClassName }) {
   return (

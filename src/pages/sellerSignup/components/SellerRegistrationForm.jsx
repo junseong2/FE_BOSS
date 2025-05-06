@@ -1,20 +1,18 @@
 import { useState, useRef, useEffect } from "react"
 import axios from "axios"
-import { useUser } from "../../../context/UserContext"
+import { useUserContext } from "../../../context/UserContext"
 import BusinessRegistrationForm from "./BusinessRegistrationForm"
 import OnlineSalesForm from "./OnlineSalesForm"
 import { CheckCircle, ArrowRight, Store, FileCheck, UserCheck } from "lucide-react"
-import { useNavigate } from "react-router-dom"
 import { BASE_URL } from "../../../lib/api"
 
 const SellerRegistrationForm = ({ onClose }) => {
-  const { userId } = useUser()
+  const { userId } = useUserContext()
   const [step, setStep] = useState(1)
   const [isUserSeller, setIsUserSeller] = useState(false)
 
   const [representativeName, setRepresentativeName] = useState("")
   const [businessRegistrationNumber, setBusinessRegistrationNumber] = useState("")
-  const [onlineSalesNumber, setOnlineSalesNumber] = useState("")
   const onlineSalesNumberRef = useRef("")
 
   const [storename, setStorename] = useState("")

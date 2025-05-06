@@ -1,31 +1,33 @@
 import { useEffect, useState } from 'react';
-import { useUser } from '../../context/UserContext';
+import { useUserContext } from '../../context/UserContext';
 import HomeBanner from './components/HomeBanner';
 import HomeCategories from './components/HomeCategories';
 import HomeProducts from './components/HomeProducts';
 import RecommendHomeProducts from './components/RecommendHomeProducts'; // ✅ 추천 전용 컴포넌트
 import HomeStores from './components/HomeStores';
-import axios from 'axios';
 import { BASE_URL } from '../../lib/api';
+import { getPopularProducts } from '../../services/product.service';
+
+
 export default function HomePage() {
-  const { recommendedProducts } = useUser();
+  const { recommendedProducts } = useUserContext();
   const [recommendedProductList, setRecommendedProductList] = useState([]);
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    const fetchPopularProducts = async () => {
-      try {
-        const response = await axios.get(BASE_URL + '/products/popular?page=0&size=30', {
-          params: { sortBy: 'daily' },
-        });
-        setProducts(response.data);
-      } catch (error) {
-        console.error('인기 상품 조회 실패:', error);
-      }
-    };
 
-    fetchPopularProducts();
+
+
+  // 인기 상품 조회
+  async function popularProductsFetch() {
+    const data = await getPopularProducts(0, 30, 'daily')
+    console.log(data)
+    setProducts(data)
+  }
+  useEffect(() => {
+    popularProductsFetch()
   }, []);
+
+  
   // 추천 상품 정보 fetch
   useEffect(() => {
     const fetchRecommendedProductDetails = async () => {
@@ -57,13 +59,13 @@ export default function HomePage() {
         <div>
           <HomeStores />
           <HomeProducts
-            products={products.map((product) => product).sort((a, b) => b.productId - a.productId)}
+            products={products?.map((product) => product).sort((a, b) => b.productId - a.productId)}
             title={'고객이 많이 찾는 상품'}
             customClassName={'bg-[rgba(0,0,0,0.025)]'}
           />
           <HomeProducts products={products} title={'BOSS가 추천하는 TOP10'} />
           <HomeProducts
-            products={products.map((product) => product).slice(20, 30)}
+            products={products?.map((product) => product).slice(20, 30)}
             title={'인기 상품 TOP10'}
             customClassName={'bg-[rgba(0,0,0,0.025)]'}
           />

@@ -65,7 +65,7 @@ export const getProductDetail = async (id) => {
 //========구매자 =========\\
 /** 구매자 상품 조회 */
 export const getAllProducts = async (page, size) => {
-  const url = apiRoutes.products(page, size);
+  const url = apiRoutes.products.getAll(page, size);
   try {
     const response = await instance.get(url);
     return response.data;
@@ -75,6 +75,22 @@ export const getAllProducts = async (page, size) => {
     }
   }
 };
+
+/** 인기 상품 조회 */
+export const getPopularProducts = async (page, size, sortBy) => {
+  const url = apiRoutes.products.popular(page, size, sortBy);
+  try {
+    const response = await instance.get(url);
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.log(error)
+      return null;
+    }
+  }
+}
+
+
 /** 상품 상세 페이지 seller storename 조회 */
 export const getProductDetail2 = async (productId) => {
   const res = await instance.get(`/products/detail/${productId}`);

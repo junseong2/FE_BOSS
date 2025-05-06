@@ -1,9 +1,9 @@
 
 import { Routes, Route } from 'react-router-dom';
-import PostList from './ContactPage/Components/PostList';
-import Post from './ContactPage/Components/Post';
-import PostWriting from './ContactPage/Components/PostWriting';
-import PostArticle from './ContactPage/Components/PostArticle';
+import PostList from './Components/PostList';
+import Post from './Components/Post';
+import PostWriting from './Components/PostWriting';
+import PostArticle from './Components/PostArticle';
 
 function ContactPage() {
   return (

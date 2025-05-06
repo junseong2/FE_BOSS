@@ -16,13 +16,13 @@ import ScrollToTop from './components/layout/ScrollToTop';
 
 import SignIn from './pages/SignIn.jsx';
 // 기본 페이지
-const AboutPage = lazy(() => import('./pages/AboutPage'));
-const CartPage = lazy(() => import('./pages/CartPage'));
+const AboutPage = lazy(() => import('./pages/about/AboutPage'));
+const CartPage = lazy(() => import('./pages/cart/CartPage'));
 const CameraCapturePage = lazy(() => import('./pages/CameraCapturePage'));
-const ContactPage = lazy(() => import('./pages/ContactPage'));
-const MyPage = lazy(() => import('./pages/MyPage/MyPage'));
-const EventPage = lazy(() => import('./pages/EventPage'));
-const ProductPage = lazy(() => import('./pages/ProductPage'));
+const ContactPage = lazy(() => import('./pages/contact/ContactPage.jsx'));
+const MyPage = lazy(() => import('./pages/myPage/MyPage'));
+const EventPage = lazy(() => import('./pages/event/EventPage'));
+const ProductPage = lazy(() => import('./pages/product/ProductPage'));
 const ChatBot = lazy(() => import('./components/layout/ChatBot'));
 const CategoryPage = lazy(() => import('./pages/CategoryPage'));
 const SearchPage = lazy(() => import('./pages/SearchPage'));

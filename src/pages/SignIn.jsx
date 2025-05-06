@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import fetchUserInfo from '../utils/api';
-import { getUserInfo } from '../services/auth.service';
 import { getToken } from '../utils/storage';
-import { useUser } from '../context/UserContext'; // ✅ Context import
+import { useUserContext } from '../context/UserContext'; 
 import kakao from '../assets/kakao_login_logo.png'
 import naver from '../assets/naver_login_logo.png'
 import { BASE_URL } from '../lib/api';
 
 function SignIn({ onClose, onLoginSuccess }) {
-  const { setUserId, setUserName, setRecommendedProducts, setRole } = useUser();
+  const { setUserId, setUserName, setRecommendedProducts, setRole } = useUserContext();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,19 +16,11 @@ function SignIn({ onClose, onLoginSuccess }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // 로그인 폼의 이메일, 비밀번호 상태 관리
-
-
-
-  // 사용자 정보 상태 관리
-  
-  const [phones, setPhones] = useState([]);
-  const [addresses, setAddresses] = useState([]);
   // 로그인 상태 추적
   const checkLoginStatus = async () => {
     try {
       const res = await fetch(`${BASE_URL}/auth/user-info`, {
-        credentials: 'include', // ✅ 쿠키 포함 필수!
+        credentials: 'include', //  쿠키 포함 필수
       });
   
       if (res.ok) {
@@ -46,7 +37,6 @@ function SignIn({ onClose, onLoginSuccess }) {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.has('code') && (window.location.href.includes('naver') || window.location.href.includes('kakao'))) {
-      console.log("✅ 소셜 로그인 콜백 감지됨, 사용자 정보 요청");
       fetchUserInfo(setUserId, setUserName, setEmail, setPhones, setAddresses);
       onClose?.();
     }
@@ -57,7 +47,6 @@ function SignIn({ onClose, onLoginSuccess }) {
   }, [location.search]);
 
   // 로그인 요청
-
   const handleLogin = async () => {
     try {
       const response = await fetch(BASE_URL+'/auth/locallogin', {
@@ -91,9 +80,8 @@ function SignIn({ onClose, onLoginSuccess }) {
         const recommendData = await recommendRes.json();
         setRecommendedProducts(recommendData);
 
-        if (onLoginSuccess) onLoginSuccess(); // ✅ Top.jsx에 로그인 성공 알림
+        if (onLoginSuccess) onLoginSuccess(); // Top.jsx에 로그인 성공 알림
         onClose();
-        // navigate('/');
       } else {
         alert('로그인 실패: ' + result.error);
       }
