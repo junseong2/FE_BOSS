@@ -4,7 +4,6 @@ import instance from '../configs/axios.config';
 import { apiRoutes } from '../configs/api-urls';
 import { BASE_URL } from '../lib/api';
 
-// { productId: product.productId, quantity }
 export const addToCart = async (data) => {
   try {
     const response = await instance.post(BASE_URL+'/cart/add', data);

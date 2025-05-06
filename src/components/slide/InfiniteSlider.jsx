@@ -7,7 +7,7 @@ import 'swiper/css/navigation';
 import { Pagination, Navigation, Autoplay } from 'swiper/modules';
 
 export default function InfiniteSlider() {
-  const BASE_IMAGE_URL = import.meta.env.VITE_BACKEND_URL;
+  const BASE_IMAGE_URL = "https://bossassets.s3.amazonaws.com";
 
   const progressCircle = useRef(null);
   const progressContent = useRef(null);
@@ -30,20 +30,22 @@ export default function InfiniteSlider() {
           delay: 2500,
           disableOnInteraction: false,
         }}
-        navigation={true}
+        // navigation={true}
         modules={[Pagination, Navigation, Autoplay]}
         onAutoplayTimeLeft={onAutoplayTimeLeft}
         className='mySwiper h-[700px]'
-        
+
       >
         {[1, 2, 3].map((num) => (
           <SwiperSlide key={num}>
-<img
-  src={`${BASE_IMAGE_URL}/banner${num}.jpg`}
-  alt={`배너 ${num}`}
-  className="w-full h-full object-cover object-center"
-  onError={(e) => (e.currentTarget.src = '/placeholder.jpg')}
-/>
+            <img
+              src={`${BASE_IMAGE_URL}/banner${num}.jpg` || 'https://via.assets.so/img.jpg?w=1600&h=600&tc=&bg=#cecece&t=plcaeimage'}
+              alt={`배너 ${num}`}
+              className="w-full h-full object-cover object-center"
+              onError={(e) => {
+                e.currentTarget.src = 'https://via.assets.so/img.jpg?w=1600&h=600&tc=&bg=#cecece&t=plcaeimage'
+              }}
+            />
 
           </SwiperSlide>
         ))}

@@ -4,6 +4,7 @@ import { MdDeleteForever } from 'react-icons/md';
 import { IoPencil } from 'react-icons/io5';
 import TimeAgo from 'react-timeago';
 import { Rating } from '@smastrom/react-rating';
+import noImage from '../../../../assets/noImage.jpg'
 
 export default function SellerReviewItem({
   review,
@@ -60,7 +61,13 @@ export default function SellerReviewItem({
           <div className='mt-4'>
             <div className='flex gap-4 mb-3'>
               <div className='w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400'>
-                <Package className='w-6 h-6' />
+                <img 
+                className='w-full h-full object-cover rounded-lg'
+                src={"https://bossassets.s3.amazonaws.com/"+ review.imageList[0]} alt={review.productName} onError={(e)=>{
+                  e.currentTarget.onerror = null; 
+                  e.currentTarget.src = noImage;
+
+                }}/>
               </div>
               <div>
                 <h4 className='font-semibold mb-1 text-gray-800'>{review.productName}</h4>

@@ -12,9 +12,9 @@ import { getOrderDetail, getOrders } from "../../services/order.service"
 const orderStatus = [
   // 탭 목 데이터
   { key: "", label: "전체내역" },
-  { key: "PENDING", label: "결제대기" },
-  { key: "PAID", label: "결제완료" },
-  { key: "CANCELLED", label: "결제취소" },
+  { key: "PENDING", label: "배송준비중" },
+  { key: "PAID", label: "배송완료" },
+  { key: "CANCELLED", label: "배송취소" },
 ]
 
 const paymentStatus = [
@@ -120,6 +120,7 @@ function SellerOrderPage() {
             <SellerOrderTable
               orders={orders}
               paymentStatus={paymentStatus}
+              orderStatus={orderStatus}
               onOrderDetailFetch={getOrderDetailFetch}
               orderDetail={orderDetail}
               detailLoading={detailLoading}

@@ -61,11 +61,11 @@ export default function SellerMonthlyGraph({ data }) {
         label: "월별 매출",
         data: values,
         backgroundColor: [
-          "rgba(44, 62, 80, 0.8)", // 블루 그레이
-          "rgba(26, 43, 62, 0.8)", // 딥 블루
-          "rgba(22, 160, 133, 0.8)", // 에메랄드
-          "rgba(230, 126, 34, 0.8)", // 오렌지
-          "rgba(142, 68, 173, 0.8)", // 퍼플
+          "rgba(0, 123, 255, 0.8)",    // 선명한 파랑
+          "rgba(255, 0, 0, 0.8)",      // 선명한 빨강
+          "rgba(0, 200, 83, 0.8)",     // 선명한 초록
+          "rgba(255, 193, 7, 0.8)",    // 선명한 노랑
+          "rgba(111, 66, 193, 0.8)",   // 선명한 보라
         ],
         borderColor: "#ffffff",
         borderWidth: 1,

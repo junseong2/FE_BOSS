@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { UserProvider } from './context/UserContext.jsx';
 import { Toaster } from 'react-hot-toast';
@@ -7,7 +7,7 @@ import { Toaster } from 'react-hot-toast';
 import AppLayout from './AppLayout';
 import ShopPage from './pages/ShopPage';
 import IntroPage from './pages/IntroPage';
-import './index.css'; // ✅ Tailwind가 적용된 index.css 사용
+import './index.css';
 import '@smastrom/react-rating/style.css';
 import Top from './components/layout/Top';
 import MenuBar from './MenuBar';
@@ -16,7 +16,6 @@ import ScrollToTop from './components/layout/ScrollToTop';
 
 import SignIn from './pages/SignIn.jsx';
 // 기본 페이지
-// const SignIn = lazy(() => import('./pages/SignIn.jsx'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
 const CameraCapturePage = lazy(() => import('./pages/CameraCapturePage'));
@@ -62,14 +61,11 @@ import { BASE_URL } from './lib/api.js';
 import SuspenseFallback from './components/SuspenseFallback.jsx';
 
 function App() {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [storename, setStorename] = useState(null);
   const [headerId, setHeaderId] = useState(null);
   const [sellerId, setSellerId] = useState(null);
-  const [userId, setUserId] = useState(null);
   const [menuBarId, setMenuBarId] = useState(null);
   const [navigationId, setNavigationId] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [sellerMenubarColor, setSellerMenubarColor] = useState('#ffffff');
 
   const location = useLocation();
@@ -78,7 +74,6 @@ function App() {
     location.pathname.toLowerCase().startsWith('/admin') ||
     location.pathname.toLowerCase().startsWith('/editor') ||
     location.pathname.toLowerCase().startsWith('/mobileeditor');
-  const hiddenPaths = location.pathname.toLowerCase().startsWith('/signin');
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   useEffect(() => {
@@ -92,7 +87,6 @@ function App() {
           const data = await response.json();
           setUserId(data.userId);
           setUserName(data.userName);
-          console.log('✅ 로그인된 유저 정보 불러오기 성공', data);
         } else {
           console.log('❌ 로그인되지 않은 상태입니다.');
         }
@@ -106,7 +100,6 @@ function App() {
 
   useEffect(() => {
     if (!storename) {
-      setLoading(false);
       return;
     }
     const fetchSellerInfo = async () => {
@@ -123,18 +116,13 @@ function App() {
 
         const sellerData = await sellerResponse.json();
 
-        console.log('📌 [fetchSellerInfo] 응답 데이터:', sellerData);
-
         setSellerId(sellerData.sellerId ?? null); // sellerId 업데이트
         setHeaderId(sellerData.headerId ?? null);
         setMenuBarId(sellerData.menuBarId ?? null);
         setNavigationId(sellerData.navigationId ?? null);
         setSellerMenubarColor(sellerData.seller_menubar_color ?? '#ffffff');
-        console.log('📌 [fetchSellerInfo] 상태 업데이트 후 sellerId:', sellerData.sellerId);
       } catch (error) {
         console.error(' fetchSellerInfo API 호출 실패:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -174,8 +162,6 @@ function App() {
   ];
   const firstSegment = location.pathname.split('/')[1] || '';
   const isStorePage = firstSegment && !reservedPaths.includes(firstSegment.toLowerCase());
-
-  console.log('📌 APP.js 시작:');
 
   return (
     <CartProvider>
@@ -501,18 +487,10 @@ function App() {
             </Routes>
           </main>
 
-          {/* <Footer /> */}
         </div>
 
         {!isAdminPage && isMobile && <BottomNavigation />}
-
         {!isStorePage && !isAdminPage && <Footer />}
-        {/* ✅ 로딩 스피너 */}
-        {loading && (
-          <div className='fixed inset-0 w-full h-screen bg-white/90 flex justify-center items-center text-lg font-bold z-[9999]'>
-            로딩 중...
-          </div>
-        )}
       </UserProvider>
     </CartProvider>
   );

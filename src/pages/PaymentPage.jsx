@@ -22,6 +22,7 @@ import kakaoIcon from '../assets/pay-kakao.png';
 import totalIcon from '../assets/pay-total.png';
 import tossIcon from '../assets/pay-toss.png';
 import paycoIcon from '../assets/pay-payco.png';
+import noImage from '../assets/noImage.jpg'
 
 function PaymentPage() {
   const { setTrigger: cartItemStateUpdateTrigger } = useCartStore();
@@ -528,7 +529,7 @@ function PaymentPage() {
                               alt={item.productName}
                               className='w-full h-full object-cover'
                               onError={(e) => {
-                                e.currentTarget.src = '/placeholder.svg';
+                                e.currentTarget.src = noImage;
                               }}
                             />
                           ) : (

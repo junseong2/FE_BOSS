@@ -1,16 +1,10 @@
 
 import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
-  IoHomeOutline,
   IoSearch,
-  IoCartOutline,
-  IoPersonOutline,
-  IoLogOutOutline,
   IoClose,
 } from 'react-icons/io5';
-import { MdDashboard, MdStorefront } from 'react-icons/md';
-import { useCart } from '../../context/CartContext';
 import fetchUserInfo from '../../utils/api.js';
 import { useUser } from '../../context/UserContext';
 import SignIn from '../../pages/SignIn';
@@ -24,42 +18,16 @@ export default function Top() {
   const { userId, setUserId, userName, setUserName, role, setRole, storeName, setStoreName } =
     useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [emails, setEmails] = useState(['']);
-  const [phones, setPhones] = useState(['']);
-  const [addresses, setAddresses] = useState([
-    { address1: '', address2: '', post: '', isDefault: false },
-  ]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showCartPopup, setShowCartPopup] = useState(false);
-  const { cartItems, loadCart } = useCart();
-  const [loadingCart, setLoadingCart] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
   const [isSellerModalOpen, setIsSellerModalOpen] = useState(false);
   const [modalAnimation, setModalAnimation] = useState(false);
-
-  const [trigger, setTrigger] = useState(false);
-
-  const handleAddToCart = async (productId) => {
-    await fetch(BASE_URL+`/cart/add`, {
-      method: "POST",
-      body: JSON.stringify({ productId }),
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-    });
-
-    // ✅ 장바구니 새로고침
-    loadCart();
-  };
 
   useEffect(() => {
     const getUserInfo = async () => {
       await fetchUserInfo(
         setUserId,
         setUserName,
-        setEmails,
-        setPhones,
-        setAddresses,
         (role) => {
           setRole(role);
           setTrigger((prev) => !prev); // 👈 트리거 강제 업데이트
@@ -112,22 +80,6 @@ export default function Top() {
       document.body.style.overflow = '';
     };
   }, [isSellerModalOpen]);
-
-  const handleSignInClick = () => {
-    const currentUrl = location.pathname + location.search;
-    console.log('현재 URL:', currentUrl);
-    setIsModalOpen(true);
-  };
-
-  const handleLogoutClick = async () => {
-    const confirmLogout = window.confirm('정말 로그아웃하시겠습니까?');
-    if (!confirmLogout) return;
-    await fetch(BASE_URL+'/auth/logout', { method: 'GET', credentials: 'include' });
-    setUserId(null);
-    setUserName(null);
-    setRole(null);
-    navigate('/');
-  };
 
   const closeSellerModal = () => {
     setModalAnimation(false);

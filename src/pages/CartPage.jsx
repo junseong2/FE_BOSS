@@ -19,6 +19,7 @@ import { useCart } from '../context/CartContext';
 import { useCartStore } from '../store/cartStore';
 
 import { BASE_URL } from '../lib/api';
+import noImage from '../assets/noImage.jpg'
 
 
 // Define the cn utility function
@@ -344,6 +345,7 @@ export default function CartPage() {
                               src={item.productThumbnail}
                               alt={item.productName}
                               className='w-full h-full object-cover'
+                              onError={(e) => (e.currentTarget.src = noImage )}
                             />
                           ) : (
                             <Package className='h-8 w-8 text-gray-300' />
