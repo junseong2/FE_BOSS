@@ -3,17 +3,15 @@ import { useUserContext } from '../../context/UserContext';
 import HomeBanner from './components/HomeBanner';
 import HomeCategories from './components/HomeCategories';
 import HomeProducts from './components/HomeProducts';
-import RecommendHomeProducts from './components/RecommendHomeProducts'; // ✅ 추천 전용 컴포넌트
+import RecommendHomeProducts from './components/RecommendHomeProducts';
 import HomeStores from './components/HomeStores';
-import { BASE_URL } from '../../lib/api';
-import { getPopularProducts } from '../../services/product.service';
+import { getPopularProducts, getRecommendProducts } from '../../services/product.service';
 
 
 export default function HomePage() {
-  const { recommendedProducts } = useUserContext();
+  const { recommendProductIds } = useUserContext();
   const [recommendedProductList, setRecommendedProductList] = useState([]);
   const [products, setProducts] = useState([]);
-
 
 
 
@@ -23,30 +21,28 @@ export default function HomePage() {
     console.log(data)
     setProducts(data)
   }
+
+  // 추천 상품 정보 fetch
+  async function recommendProductsFetch() {
+    if (!recommendProductIds || recommendProductIds.length === 0) return;
+
+    try {
+      const results = getRecommendProducts({ recommendedProductIds: recommendProductIds })
+      setRecommendedProductList(results);
+    } catch (error) {
+      console.error('추천 상품 불러오기 실패:', error);
+    }
+  }
+
+
+  useEffect(() => {
+    recommendProductsFetch()
+  }, [recommendProductIds]);
+
   useEffect(() => {
     popularProductsFetch()
   }, []);
 
-  
-  // 추천 상품 정보 fetch
-  useEffect(() => {
-    const fetchRecommendedProductDetails = async () => {
-      if (!recommendedProducts || recommendedProducts.length === 0) return;
-
-      try {
-        const productDetailPromises = recommendedProducts.map((id) =>
-          fetch(BASE_URL + `/products/${id}`).then((res) => res.json()),
-        );
-
-        const results = await Promise.all(productDetailPromises);
-        setRecommendedProductList(results);
-      } catch (error) {
-        console.error('추천 상품 불러오기 실패:', error);
-      }
-    };
-
-    fetchRecommendedProductDetails();
-  }, [recommendedProducts]);
 
   return (
     <div className='w-full h-full'>

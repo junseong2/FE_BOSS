@@ -1,4 +1,4 @@
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { apiRoutes } from '../configs/api-urls';
 import instance from '../configs/axios.config';
 import { toastSuccess } from '../components/toast/CustomToast';
@@ -96,3 +96,20 @@ export const getProductDetail2 = async (productId) => {
   const res = await instance.get(`/products/detail/${productId}`);
   return res.data;
 };
+
+
+/** 협업 필터링 기반 추천 상품 조회 */
+export const getRecommendProducts = async ({ recommendedProductIds }) => {
+
+  try {
+    const productDetailPromises = recommendedProductIds.map((id) =>
+      axios.get(apiRoutes.products.getAllWithRecommend(id)).then((res) => res.data),
+    );
+
+    const results = await Promise.all(productDetailPromises); // 비동기 프로미스를 병렬 처리하여 한 번에 응답받아 사용
+    return results
+  } catch (error) {
+    console.log(error)
+    return null;
+  }
+}
