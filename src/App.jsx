@@ -6,7 +6,6 @@ import { Toaster } from 'react-hot-toast';
 
 import AppLayout from './AppLayout';
 import ShopPage from './pages/ShopPage';
-import IntroPage from './pages/IntroPage';
 import './index.css';
 import '@smastrom/react-rating/style.css';
 import Top from './components/layout/Top';
@@ -14,7 +13,6 @@ import MenuBar from './MenuBar';
 import BottomNavigation from './components/layout/BottomNavigation';
 import ScrollToTop from './components/layout/ScrollToTop';
 
-import SignIn from './pages/SignIn.jsx';
 // 기본 페이지
 const AboutPage = lazy(() => import('./pages/about/AboutPage'));
 const CartPage = lazy(() => import('./pages/cart/CartPage'));
@@ -214,16 +212,7 @@ function App() {
                     </Suspense>
                   }
                 />
-                <Route
-                  path='intro'
-                  element={
-                    <Suspense fallback={<SuspenseFallback message='소개 페이지 불러오는 중...' />}>
-                      <IntroPage
-                        {...{ sellerId, headerId, menuBarId, navigationId, sellerMenubarColor }}
-                      />
-                    </Suspense>
-                  }
-                />
+         
               </Route>
 
               {/* 일반 페이지 */}
@@ -264,14 +253,6 @@ function App() {
                 element={
                   <Suspense fallback={<SuspenseFallback message='카메라 기능 불러오는 중...' />}>
                     <CameraCapturePage />
-                  </Suspense>
-                }
-              />
-              <Route
-                path='/signin'
-                element={
-                  <Suspense fallback={<SuspenseFallback message='로그인 페이지 불러오는 중...' />}>
-                    <SignIn />
                   </Suspense>
                 }
               />

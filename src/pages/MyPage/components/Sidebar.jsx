@@ -20,7 +20,7 @@ const Sidebar = ({ activeTab, setActiveTab, userId, userName, setUserId, setUser
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const res = await fetch(BASE_URL+"/auth/user-info", {
+        const res = await fetch(BASE_URL + "/auth/user-info", {
           method: "GET",
           credentials: "include",
         })
@@ -46,7 +46,7 @@ const Sidebar = ({ activeTab, setActiveTab, userId, userName, setUserId, setUser
     if (!confirmLogout) return
 
     try {
-      await fetch(BASE_URL+"/auth/logout", {
+      await fetch(BASE_URL + "/auth/logout", {
         method: "GET",
         credentials: "include",
       })
@@ -81,7 +81,7 @@ const Sidebar = ({ activeTab, setActiveTab, userId, userName, setUserId, setUser
   return (
     <>
       {/* Mobile Menu Button - Always visible on small screens */}
-      <div className="md:hidden fixed top-20 left-4 z-30">
+      <div className="md:hidden fixed top-1/2 -translate-y-1/2 z-[60]">
         <button
           onClick={toggleMobileMenu}
           className="p-2 rounded-full bg-white shadow-md text-gray-600 hover:bg-gray-50 transition-colors"
@@ -94,7 +94,7 @@ const Sidebar = ({ activeTab, setActiveTab, userId, userName, setUserId, setUser
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-20 backdrop-blur-sm"
+          className="md:hidden fixed inset-0 bg-[rgba(0,0,0,0.6)] z-[60] backdrop-blur-sm"
           onClick={() => setIsMobileMenuOpen(false)}
         ></div>
       )}
@@ -102,10 +102,10 @@ const Sidebar = ({ activeTab, setActiveTab, userId, userName, setUserId, setUser
       {/* Sidebar Container */}
       <div
         className={`
-          fixed md:relative z-25
+          fixed md:relative z-60 top-1/2 -translate-y-1/2
           ${isMobileMenuOpen ? "left-0" : "-left-80"} 
           md:left-0 transition-all duration-300 ease-in-out
-          w-72 md:w-64 h-full overflow-y-auto
+          w-72 md:w-64 md:h-full h-10/12 overflow-y-auto
           shadow-md rounded-xl
         `}
       >
@@ -126,10 +126,9 @@ const Sidebar = ({ activeTab, setActiveTab, userId, userName, setUserId, setUser
                 key={item.id}
                 onClick={() => handleTabClick(item.id)}
                 className={`flex items-center gap-3 px-4 py-3 text-sm rounded-lg font-medium transition-all
-                  ${
-                    activeTab === item.id
-                      ? "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300"
-                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50"
+                  ${activeTab === item.id
+                    ? "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50"
                   }`}
               >
                 <span
@@ -160,9 +159,8 @@ const Sidebar = ({ activeTab, setActiveTab, userId, userName, setUserId, setUser
             <button
               key={item.id}
               onClick={() => handleTabClick(item.id)}
-              className={`flex flex-col items-center justify-center p-2 ${
-                activeTab === item.id ? "text-blue-500 dark:text-blue-400" : "text-gray-600 dark:text-gray-400"
-              }`}
+              className={`flex flex-col items-center justify-center p-2 ${activeTab === item.id ? "text-blue-500 dark:text-blue-400" : "text-gray-600 dark:text-gray-400"
+                }`}
             >
               {item.icon}
               <span className="text-xs mt-1">{item.label.split(" ")[0]}</span>

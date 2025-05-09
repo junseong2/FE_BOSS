@@ -7,7 +7,7 @@ import {
 } from 'react-icons/io5';
 import fetchUserInfo from '../../utils/api.js';
 import { useUserContext } from '../../context/UserContext';
-import SignIn from '../../pages/SignIn';
+import SignIn from '../../pages/signin/SignIn.jsx';
 import SellerRegistrationPage from '../../pages/sellerSignup/SellerRegistrationPage.jsx';
 import bossLogo from '../../assets/boss_logo.jpg';
 import MenuButton from '../MenuButton.jsx';
@@ -92,11 +92,9 @@ export default function Top() {
 
   return (
     <>
-      <div className='h-[70px]'></div>
       {/* 헤더 */}
-      <header className=' fixed top-0 left-0 w-full h-[70px] bg-white border-b py-3 border-gray-200  px-4 z-[20] '>
+      <header className='w-full h-[70px] border-b py-3 border-gray-200  px-4 z-[31] '>
         <div className='max-w-[1200px] w-full mx-auto flex items-center justify-between px-4'>
-          {/*=> MenuBar에 있던 삼지창 버튼을 별도 컴포넌트로 분리하고, 이를 zustand를 사용해 전역 상태로 메뉴바 토글 관리하게 바꿈 */}
           <div className='flex items-center gap-3'>
             {/* 카테고리 토글 버튼(메뉴바) */}
             <MenuButton />
@@ -155,6 +153,7 @@ export default function Top() {
           className={` bg-white rounded-lg shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto`}
         >
           <SignIn
+            isModalOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             onLoginSuccess={() => setTrigger((prev) => !prev)} // 트리거 전달
           />

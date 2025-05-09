@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import fetchUserInfo from '../utils/api';
-import { getToken } from '../utils/storage';
-import { useUserContext } from '../context/UserContext'; 
-import kakao from '../assets/kakao_login_logo.png'
-import naver from '../assets/naver_login_logo.png'
-import { BASE_URL } from '../lib/api';
+import { useUserContext } from '../../context/UserContext';
 
-function SignIn({ onClose, onLoginSuccess }) {
+import { getToken } from '../../utils/storage';
+import fetchUserInfo from '../../utils/api';
+import { BASE_URL } from '../../lib/api';
+import { loginRequest } from '../../services/auth.service';
+
+import kakao from '../../assets/kakao_login_logo.png'
+import naver from '../../assets/naver_login_logo.png'
+
+function SignIn({ onClose, onLoginSuccess, isModalOpen }) {
   const { setUserId, setUserName, setRecommendedProducts, setRole } = useUserContext();
 
   const navigate = useNavigate();
@@ -22,7 +25,7 @@ function SignIn({ onClose, onLoginSuccess }) {
       const res = await fetch(`${BASE_URL}/auth/user-info`, {
         credentials: 'include', //  쿠키 포함 필수
       });
-  
+
       if (res.ok) {
         const data = await res.json();
         setUserName(data.userName);
@@ -32,7 +35,7 @@ function SignIn({ onClose, onLoginSuccess }) {
       console.error('로그인 상태 확인 중 오류 발생:', error);
     }
   };
-  
+
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -41,58 +44,46 @@ function SignIn({ onClose, onLoginSuccess }) {
       onClose?.();
     }
   }, [location.search]);
-  
+
   useEffect(() => {
     checkLoginStatus();
   }, [location.search]);
 
   // 로그인 요청
   const handleLogin = async () => {
-    try {
-      const response = await fetch(BASE_URL+'/auth/locallogin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include',
-      });
+    const userInfo = { email, password }
+    const data = await loginRequest(userInfo)
+    console.log(data)
+    if (data.userName !== null) {
+      alert("로그인 성공")
 
-      const result = await response.json();
+      setUserName(result.userName);
 
-      if (response.ok) {
-        alert('로그인 성공!');
-        setUserName(result.userName);
+      await fetchUserInfo(setUserId, setUserName, undefined, undefined, undefined, setRole);
 
-        await fetchUserInfo(setUserId, setUserName, undefined, undefined, undefined, setRole);
+      const token = getToken();
+      const currentUserId = result.userId;
 
-        const token = getToken();
-        const currentUserId = result.userId;
+      if (!currentUserId) throw new Error('userId가 null입니다');
 
-        if (!currentUserId) throw new Error('userId가 null입니다');
+      const recommendRes = await fetch(
+        BASE_URL + `/vector/recommend?userId=${currentUserId}&n=20&m=3`,
+        {
+          method: 'GET',
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-        const recommendRes = await fetch(
-          BASE_URL+`/vector/recommend?userId=${currentUserId}&n=20&m=3`,
-          {
-            method: 'GET',
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+      const recommendData = await recommendRes.json();
+      setRecommendedProducts(recommendData);
 
-        const recommendData = await recommendRes.json();
-        setRecommendedProducts(recommendData);
-
-        if (onLoginSuccess) onLoginSuccess(); // Top.jsx에 로그인 성공 알림
-        onClose();
-      } else {
-        alert('로그인 실패: ' + result.error);
-      }
-    } catch (error) {
-      console.error('❌ 로그인 요청 중 오류:', error);
-      alert('로그인 중 오류가 발생했습니다.');
+      onLoginSuccess(); // Top.jsx에 로그인 성공 알림
+      onClose();
     }
-  };
+  }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-transparent z-50">
+    <div aria-label='로그인 모달' aria-hidden={isModalOpen ? 'false' : 'true'} className={`${isModalOpen ? 'visible opacity-100' : 'invisible opacity-0'} fixed inset-0 flex items-center justify-center bg-transparent z-50`}>
       <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-sm relative">
         <button
           className="absolute top-4 right-4 text-gray-600 hover:text-blue-500 text-xl font-bold"
