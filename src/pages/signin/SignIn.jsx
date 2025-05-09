@@ -37,35 +37,24 @@ function SignIn({ onClose, onLoginSuccess, isModalOpen }) {
   };
 
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    if (params.has('code') && (window.location.href.includes('naver') || window.location.href.includes('kakao'))) {
-      fetchUserInfo(setUserId, setUserName, setEmail, setPhones, setAddresses);
-      onClose?.();
-    }
-  }, [location.search]);
-
-  useEffect(() => {
-    checkLoginStatus();
-  }, [location.search]);
-
   // 로그인 요청
   const handleLogin = async () => {
     const userInfo = { email, password }
     const data = await loginRequest(userInfo)
-    console.log(data)
+
     if (data.userName !== null) {
       alert("로그인 성공")
 
-      setUserName(result.userName);
+      setUserName(data.userName);
 
       await fetchUserInfo(setUserId, setUserName, undefined, undefined, undefined, setRole);
 
       const token = getToken();
-      const currentUserId = result.userId;
-
+      const currentUserId = data.userId;
+      console.log(data)
       if (!currentUserId) throw new Error('userId가 null입니다');
 
+      // 로그인 시 협업 필터링 기반 사용자 추천 상품이 조회되도록
       const recommendRes = await fetch(
         BASE_URL + `/vector/recommend?userId=${currentUserId}&n=20&m=3`,
         {
@@ -81,6 +70,20 @@ function SignIn({ onClose, onLoginSuccess, isModalOpen }) {
       onClose();
     }
   }
+
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.has('code') && (window.location.href.includes('naver') || window.location.href.includes('kakao'))) {
+      fetchUserInfo(setUserId, setUserName, setEmail, setPhones, setAddresses);
+      onClose?.();
+    }
+  }, [location.search]);
+
+  useEffect(() => {
+    checkLoginStatus();
+  }, [location.search]);
+
 
   return (
     <div aria-label='로그인 모달' aria-hidden={isModalOpen ? 'false' : 'true'} className={`${isModalOpen ? 'visible opacity-100' : 'invisible opacity-0'} fixed inset-0 flex items-center justify-center bg-transparent z-50`}>

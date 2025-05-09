@@ -18,7 +18,6 @@ export default function HomePage() {
   // 인기 상품 조회
   async function popularProductsFetch() {
     const data = await getPopularProducts(0, 30, 'daily')
-    console.log(data)
     setProducts(data)
   }
 
@@ -46,14 +45,14 @@ export default function HomePage() {
 
   return (
     <div className='w-full h-full'>
-      <HomeBanner />
+      {/* <HomeBanner /> */}
       <div className='max-w-[1200px] w-full mx-auto'>
         {/* 상품 카테고리 */}
         <HomeCategories />
 
         {/* 상품 리스트 */}
         <div>
-          <HomeStores />
+          {/* <HomeStores /> */}
           <HomeProducts
             products={products?.map((product) => product).sort((a, b) => b.productId - a.productId)}
             title={'고객이 많이 찾는 상품'}

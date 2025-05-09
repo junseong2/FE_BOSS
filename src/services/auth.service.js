@@ -22,6 +22,7 @@ export const loginRequest = async (formData) => {
   const url = apiRoutes.auth.signin();
   try {
     const response = await instance.post(url, formData);
+    console.log(response)
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {

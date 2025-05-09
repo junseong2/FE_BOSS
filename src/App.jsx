@@ -19,7 +19,6 @@ const CartPage = lazy(() => import('./pages/cart/CartPage'));
 const CameraCapturePage = lazy(() => import('./pages/CameraCapturePage'));
 const ContactPage = lazy(() => import('./pages/contact/ContactPage.jsx'));
 const MyPage = lazy(() => import('./pages/myPage/MyPage'));
-const EventPage = lazy(() => import('./pages/event/EventPage'));
 const ProductPage = lazy(() => import('./pages/product/ProductPage'));
 const ChatBot = lazy(() => import('./components/layout/ChatBot'));
 const CategoryPage = lazy(() => import('./pages/CategoryPage'));
@@ -232,14 +231,7 @@ function App() {
                   </Suspense>
                 }
               />
-              <Route
-                path='/event'
-                element={
-                  <Suspense fallback={<SuspenseFallback message='이벤트 페이지 불러오는 중...' />}>
-                    <EventPage />
-                  </Suspense>
-                }
-              />
+      
               <Route
                 path='/contact/*'
                 element={

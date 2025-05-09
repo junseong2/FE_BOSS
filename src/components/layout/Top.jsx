@@ -19,28 +19,16 @@ export default function Top() {
     useUserContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const navigate = useNavigate();
   const [isSellerModalOpen, setIsSellerModalOpen] = useState(false);
   const [modalAnimation, setModalAnimation] = useState(false);
+  const [_, setTrigger] = useState(false)
 
-  useEffect(() => {
-    const getUserInfo = async () => {
-      await fetchUserInfo(
-        setUserId,
-        setUserName,
-        (role) => {
-          setRole(role);
-          setTrigger((prev) => !prev); // 👈 트리거 강제 업데이트
-        },
-        setStoreName,
-      );
-    };
-    getUserInfo();
-  }, []);
+  const navigate = useNavigate();
+
 
   const fetchSellerStoreName = async (userId) => {
     try {
-      const res = await fetch(BASE_URL+`/seller/seller-info-byuserid/${userId}`);
+      const res = await fetch(BASE_URL + `/seller/seller-info-byuserid/${userId}`);
       const data = await res.json();
 
       if (data.storename) {
@@ -53,7 +41,33 @@ export default function Top() {
     }
   };
 
-  
+  const closeSellerModal = () => {
+    setModalAnimation(false);
+    setTimeout(() => setIsSellerModalOpen(false), 300);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
+  useEffect(() => {
+    const getUserInfo = async () => {
+      await fetchUserInfo(
+        setUserId,
+        setUserName,
+        (role) => {
+          setRole(role);
+          setTrigger((prev) => !prev);
+        },
+        setStoreName,
+      );
+    };
+    getUserInfo();
+  }, []);
+
   useEffect(() => {
     console.log('🧪 useEffect 감지됨:', { role, userId, storeName });
 
@@ -78,17 +92,7 @@ export default function Top() {
     };
   }, [isSellerModalOpen]);
 
-  const closeSellerModal = () => {
-    setModalAnimation(false);
-    setTimeout(() => setIsSellerModalOpen(false), 300);
-  };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
-    }
-  };
 
   return (
     <>
@@ -168,9 +172,8 @@ export default function Top() {
           onClick={closeSellerModal}
         >
           <div
-            className={`bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transition-all duration-500 ${
-              modalAnimation ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-            }`}
+            className={`bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transition-all duration-500 ${modalAnimation ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+              }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* 모달 헤더 */}
