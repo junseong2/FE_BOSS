@@ -17,7 +17,7 @@ export default function UserNav({
   navigate,
   userId,
 }) {
-  const { trigger: cartItemStateTrigger } = useCartStore();
+  const { setTrigger: cartItemStateTrigger } = useCartStore();
   const [cartTotalCount, setCartTotalCount] = useState(0);
   const [dropdown, setDropdown] = useState(false);
 

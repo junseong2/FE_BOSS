@@ -1,9 +1,11 @@
+import { AxiosError } from 'axios';
 import { apiRoutes } from '../configs/api-urls';
 import instance from '../configs/axios.config';
+import { toastError } from '../components/toast/CustomToast';
 
 /** 회원가입 요청 */
 export const registerUser = async (formData) => {
-  const url = apiRoutes.auth.signup(); // ✅ 오타 수정
+  const url = apiRoutes.auth.signup(); 
 
   try {
     const response = await instance.post(url, formData);
@@ -20,8 +22,21 @@ export const loginRequest = async (formData) => {
   const url = apiRoutes.auth.signin();
   try {
     const response = await instance.post(url, formData);
-    return response.status;
+    console.log(response)
+    return response.data;
   } catch (error) {
+    if (error instanceof AxiosError) {
+      const response = error.response
+      if (response.status === 401) {
+        toastError(response.data.error)
+      }
+      if (response.status === 404) {
+        toastError("존재하지 않는 유저입니다. 회원가입을 진행해주세요.")
+      }
+      if (response.status >= 500) {
+        toastError("서버 측 문제로 요청에 실패하였습니다.")
+      }
+    }
     return null;
   }
 };

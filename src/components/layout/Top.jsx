@@ -1,19 +1,13 @@
 
 import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
-  IoHomeOutline,
   IoSearch,
-  IoCartOutline,
-  IoPersonOutline,
-  IoLogOutOutline,
   IoClose,
 } from 'react-icons/io5';
-import { MdDashboard, MdStorefront } from 'react-icons/md';
-import { useCart } from '../../context/CartContext';
 import fetchUserInfo from '../../utils/api.js';
-import { useUser } from '../../context/UserContext';
-import SignIn from '../../pages/SignIn';
+import { useUserContext } from '../../context/UserContext';
+import SignIn from '../../pages/signin/SignIn.jsx';
 import SellerRegistrationPage from '../../pages/sellerSignup/SellerRegistrationPage.jsx';
 import bossLogo from '../../assets/boss_logo.jpg';
 import MenuButton from '../MenuButton.jsx';
@@ -22,34 +16,41 @@ import { BASE_URL } from "../../lib/api.js"
 
 export default function Top() {
   const { userId, setUserId, userName, setUserName, role, setRole, storeName, setStoreName } =
-    useUser();
+    useUserContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [emails, setEmails] = useState(['']);
-  const [phones, setPhones] = useState(['']);
-  const [addresses, setAddresses] = useState([
-    { address1: '', address2: '', post: '', isDefault: false },
-  ]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showCartPopup, setShowCartPopup] = useState(false);
-  const { cartItems, loadCart } = useCart();
-  const [loadingCart, setLoadingCart] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
   const [isSellerModalOpen, setIsSellerModalOpen] = useState(false);
   const [modalAnimation, setModalAnimation] = useState(false);
+  const [_, setTrigger] = useState(false)
 
-  const [trigger, setTrigger] = useState(false);
+  const navigate = useNavigate();
 
-  const handleAddToCart = async (productId) => {
-    await fetch(BASE_URL+`/cart/add`, {
-      method: "POST",
-      body: JSON.stringify({ productId }),
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-    });
 
-    // ✅ 장바구니 새로고침
-    loadCart();
+  const fetchSellerStoreName = async (userId) => {
+    try {
+      const res = await fetch(BASE_URL + `/seller/seller-info-byuserid/${userId}`);
+      const data = await res.json();
+
+      if (data.storename) {
+        setStoreName(data.storename);
+      } else {
+        console.warn('storeName이 없습니다:', data);
+      }
+    } catch (err) {
+      console.error('스토어명 불러오기 실패', err);
+    }
+  };
+
+  const closeSellerModal = () => {
+    setModalAnimation(false);
+    setTimeout(() => setIsSellerModalOpen(false), 300);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+    }
   };
 
   useEffect(() => {
@@ -57,12 +58,9 @@ export default function Top() {
       await fetchUserInfo(
         setUserId,
         setUserName,
-        setEmails,
-        setPhones,
-        setAddresses,
         (role) => {
           setRole(role);
-          setTrigger((prev) => !prev); // 👈 트리거 강제 업데이트
+          setTrigger((prev) => !prev);
         },
         setStoreName,
       );
@@ -70,30 +68,11 @@ export default function Top() {
     getUserInfo();
   }, []);
 
-  const fetchSellerStoreName = async (userId) => {
-    try {
-      console.log("📦 fetchSellerStoreName 호출됨 - userId:", userId);
-      const res = await fetch(BASE_URL+`/seller/seller-info-byuserid/${userId}`);
-      const data = await res.json();
-      console.log('📦 fetchSellerStoreName 응답:', data);
-
-      if (data.storename) {
-        setStoreName(data.storename);
-        console.log('✅ storeName 저장됨:', data.storename);
-      } else {
-        console.warn('⚠️ storeName이 없습니다:', data);
-      }
-    } catch (err) {
-      console.error('❌ 스토어명 불러오기 실패', err);
-    }
-  };
-
-  
   useEffect(() => {
     console.log('🧪 useEffect 감지됨:', { role, userId, storeName });
 
     if (role === 'SELLER' && userId && !storeName) {
-      console.log('🟡 조건 충족 → fetchSellerStoreName 실행');
+      console.log('조건 충족 → fetchSellerStoreName 실행');
       fetchSellerStoreName(userId);
     }
   }, [role, userId]);
@@ -113,41 +92,13 @@ export default function Top() {
     };
   }, [isSellerModalOpen]);
 
-  const handleSignInClick = () => {
-    const currentUrl = location.pathname + location.search;
-    console.log('현재 URL:', currentUrl);
-    setIsModalOpen(true);
-  };
 
-  const handleLogoutClick = async () => {
-    const confirmLogout = window.confirm('정말 로그아웃하시겠습니까?');
-    if (!confirmLogout) return;
-    await fetch(BASE_URL+'/auth/logout', { method: 'GET', credentials: 'include' });
-    setUserId(null);
-    setUserName(null);
-    setRole(null);
-    navigate('/');
-  };
-
-  const closeSellerModal = () => {
-    setModalAnimation(false);
-    setTimeout(() => setIsSellerModalOpen(false), 300);
-  };
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
-    }
-  };
 
   return (
     <>
-      <div className='h-[70px]'></div>
       {/* 헤더 */}
-      <header className=' fixed top-0 left-0 w-full h-[70px] bg-white border-b py-3 border-gray-200  px-4 z-[20] '>
+      <header className='w-full h-[70px] border-b py-3 border-gray-200  px-4 z-[31] '>
         <div className='max-w-[1200px] w-full mx-auto flex items-center justify-between px-4'>
-          {/*=> MenuBar에 있던 삼지창 버튼을 별도 컴포넌트로 분리하고, 이를 zustand를 사용해 전역 상태로 메뉴바 토글 관리하게 바꿈 */}
           <div className='flex items-center gap-3'>
             {/* 카테고리 토글 버튼(메뉴바) */}
             <MenuButton />
@@ -206,6 +157,7 @@ export default function Top() {
           className={` bg-white rounded-lg shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto`}
         >
           <SignIn
+            isModalOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             onLoginSuccess={() => setTrigger((prev) => !prev)} // 트리거 전달
           />
@@ -220,9 +172,8 @@ export default function Top() {
           onClick={closeSellerModal}
         >
           <div
-            className={`bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transition-all duration-500 ${
-              modalAnimation ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-            }`}
+            className={`bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transition-all duration-500 ${modalAnimation ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+              }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* 모달 헤더 */}

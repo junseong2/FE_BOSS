@@ -1,7 +1,6 @@
 /** 휴대폰 유효성 검사 */
 export function phoneNumberCheck(number) {
   let result = /^(01[016789])?[0-9]{3,4}[0-9]{4}$/;
-  console.log(result);
   return result.test(number);
 }
 

@@ -1,7 +1,0 @@
-.input {
-  @apply bg-white p-4 m-2 rounded-lg shadow flex justify-between items-center w-80;
-}
-
-.input-field {
-  @apply bg-white border-2 border-yellow-500 rounded transition focus:ring-2 focus:ring-yellow-500 outline-none;
-}

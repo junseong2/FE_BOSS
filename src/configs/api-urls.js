@@ -5,6 +5,8 @@ export const apiRoutes = {
   products: {
     getAll: (page, size) => BASE_URL + `/products?page=${page}&size=${size}`,
     getById: (productId) => BASE_URL + `/products/${productId}`,
+    popular: (page, size, sortBy) => BASE_URL + `/products/popular?page=${page}&size=${size}&sortBy=${sortBy}`,
+    getAllWithRecommend: (id) => BASE_URL + `/products/${id}`
   },
 
   // 카테고리
@@ -43,7 +45,8 @@ export const apiRoutes = {
       insertMany: () => BASE_URL + `/seller/products/multiple`,
       insert: () => BASE_URL + `/seller/products`,
       delete: () => BASE_URL + `/seller/products`,
-      update: (productId) => BASE_URL + `/seller/products/${productId}`,
+      update: (productId) => BASE_URL + `/seller/products/${productId}`
+
     },
     // 재고 관리
     inventories: {
@@ -122,7 +125,9 @@ export const apiRoutes = {
   },
 
   // 장바구니
-  carts:{
-    count: ()=> BASE_URL + `/cart/count`
+  carts: {
+    count: () => BASE_URL + `/cart/count`,
+    /**장바구니 비우기 */
+    clear: () => BASE_URL + `/cart/clear`
   }
 };

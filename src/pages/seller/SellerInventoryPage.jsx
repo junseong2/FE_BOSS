@@ -12,8 +12,7 @@ import Pagination from '../../components/Pagination';
 const sortList = [
   // 탭 목 데이터
   { key: 'all', label: '전체 목록' },
-  { key: 'warn', label: '재고 부족' },
-  { key: 'soldout', label: '품절' },
+  { key: 'warn', label: '부족/품절' },
 ];
 
 const PAGE_SIZE = 8;

@@ -13,43 +13,33 @@ export default function SellerProductPriceSelector({
   const [discountedPrice, setDiscountedPrice] = useState(0);
   const [discountRate, setDiscountRate] = useState(0);
 
-  // 고정 할인율 목록
   const discountOptions = [2, 3, 5, 10, 15, 20, 25, 30];
 
-
-  //  새값 || 기존값 : 수정한 값이 없으면 기존 값을 사용하기 위함
   useEffect(() => {
-    if (
-      originalPrice ||
-      (oldOriginPrice && discountedPrice) ||
-      (oldPrice && Number(originalPrice || oldOriginPrice) > 0)
-    ) {
-      const original = Number(originalPrice || oldOriginPrice);
-      const discounted = Number(discountedPrice || oldPrice);
+    const original = Number(originalPrice || oldOriginPrice);
+    const discounted = Number(discountedPrice || oldPrice);
+
+    if (original > 0 && discounted >= 0) {
       const rate = ((original - discounted) / original) * 100;
       setDiscountRate(Math.round(rate * 10) / 10);
     } else {
       setDiscountRate(0);
     }
-  }, [originalPrice, discountedPrice]);
+  }, [originalPrice, discountedPrice, oldOriginPrice, oldPrice]);
 
-  // 할인률 적용
-const applyDiscountRate = (rate) => {
-  setDiscountRate(rate);
-  const original = Number(originalPrice) || Number(oldOriginPrice);
-  if (original > 0) {
-    const discounted = original * (1 - rate / 100);
-    setDiscountedPrice(Math.floor(discounted));
-  }
-};
+  const applyDiscountRate = (rate) => {
+    setDiscountRate(rate);
+    const original = Number(originalPrice || oldOriginPrice);
+    if (original > 0) {
+      const discounted = original * (1 - rate / 100);
+      setDiscountedPrice(Math.floor(discounted));
+    }
+  };
 
-
-  // 모달 닫기
   const handleClose = () => {
     onToggle();
   };
 
-  // 최종 가격 저장
   const handleSave = () => {
     alert(
       `할인이 적용되었습니다: 원가 ${originalPrice || oldOriginPrice}원, 할인가 ${discountedPrice || oldPrice}원, 할인율 ${discountRate || oldDiscountRate}%`,
@@ -117,15 +107,17 @@ const applyDiscountRate = (rate) => {
             <label className='w-16 text-gray-700'>할인율</label>
             <div className='flex-1 flex items-center'>
               <IoCalculator size={19} className='text-gray-700' />
-              <div className='text-lg font-medium'>{discountRate}%</div>
+              <div className='text-lg font-medium'>
+                {isNaN(discountRate) ? 0 : discountRate}%
+              </div>
               <div className='ml-2 text-sm text-gray-500'>
-                {discountRate > 0 && `(${originalPrice - discountedPrice}원 할인)`}
+                {originalPrice && discountedPrice && discountRate > 0 &&
+                  `(${originalPrice - discountedPrice}원 할인)`}
               </div>
             </div>
             <input className='hidden' name='discountRate' value={discountRate || oldDiscountRate} />
           </div>
 
-          {/* 할인율 선택 리스트 */}
           <div className='mb-6'>
             <label className='block mb-2 text-gray-700'>할인율 선택</label>
             <div className='flex flex-wrap gap-2'>

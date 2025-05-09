@@ -39,10 +39,9 @@ export default function SellerSettlementPage() {
   }
 
   // 정산신청
-  async function onSubmit(e) {
+  async function onSubmit(formData) {
     setSubmitLoading(true)
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
+
 
     const amount = formData.get("amount") || 0
     const bank = formData.get("bank") || ""

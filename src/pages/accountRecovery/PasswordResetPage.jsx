@@ -3,7 +3,7 @@ import EmailSendForm from "./components/EmailSendForm";
 import CodeVerifyForm from "./components/CodeVerifyForm";
 import ResetPasswordForm from "./components/ResetPasswordForm";
 import { motion } from "framer-motion";
-import { passsendEmailAuthCode, verifyEmailAuthCode } from "../../services/auth.service"; // 수정된 import
+import { passsendEmailAuthCode, verifyEmailAuthCode } from "../../services/auth.service"; 
 import { BASE_URL } from "../../lib/api";
 
 export default function PasswordResetPage() {

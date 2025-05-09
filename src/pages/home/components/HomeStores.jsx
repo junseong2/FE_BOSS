@@ -51,7 +51,6 @@ export default function HomeStores({ customClassName }) {
       <div className='mt-3 sm:mt-5'>
         <CenteredSlider>
           {stores?.map((store, index) => {
-            console.log('스토어 정보:', store); // 여기서 출력 가능
 
             return (
               <SwiperSlide key={store.storeName}>

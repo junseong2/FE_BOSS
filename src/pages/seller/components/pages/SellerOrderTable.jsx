@@ -18,6 +18,7 @@ const getStatusClassName = (status) => {
 export default function SellerOrderTable({
   orders,
   paymentStatus,
+  orderStatus,
   onOrderDetailFetch,
   orderDetail,
   detailLoading,
@@ -40,6 +41,13 @@ export default function SellerOrderTable({
     const method = paymentStatus.find((item) => item.key === status);
     return method ? method.label : '보류'; // 일치하는 키가 없으면 기본값 반환
   }
+
+    /** 영어로 작성된 상태를 한글로 */
+    function getOrderLabel(status) {
+      const method = orderStatus.find((item) => item.key === status);
+      return method ? method.label : '보류'; // 일치하는 키가 없으면 기본값 반환
+    }
+  
 
   return (
     <>
@@ -64,7 +72,7 @@ export default function SellerOrderTable({
                 <tr key={order.orderId} className='hover:bg-gray-50 '>
                   <td className='py-3 px-4 text-sm'>{'ORD-' + order.orderId}</td>
                   <td className='py-3 px-4 text-sm font-medium text-black'>{order.username}</td>
-                  <td className='py-3 px-4 text-sm text-gray-700'>{order.createdDate}</td>
+                  <td className='py-3 px-4 text-sm text-gray-700'>{new Date(order.createdDate).toLocaleString()}</td>
                   <td className='py-3 px-4 text-sm text-center'>{order.orderCount}개</td>
                   <td className='py-3 px-4 text-sm'>{order.paymentMethod}</td>
                   <td className='py-3 px-4 text-sm font-medium'>
@@ -81,7 +89,7 @@ export default function SellerOrderTable({
                     <span
                       className={`inline-block px-3 py-1 text-xs rounded-full ${getStatusClassName(order.status)}`}
                     >
-                      {order.status}
+                      {getOrderLabel( order.status)}
                     </span>
                   </td>
                   <td className='py-2 px-4 text-center relative'>

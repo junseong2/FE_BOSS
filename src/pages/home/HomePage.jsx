@@ -1,69 +1,66 @@
 import { useEffect, useState } from 'react';
-import { useUser } from '../../context/UserContext';
+import { useUserContext } from '../../context/UserContext';
 import HomeBanner from './components/HomeBanner';
 import HomeCategories from './components/HomeCategories';
 import HomeProducts from './components/HomeProducts';
-import RecommendHomeProducts from './components/RecommendHomeProducts'; // ✅ 추천 전용 컴포넌트
+import RecommendHomeProducts from './components/RecommendHomeProducts';
 import HomeStores from './components/HomeStores';
-import axios from 'axios';
-import { BASE_URL } from '../../lib/api';
+import { getPopularProducts, getRecommendProducts } from '../../services/product.service';
+
+
 export default function HomePage() {
-  const { recommendedProducts } = useUser();
+  const { recommendProductIds } = useUserContext();
   const [recommendedProductList, setRecommendedProductList] = useState([]);
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    const fetchPopularProducts = async () => {
-      try {
-        const response = await axios.get(BASE_URL + '/products/popular?page=0&size=30', {
-          params: { sortBy: 'daily' },
-        });
-        setProducts(response.data);
-      } catch (error) {
-        console.error('인기 상품 조회 실패:', error);
-      }
-    };
 
-    fetchPopularProducts();
-  }, []);
+
+  // 인기 상품 조회
+  async function popularProductsFetch() {
+    const data = await getPopularProducts(0, 30, 'daily')
+    setProducts(data)
+  }
+
   // 추천 상품 정보 fetch
+  async function recommendProductsFetch() {
+    if (!recommendProductIds || recommendProductIds.length === 0) return;
+
+    try {
+      const results = getRecommendProducts({ recommendedProductIds: recommendProductIds })
+      setRecommendedProductList(results);
+    } catch (error) {
+      console.error('추천 상품 불러오기 실패:', error);
+    }
+  }
+
+
   useEffect(() => {
-    const fetchRecommendedProductDetails = async () => {
-      if (!recommendedProducts || recommendedProducts.length === 0) return;
+    recommendProductsFetch()
+  }, [recommendProductIds]);
 
-      try {
-        const productDetailPromises = recommendedProducts.map((id) =>
-          fetch(BASE_URL + `/products/${id}`).then((res) => res.json()),
-        );
+  useEffect(() => {
+    popularProductsFetch()
+  }, []);
 
-        const results = await Promise.all(productDetailPromises);
-        setRecommendedProductList(results);
-      } catch (error) {
-        console.error('추천 상품 불러오기 실패:', error);
-      }
-    };
-
-    fetchRecommendedProductDetails();
-  }, [recommendedProducts]);
 
   return (
     <div className='w-full h-full'>
-      <HomeBanner />
+      {/* <HomeBanner /> */}
       <div className='max-w-[1200px] w-full mx-auto'>
         {/* 상품 카테고리 */}
         <HomeCategories />
 
         {/* 상품 리스트 */}
         <div>
-          <HomeStores />
+          {/* <HomeStores /> */}
           <HomeProducts
-            products={products.map((product) => product).sort((a, b) => b.productId - a.productId)}
+            products={products?.map((product) => product).sort((a, b) => b.productId - a.productId)}
             title={'고객이 많이 찾는 상품'}
             customClassName={'bg-[rgba(0,0,0,0.025)]'}
           />
           <HomeProducts products={products} title={'BOSS가 추천하는 TOP10'} />
           <HomeProducts
-            products={products.map((product) => product).slice(20, 30)}
+            products={products?.map((product) => product).slice(20, 30)}
             title={'인기 상품 TOP10'}
             customClassName={'bg-[rgba(0,0,0,0.025)]'}
           />

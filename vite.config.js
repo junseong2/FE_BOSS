@@ -2,11 +2,13 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+import removeConsole from 'vite-plugin-remove-console';
 
 export default defineConfig({
   base: "/",
   plugins: [
     react(),
+    removeConsole({ external: ['error', 'warn'] }), // log, info 제거. error, warn 유지
     tailwindcss(),
     VitePWA({
       injectRegister: 'auto',
@@ -50,4 +52,5 @@ export default defineConfig({
     port: 5173,
     historyApiFallback: true,
   },
+  
 });

@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import { FaTimes } from 'react-icons/fa';
 import {
   IoHomeOutline,
   IoInformationOutline,
@@ -9,61 +9,46 @@ import {
   IoChevronDownOutline,
   IoChevronForwardOutline,
 } from 'react-icons/io5';
-import axios from 'axios';
 import { useMenuToggleStore } from './store/toggleStore';
-import { BASE_URL } from './lib/api';
+import { getCategories } from './services/category.service';
 
 function MenuBar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isIconClicked, setIsIconClicked] = useState(false);
   const [categories, setCategories] = useState([]);
   const [openSubMenu, setOpenSubMenu] = useState(null);
   const location = useLocation();
 
   const { open, setOpen } = useMenuToggleStore();
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get(BASE_URL+'/category/root');
-        setCategories(response.data);
-      } catch (error) {
-        console.error('카테고리 데이터를 불러오는 중 오류 발생:', error);
-      }
-    };
-    fetchCategories();
-  }, []);
 
-  const handleCategoryClick = async (categoryId, e) => {
-    e.preventDefault();
-    if (openSubMenu?.id === categoryId) {
+  /** 카테고리(대/중분류) 목록 조회 */
+  async function getCategoriesFetch() {
+    const categories = await getCategories()
+    setCategories(categories);
+  }
+
+
+  /** 서브 카테고리  */
+  const handleCategoryClick = async (categoryId, subCategories) => {
+    console.log(categoryId, subCategories)
+    if (openSubMenu?.parentCategoryId === categoryId) {
       setOpenSubMenu(null);
-      return;
+    } else {
+      setOpenSubMenu({ parentCategoryId: categoryId, subCategories });
     }
-    try {
-      const response = await axios.get(
-        BASE_URL+`/category/${categoryId}/subcategories`,
-      );
-      setOpenSubMenu({ id: categoryId, subcategories: response.data });
-    } catch (error) {
-      console.error('서브카테고리 데이터를 불러오는 중 오류 발생:', error);
-    }
-  };
+  }
 
   useEffect(() => {
-    setIsMenuOpen(false);
-    setIsIconClicked(false);
-  }, [location.pathname]);
+    getCategoriesFetch();
+  }, []);
 
   return (
     <>
-    <div className={`${open ? 'visible opacity-100' :'invisible opacity-0' } fixed leading-0 bg-[rgba(0,0,0,0.3)] w-full h-full z-[100] transition`}></div>
+      <div className={`${open ? 'visible opacity-100' : 'invisible opacity-0'} fixed leading-0 bg-[rgba(0,0,0,0.3)] w-full h-full z-[100] transition`}></div>
       <div
-        className={`fixed top-0 left-0 h-full w-[85vw] max-w-[280px] bg-white shadow-xl z-[101] transition-transform duration-300 ease-in-out transform ${
-          open ? 'translate-x-0' : '-translate-x-full'
-        } overflow-y-auto`}
+        className={`fixed top-0 left-0 h-full w-[85vw] max-w-[280px] bg-white shadow-xl z-[101] transition-transform duration-300 ease-in-out transform ${open ? 'translate-x-0' : '-translate-x-full'
+          } overflow-y-auto`}
       >
-        
+
         <div className='flex items-center justify-between px-4 py-3 bg-blue-600 text-white'>
           <h2 className='text-lg font-bold'>메뉴</h2>
           <button
@@ -118,19 +103,19 @@ function MenuBar() {
             <div key={category.id} className='relative'>
               <div
                 className={`flex items-center justify-between px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer ${location.pathname === `/category/${category.id}` ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600 pl-3' : ''}`}
-                onClick={(e) => handleCategoryClick(category.id, e)}
+                onClick={() => handleCategoryClick(category.id, category.subCategories)}
               >
                 <span className='font-medium text-sm'>{category.name}</span>
-                {openSubMenu?.id === category.id && openSubMenu.subcategories.length > 0 ? (
+                {openSubMenu?.parentCategoryId === category.id && openSubMenu.subCategories?.length > 0 ? (
                   <IoChevronDownOutline className='text-gray-400' />
                 ) : (
                   <IoChevronForwardOutline className='text-gray-400' />
                 )}
               </div>
 
-              {openSubMenu?.id === category.id && openSubMenu.subcategories.length > 0 && (
+              {openSubMenu?.parentCategoryId === category.id && openSubMenu.subCategories?.length > 0 && (
                 <div className='bg-gray-50 py-1'>
-                  {openSubMenu.subcategories.map((sub) => (
+                  {openSubMenu.subCategories.map((sub) => (
                     <Link
                       key={sub.id}
                       to={`/category/${sub.id}`}

@@ -4,10 +4,27 @@ import instance from '../configs/axios.config';
 import { apiRoutes } from '../configs/api-urls';
 import { BASE_URL } from '../lib/api';
 
-// { productId: product.productId, quantity }
+
+// 장바구니 비우기
+export const clearCartFetch = async () => {
+  try {
+    const response = await instance.post(apiRoutes.carts.clear())
+    if (response.status > 399) {
+      return false;
+    } else {
+      return true;
+    }
+  } catch (error) {
+    console.error(error)
+    return false;
+  }
+
+}
+
+// 장바구니 추가
 export const addToCart = async (data) => {
   try {
-    const response = await instance.post(BASE_URL+'/cart/add', data);
+    const response = await instance.post(BASE_URL + '/cart/add', data);
     if (response.status > 399) {
       throw new Error();
     } else {
@@ -24,9 +41,9 @@ export const addToCart = async (data) => {
     }
   }
 
-  // ✅ 사용자 벡터 업데이트 요청 추가
+  // 사용자 벡터 업데이트 요청 추가
 
-  const updateRes = await fetch(BASE_URL+`/vector/update?productId=${data.productId}`, {
+  const updateRes = await fetch(BASE_URL + `/vector/update?productId=${data.productId}`, {
     method: 'POST',
     credentials: 'include',
   });
@@ -42,7 +59,7 @@ export const getCartCount = async () => {
     if (response.status > 399) {
       throw new Error();
     }
-    
+
     return response.data?.totalCount ?? 0
   } catch {
     return 0;

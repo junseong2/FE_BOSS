@@ -12,7 +12,7 @@ const OnlineSalesForm = ({ onVerify }) => {
     setLoading(true);
     setError(null);
 
-    if (salesNumber === '123') {
+    if (salesNumber === '2025부산금정구0456') {
       setSuccess(true);
       onVerify(salesNumber);
     } else {

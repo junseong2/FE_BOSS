@@ -90,7 +90,7 @@ export default function ProductReviewList({ reviews }) {
                           className='p-1 bg-white border border-gray-200 rounded-[3px] hover:bg-gray-100 transition-colors'
                         >
                           <img
-                            src={imgUrl}
+                            src={"https://bossassets.s3.amazonaws.com/"+imgUrl}
                             alt='리뷰 이미지'
                             onError={(e) => {
                               e.currentTarget.src = noImage;

@@ -23,8 +23,6 @@ const defaultBreakpoints = {
 
 export default function CenteredSlider({
   children,
-  slidesPerView,
-  spaceBetween,
   breakpoints = defaultBreakpoints,
 }) {
   return (
